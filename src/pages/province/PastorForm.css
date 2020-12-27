@@ -1,0 +1,16 @@
+.PastorForm{
+
+}
+
+.PastorForm-heading{
+    font-size: 3rem;
+}
+
+.PastorForm-subTitle{
+    font-size: 2rem;
+    color:var(--success);
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--body-bg);
+    padding-bottom: 1rem;
+
+}

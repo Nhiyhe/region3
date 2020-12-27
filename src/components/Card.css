@@ -1,0 +1,9 @@
+.Card{
+    background-color:var(--white);
+    padding: 2rem;
+    border-radius: 1rem;
+    height: auto;
+    margin-top:2rem;
+    margin-bottom: 5rem;
+    border-top:4px solid var(--gray);
+}

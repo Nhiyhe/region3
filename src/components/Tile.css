@@ -1,0 +1,29 @@
+.Tile{
+    width: 30rem;
+    height: auto;
+    background-color:var(--teal);
+    display: flex;
+    margin-right: 1.5rem;
+    padding: .5rem;
+
+}
+
+.Tile > svg{
+    font-size: 10rem;
+    color: var(--white);
+}
+
+.Tile-content{
+    
+}
+
+.Tile-content-name{
+ text-transform: uppercase;
+ font-size: 2rem;
+ color: white;
+}
+
+.Tile-content-count{
+ color: white;
+ font-size: 2rem;
+}

@@ -1,0 +1,10 @@
+.Loading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20rem;
+}
+
+.Loading div span{
+    font-size: 9rem;
+}

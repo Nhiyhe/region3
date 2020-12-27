@@ -1,0 +1,13 @@
+.AdminDashboard{
+
+}
+
+.AdminDashboard-icon{
+    font-size: 5rem;
+    color:red;
+}
+
+.AdminDashboard-container{
+    display: flex;
+    justify-content: space-around;
+}

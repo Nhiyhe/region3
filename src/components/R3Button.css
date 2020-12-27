@@ -1,0 +1,17 @@
+.R3Button{
+    font-family: Lato;
+    font-size: 1.1rem;
+    font-weight: 700;
+    width: auto;
+    height: auto;
+    padding: 1rem 2rem;
+    background-color:var(--teal);
+    color: var(--white);
+    text-align: center;
+    cursor: pointer;
+    display: inline;
+    /* margin-left: 1rem; */
+}
+.R3Button-icon{
+    margin-right: .8rem;
+}

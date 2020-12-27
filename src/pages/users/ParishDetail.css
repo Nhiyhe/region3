@@ -1,0 +1,51 @@
+.ParishDetail{
+    font-family: 'Open Sans';
+    color:var(--gray);
+ 
+}
+
+p{
+    /* font-size: 1.3rem; */
+}
+
+
+.ParishDetail-name{
+    font-size: 3.5rem;
+    font-weight: 700;
+}
+
+.ParishDetail-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+svg{
+    color: var(--cyan);
+    font-size: 1.5rem;
+    margin-right: 3px;
+}
+
+.ParishDetail-pname{
+    font-size: 2rem;
+    font-weight: 700;
+    color:var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ParishDetail-pname > svg{
+    font-size: 5rem;
+}
+
+.ParishDetail-location{
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+}
+
+.ParishDetail-coutry{
+    margin-bottom: -.7px;
+}
