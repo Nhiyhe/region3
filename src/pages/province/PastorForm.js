@@ -5,10 +5,12 @@ import React from 'react';
 import R3Card from '../../components/Card';
 import R3Button from '../../components/R3Button';
 import './PastorForm.css';
+import PageContent from '../../components/PageContent';
 
 const PastorForm = () => {
     return (
-       <div className="PastorForm">
+       <PageContent>
+           <div className="PastorForm">
            <h2 className="PastorForm-heading">Create New Pastor</h2>
           <div>
           <R3Card>
@@ -117,6 +119,7 @@ const PastorForm = () => {
            </R3Card>
           </div>
        </div>
+       </PageContent>
     )
 }
 

@@ -3,8 +3,10 @@ import './PageContent.css';
 
 const PageContent = ({children}) => {
     return (
-        <div className="PageContent container">
-            {children}
+        <div className="">
+            <div className="container">
+                <div className="PageContent">{children}</div>
+            </div>
         </div>
     )
 }

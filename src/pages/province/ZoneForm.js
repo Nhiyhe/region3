@@ -6,6 +6,8 @@ import { AuthContext } from "../../context/AuthContext";
 import requestAxios from '../../util/requestAxios';
 import R3Card from "../../components/Card";
 import './ZoneForm.css';
+import PageContent from '../../components/PageContent';
+
 
 const ZoneForm = () => {
   const {userInfo, isAdmin} = useContext(AuthContext);
@@ -28,7 +30,8 @@ const ZoneForm = () => {
     })
   }, []);
   return (
-   <div className="ZoneForm">
+   <PageContent>
+     <div className="ZoneForm">
        <h2 className="ZoneForm-heading">Create New Zone</h2>    
       <div className="col-6 offset-3">
       <R3Card>
@@ -63,7 +66,7 @@ const ZoneForm = () => {
     </R3Card>
       </div>
    </div>
-     
+   </PageContent>
   );
 };
 

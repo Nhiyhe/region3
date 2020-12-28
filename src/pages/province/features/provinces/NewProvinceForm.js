@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Axios from '../../util/requestAxios';
+import Axios from '../../../../util/requestAxios';
 import { Form } from "formik";
 import { Field, ResetButton, SubmitButton } from "formik-antd";
 import axios from 'axios';
-import R3Card from '../../components/Card';
-import './ProvinceForm.css';
-import ProvinceList from "./ProvinceList";
-import ProvinceEditFormContainer from "./ProvinceEditFormContainer";
-import SubNavBar from "../../components/SubNavBar";
+import R3Card from '../../../../components/Card';
+import './NewProvinceForm.css';
+import Loading from '../../../../components/Loading';
 
-const ProvinceForm = () => {
+const NewProvinceForm = ({province, mode}) => {
   const [provinces, setProvinces] = useState([]);
   const [pastors, setPastors] = useState([]);
-  const [isEditing, setIsEditing] =useState(false);
 
   useEffect(() => {
     const source = axios.CancelToken.source();
@@ -21,7 +18,7 @@ const ProvinceForm = () => {
         const { data } = await Axios.get("/provinces", {cancelToken:source.token});
         setProvinces(data.body);
       }catch(err){
-        console.error(err.message)
+        console.error(err)
       }
     };
     getProvinces();
@@ -33,21 +30,26 @@ const ProvinceForm = () => {
   useEffect(() => {
     const source = axios.CancelToken.source();
     const getPastors = async () => {
-      const { data } = await Axios.get("/pastors", {cancelToken:source.token});
-      setPastors(data.body);
+      try{
+        const { data } = await Axios.get("/pastors", {cancelToken:source.token});
+        setPastors(data.body);
+      }catch(err){
+        console.error(err);
+      }
     };
     getPastors();
     return (() => {
       source.cancel()
     })
   },[])
-  return (
-     <div className="ProvinceForm">
-       <SubNavBar />
-       <div className="container">         
-          <h2 className="ProvinceForm-heading">Create New Province</h2>
-            <div className="col-8 offset-2">
 
+  if(!province && mode === "editing"){
+    return <Loading />
+  }
+  return (
+     <div className="NewProvinceForm">
+          <h2 className="ProvinceForm-heading">{province ? `Editing ${province?.name}` : 'Create New Province'}</h2>
+            <div className="col-8 offset-2">
             <R3Card>
                 <Form>
                         <div className="form-group">
@@ -75,22 +77,17 @@ const ProvinceForm = () => {
                         </div>
                         <div className="mt-5">
                         <SubmitButton type="primary" disabled={false}>
-                          Create
+                          {mode === 'editing' ?  'Update' : 'Create'}
                         </SubmitButton>
                         <ResetButton>Reset</ResetButton>
                         </div>
                     </Form>
           </R3Card>
             </div>
-       <div>
-         <R3Card>
-           {!isEditing && <ProvinceList setIsEditing={setIsEditing} />}
-           {isEditing && <ProvinceEditFormContainer/>}
-         </R3Card>
+       <div>        
        </div>
        </div>
-     </div>
   );
 };
 
-export default ProvinceForm;
+export default NewProvinceForm;

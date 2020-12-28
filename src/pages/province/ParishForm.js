@@ -6,6 +6,7 @@ import requestAxios from '../../util/requestAxios';
 import R3Card from '../../components/Card';
 import './ParishForm.css';
 import { AuthContext } from "../../context/AuthContext";
+import PageContent from '../../components/PageContent';
 
 const ParishForm = () => {
 
@@ -96,7 +97,8 @@ const ParishForm = () => {
 
 
   return (
-    <Form>
+    <PageContent>
+        <Form>
         <h2 className="ParishForm-heading">Create New Parish</h2>
         <R3Card>
           <div className="container">
@@ -206,6 +208,7 @@ const ParishForm = () => {
           </div>
         </R3Card>
     </Form>
+    </PageContent>
   );
 };
 
