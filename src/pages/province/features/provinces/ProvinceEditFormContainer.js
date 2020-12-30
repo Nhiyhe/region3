@@ -31,7 +31,7 @@ const ProvinceEditFormContainer = ()  => {
         component={() => <NewProvinceForm province={province} mode="editing" />}
         onSubmit= {async (updatedValues) => {
             try{
-                const {data} = await requestAxios.put(`/provinces/${province.id}`,{...updatedValues});
+                const {data} = await requestAxios.put(`/provinces/${province.id}`,updatedValues);
                 console.log(data.body);
                 history.push("/provinces/lists");
             }catch(err){

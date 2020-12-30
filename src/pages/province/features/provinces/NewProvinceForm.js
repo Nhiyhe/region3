@@ -43,12 +43,12 @@ const NewProvinceForm = ({province, mode}) => {
     })
   },[])
 
-  if(!province && mode === "editing"){
+  if(!province.name && mode === 'editing'){
     return <Loading />
   }
   return (
      <div className="NewProvinceForm">
-          <h2 className="ProvinceForm-heading">{province ? `Editing ${province?.name}` : 'Create New Province'}</h2>
+          <h2 className="ProvinceForm-heading">{province.name ? `Editing ${province.name}` : 'Create New Province'}</h2>
             <div className="col-8 offset-2">
             <R3Card>
                 <Form>

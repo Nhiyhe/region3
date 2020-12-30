@@ -2,11 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import { Form, Field } from "formik";
 import axios from "axios";
 import { ResetButton, SubmitButton } from "formik-antd";
-import { AuthContext } from "../../context/AuthContext";
-import requestAxios from '../../util/requestAxios';
-import R3Card from "../../components/Card";
+import { AuthContext } from "../../../../context/AuthContext";
+import requestAxios from '../../../../util/requestAxios';
+import R3Card from "../../../../components/Card";
 import './ZoneForm.css';
-import PageContent from '../../components/PageContent';
+import PageContent from '../../../../components/PageContent';
+import Loading from "../../../../components/Loading";
 
 
 const ZoneForm = () => {
@@ -29,6 +30,8 @@ const ZoneForm = () => {
       source.cancel()
     })
   }, []);
+
+  if(!provinces.length) return <Loading />
   return (
    <PageContent>
      <div className="ZoneForm">

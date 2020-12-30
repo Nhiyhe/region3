@@ -17,7 +17,7 @@ const ProvinceFormContainer = () => {
   return (
     <Formik
       initialValues={{ name: "", locationAddress: "", pastor: "" }}
-      component={NewProvinceForm}
+      component={() => <NewProvinceForm province={{}} />}
       validationSchema={validationSchema}
       onSubmit={async(values) => {        
       await requestAxios.post("/provinces", values);

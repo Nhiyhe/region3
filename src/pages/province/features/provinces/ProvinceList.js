@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import requestAxios from '../../../../util/requestAxios';
 import PageContent from '../../../../components/PageContent';
-import { Table, Tag, Space, Modal} from 'antd';
+import { Table, Space, Modal} from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import './ProvinceList.css';
 import Loading from '../../../../components/Loading';
+import axios from 'axios';
 
 const ProvinceList = () => {
-   const history = useHistory();
     const [provinces, setProvinces] = useState([]);
 
     const { confirm } = Modal;
@@ -32,16 +32,20 @@ const ProvinceList = () => {
       }
 
     useEffect(() => {
+      const source = axios.CancelToken.source();
         const getProvinces = async () => {
             try{
-            const {data} = await requestAxios.get(`/provinces`);
+            const {data} = await requestAxios.get(`/provinces`,{cancelToken:source.token});
             setProvinces(data.body);
             }catch(err){
                 console.error(err.message);
             }
         }
-
         getProvinces();
+        return (() => {
+          source.cancel();
+        })
+   
     }, [])
 
   
@@ -50,7 +54,6 @@ const ProvinceList = () => {
           title: 'Province',
           dataIndex: 'name',
           key: 'name',
-          render: text => <a>{text}</a>,
         },
         {
           title: 'Location',
@@ -63,7 +66,7 @@ const ProvinceList = () => {
           key: 'pastor',
           render: p => (
               <>
-                <a>{p.pastorName}</a>
+                {p.pastorName}
               </>
           )
         },        
@@ -79,12 +82,12 @@ const ProvinceList = () => {
         },
       ];
 
-    if(!provinces || provinces.length < 0){
+    if(!provinces.length > 0){
         return <Loading />
     }
     return (
         <PageContent>
-            <Table title={() => <h2 className="ProvinceList-title">List of Provinces</h2>} dataSource={provinces}columns={columns} size="small" />
+            { <Table title={() => <h2 className="ProvinceList-title">List of Provinces</h2>} rowKey={data =>data.id}  dataSource={provinces} columns={columns} size="small" />}
         </PageContent>
     )
 }

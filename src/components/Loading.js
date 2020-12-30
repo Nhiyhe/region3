@@ -1,4 +1,4 @@
-import Reat from 'react';
+import React from 'react';
 import './Loading.css';
 import {Spin} from 'antd';
 

@@ -2,7 +2,7 @@ import { Formik } from "formik";
 import React from "react";
 import ZoneForm from "./ZoneForm";
 import * as Yup from 'yup';
-import requestAxios from "../../util/requestAxios";
+import requestAxios from "../../../../util/requestAxios";
 import { useHistory } from "react-router-dom";
 
 const validationSchema = Yup.object().shape({
@@ -24,7 +24,7 @@ const ZoneFormContainer = () => {
           console.log(data.body);
         history.push('/dashboard');
         }catch(err){
-          console.error(err.message);
+          console.error(err);
         }
       }}
     />

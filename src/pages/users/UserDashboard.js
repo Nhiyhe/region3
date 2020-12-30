@@ -7,16 +7,12 @@ import ParishDetail from './ParishDetail';
 import UsersRoutes from './UsersRoutes';
 import PageContent from '../../components/PageContent';
 import './UserDashboard.css';
-import Loading from '../../components/Loading';
 
 
 const UserDashboard = () => {
    const {parishId} = useContext(ParishContext);
    const {url} = useRouteMatch();
-   console.log(parishId);
-//    if(!parishId){
-//        return <Loading />
-//    }
+
         return (
             <section className="UserDashboard">
                 <SubNavBar>
