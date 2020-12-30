@@ -1,12 +1,12 @@
 import { Field, Form, ResetButton, SubmitButton } from "formik-antd";
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import requestAxios from '../../util/requestAxios';
-import R3Card from '../../components/Card';
+import requestAxios from '../../../../util/requestAxios';
+import R3Card from '../../../../components/Card';
 import './CountryForm.css';
-import { AuthContext } from "../../context/AuthContext";
-import CountryList from "./CountryList";
-import PageContent from '../../components/PageContent';
+import { AuthContext } from "../../../../context/AuthContext";
+import PageContent from '../../../../components/PageContent';
+import Loading from "../../../../components/Loading";
 
 const CountryForm = () => {
   const {userInfo, isAdmin} = useContext(AuthContext);
@@ -50,6 +50,9 @@ const CountryForm = () => {
     })
   }, [provinceId]);
 
+
+  if(!provinces.length) return <Loading />
+  
   return (
     <PageContent>
       <Form>
@@ -108,12 +111,6 @@ const CountryForm = () => {
                
               </R3Card>
            </div>
-
-        <div>
-           <R3Card>
-             <CountryList />
-           </R3Card>
-        </div>
       </div>
     </Form>
     </PageContent>

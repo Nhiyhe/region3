@@ -1,11 +1,11 @@
 import React, {useContext} from 'react';
-import {Link} from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const AdminListItem = ({children, to}) => {
+const AdminListItem = ({children, to, rest}) => {
 const {isAuthenticated, isProvincePastor, isAdmin} = useContext(AuthContext);
    return (
-    <> { isAuthenticated() &&  isProvincePastor() && isAdmin() && <li><Link to={to}>{children}</Link></li> }</> 
+    <> { isAuthenticated() &&  isProvincePastor() && isAdmin() && <li><NavLink {...rest} to={to}>{children}</NavLink></li> }</> 
    )  
 }
 

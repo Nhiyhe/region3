@@ -2,7 +2,7 @@ import { Formik } from "formik";
 import React from "react";
 import CountryForm from "./CountryForm";
 import * as Yup from "yup";
-import requestAxios from "../../util/requestAxios";
+import requestAxios from "../../../../util/requestAxios";
 import { useHistory } from "react-router-dom";
 
 const schema = Yup.object().shape({
@@ -22,10 +22,9 @@ const CountryFormContainer = () => {
         try{
           await requestAxios.post(`/countries`, values);
           setSubmitting(false);
-          history.push('/dashboard');
-
+          history.push('/countries/lists');
         }catch(err){
-          console.error(err.message);
+          console.error(err);
         }
       }}
     />

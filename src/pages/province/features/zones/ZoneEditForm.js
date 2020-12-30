@@ -4,7 +4,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import R3Card from '../../../../components/Card';
 import Loading from '../../../../components/Loading';
 import requestAxios from '../../../../util/requestAxios';
-import { ResetButton, SubmitButton } from "formik-antd";
 import axios from 'axios';
 
 const ZoneEditForm = () => {
