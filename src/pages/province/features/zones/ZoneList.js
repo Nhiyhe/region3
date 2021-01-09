@@ -9,6 +9,7 @@ import { Table, Space, Modal } from 'antd';
 import {Link} from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Loading from '../../../../components/Loading';
+import {useAlert} from 'react-alert';
 
 
 const ZoneList  = () => {
@@ -16,6 +17,7 @@ const {userInfo, isAdmin} = useContext(AuthContext);
   const [provinces, setProvinces] = useState([]);
   const [zones, setZones] = useState([]);
   const [provinceId, setProvinceId] = useState('5fc38e7d4dc52100044c578e');
+  const alert = useAlert();
 
   const { confirm } = Modal;
 
@@ -45,11 +47,21 @@ const {userInfo, isAdmin} = useContext(AuthContext);
       okType: 'danger',
       cancelText: 'No',
       async onOk() {
-        await requestAxios.delete(`/zones/${zone.id}`);
-        window.location ='/zones/lists';            
+        try{
+          const {data} = await requestAxios.delete(`/zones/${zone.id}`);
+          alert.success(data.message);
+          window.location ='/zones/lists';
+        } catch(err)
+        {
+          if(err.response && err.response.data){
+            alert.error(err.response.data.message);
+          }else{
+          alert.error("An unexpected error occured.");
+          }
+        }
+        
       },
       onCancel() {
-        console.log('Cancel');
       },
     });
   }

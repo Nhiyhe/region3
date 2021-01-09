@@ -7,11 +7,13 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import './ProvinceList.css';
 import Loading from '../../../../components/Loading';
 import axios from 'axios';
+import {useAlert} from 'react-alert';
 
 const ProvinceList = () => {
     const [provinces, setProvinces] = useState([]);
 
     const { confirm } = Modal;
+    const alert = useAlert();
 
     function showDeleteConfirm(province) {
         confirm({
@@ -22,11 +24,19 @@ const ProvinceList = () => {
           okType: 'danger',
           cancelText: 'No',
           async onOk() {
-            await requestAxios.delete(`/provinces/${province.id}`);
-            window.location ='/provinces/lists';            
+            try{
+              const {data} = await requestAxios.delete(`/provinces/${province.id}`);
+              alert.success(data.message);
+               window.location ='/provinces/lists';
+            }catch(err){
+              if(err.response && err.response.data){
+                alert.error(err.response.data.message);
+              }else{
+              alert.error("An unexpected error occured.");
+              }
+            }           
           },
           onCancel() {
-            console.log('Cancel');
           },
         });
       }
@@ -38,7 +48,11 @@ const ProvinceList = () => {
             const {data} = await requestAxios.get(`/provinces`,{cancelToken:source.token});
             setProvinces(data.body);
             }catch(err){
-                console.error(err.message);
+              if(err.response && err.response.data){
+                alert.error(err.response.data.message);
+              }else{
+              alert.error("An unexpected error occured.");
+              }
             }
         }
         getProvinces();
@@ -66,7 +80,7 @@ const ProvinceList = () => {
           key: 'pastor',
           render: p => (
               <>
-                {p.pastorName}
+                {p.firstName} {p.lastName}
               </>
           )
         },        
@@ -87,7 +101,7 @@ const ProvinceList = () => {
     }
     return (
         <PageContent>
-            { <Table title={() => <h2 className="ProvinceList-title">List of Provinces</h2>} rowKey={data =>data.id}  dataSource={provinces} columns={columns} size="small" />}
+            { <Table rowKey={data =>data.id}  dataSource={provinces} columns={columns} />}
         </PageContent>
     )
 }

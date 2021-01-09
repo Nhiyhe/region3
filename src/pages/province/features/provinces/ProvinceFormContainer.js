@@ -2,9 +2,9 @@ import { Formik } from "formik";
 import React from "react";
 import NewProvinceForm from "./NewProvinceForm";
 import * as Yup from 'yup';
-import Axios from 'axios';
 import {useHistory} from 'react-router-dom';
 import requestAxios from "../../../../util/requestAxios";
+import {useAlert} from 'react-alert';
 
 const validationSchema = Yup.object().shape({
   name:Yup.string().required("Parish Name is Required").min(5),
@@ -14,14 +14,24 @@ const validationSchema = Yup.object().shape({
 
 const ProvinceFormContainer = () => {
   const history = useHistory();
+  const alert = useAlert();
   return (
     <Formik
       initialValues={{ name: "", locationAddress: "", pastor: "" }}
       component={() => <NewProvinceForm province={{}} />}
       validationSchema={validationSchema}
       onSubmit={async(values) => {        
-      await requestAxios.post("/provinces", values);
-        history.push('/dashboard');
+       try{
+        const {data} = await requestAxios.post("/provinces", values);
+        alert.success(data.message);
+        history.push('/provinces/lists');
+       }catch(err){          
+          if(err.response && err.response.data){
+            alert.error(err.response.data.message);
+          }else{
+          alert.error("An unexpected error occured.");
+          }
+       }
       }}
     />
   );

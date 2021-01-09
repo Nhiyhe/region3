@@ -1,11 +1,11 @@
-import { DatePicker } from 'antd';
+import { DatePicker } from 'formik-antd';
 import { Form } from 'formik';
 import { Field } from 'formik-antd';
 import React from 'react';
-import R3Card from '../../components/Card';
-import R3Button from '../../components/R3Button';
+import R3Card from '../../../../components/Card';
 import './PastorForm.css';
-import PageContent from '../../components/PageContent';
+import PageContent from '../../../../components/PageContent';
+import { dateFormatList } from '../../../../helpers/dateHelper';
 
 const PastorForm = () => {
     return (
@@ -19,43 +19,37 @@ const PastorForm = () => {
             <div className="form-row">
                 <div className="form-group col-4">
                     <label>FirstName</label>
-                    <Field name="firstname" placeholder="FirstName" className="form-control form-control-lg"  />
+                    <Field name="firstName" placeholder="FirstName" className="form-control form-control-lg"  />
                 </div>
 
                 <div className="form-group col-4">
                     <label>MiddleName</label>
-                    <Field name="middlename" placeholder="MiddleName" className="form-control form-control-lg" />
+                    <Field name="middleName" placeholder="MiddleName" className="form-control form-control-lg" />
                 </div>
 
                 <div className="form-group col-4"> 
                     <label>LastName</label>
-                    <Field name="lastname" placeholder="LastName" className="form-control form-control-lg" />
+                    <Field name="lastName" placeholder="LastName" className="form-control form-control-lg" />
                 </div>
             </div>
 
            <div className="form-row">
                 <div className="form-group col-4">
                         <label>Date of Birth</label>
-                        <DatePicker name="dob"  className="form-control form-control-lg"/>
+                        <DatePicker name="dateOfBirth"  className="form-control form-control-lg" format={dateFormatList[0]}/>
                     </div>
-                    <div className="form-group col-4">
-                        <label>Email</label>
-                        <Field name="email" placeholder="Email" className="form-control form-control-lg" />
-                    </div>
-
                     <div className="form-group col-4">
                         <label>Phone</label>
-                        <Field name="telephone" placeholder="Phone Number" className="form-control form-control-lg" />
+                        <Field name="phone" placeholder="Phone Number" className="form-control form-control-lg" />
                     </div>
            </div>
 
           <div className="form-row">                
             <div className="form-group col-6">
-                <label>Position</label>
-                <Field as="select" name="position" className="form-control form-control-lg">
-                    <option value="parish pastor">Parish Pastor</option>
-                    <option value="zonal pastor">Zonal Pastor</option>
-                    <option value="province pastor">Province Pastor</option>
+                <label className="form-label" htmlFor="position">Position</label>
+                <Field as="select" name="position" className="form-control form-control-lg" id="position">
+                    <option value="Parish Pastor">Parish Pastor</option>
+                    <option value="Province Pastor">Province Pastor</option>
                 </Field>
             </div>
 
@@ -79,21 +73,26 @@ const PastorForm = () => {
 
             <h3 className="PastorForm-subTitle mt-5">Pastor's Spouse Information.</h3>  
             <div className="form-row">
-                <div className="form-group col-6">
+                <div className="form-group col-4">
                     <label>FirstName</label>
-                    <Field name="spouseName" placeholder="FirstName" className="form-control form-control-lg" />
+                    <Field name="spouseFirstName" placeholder="FirstName" className="form-control form-control-lg" />
                 </div>
 
-                <div className="form-group col-6">
+                <div className="form-group col-4">
                     <label>MiddleName</label>
-                    <Field name="spouseName" placeholder="MiddleName" className="form-control form-control-lg" />
+                    <Field name="spouseMiddleName" placeholder="MiddleName" className="form-control form-control-lg" />
+                </div>
+
+                <div className="form-group col-4">
+                    <label>MiddleName</label>
+                    <Field name="spouseLastName" placeholder="LastName" className="form-control form-control-lg" />
                 </div>
             </div>
 
            <div className="form-row">
                 <div className="form-group col-4">
                     <label>Date of Birth</label>
-                    <DatePicker name="spouseDob" className="form-control form-control-lg"  />
+                    <DatePicker name="spouseDateOfBirth" className="form-control form-control-lg"  format={dateFormatList[0]} />
                 </div>
            </div>
 
@@ -101,19 +100,27 @@ const PastorForm = () => {
            <div className="form-row">
                 <div className="form-group col-4">
                     <label>Memorable Occasion</label>
-                    <Field name="occassion" placeholder="Memorable Occasion" className="form-control form-control-lg" />
+                    <Field name="memorableOccassion" placeholder="Memorable Occasion" className="form-control form-control-lg" />
                 </div>
 
                 <div className="form-group col-4">
                     <label>Memorable Occasion Date</label>
-                    <DatePicker name="occassionDate" className="form-control form-control-lg"  />
+                    <DatePicker name="dateOfMemorableOccassion" className="form-control form-control-lg"  format={dateFormatList[0]} />
                 </div>
            </div>
+           <h3 className="PastorForm-subTitle mt-5">Login Information.</h3>  
+                <div className="form-group">
+                        <label className="form-label" htmlFor="email">Email</label>
+                        <Field name="email" className="form-control form-control-lg" id="email" placeholder="Email" />
+                </div>
+                <div className="form-group">
+                        <label className="form-label" htmlFor="password">Password</label>
+                        <Field name="password" type="password" className="form-control form-control-lg" placeholder="Password" id="password" />
+                </div>
 
            <div className="form-group mt-5">
-           <hr/>
-                <R3Button rounded color="orange">Submit</R3Button>
-                <R3Button>Reset</R3Button>
+                <input type="submit" value="CREATE PASTOR" className="btn btn-primary btn-lg mr-3" />
+                <button type="reset" className="btn btn-info btn-lg">RESET</button>
            </div>
         </Form>
            </R3Card>

@@ -1,11 +1,11 @@
 import { Formik } from 'formik';
 import React, { useContext } from 'react';
-import { ParishContext } from '../../context/ParishContext';
+import { ParishAuthContext } from '../../context/ParishAuthContext';
 import requestAxios from '../../util/requestAxios';
 import NewAttendanceForm from './NewAttendanceForm';
 
 const NewAttendanceFormContainer = () => {
-    const {parishId} = useContext(ParishContext);
+    const {parishId} = useContext(ParishAuthContext);
     return (
         <Formik
          initialValues={{men: 0, women: 0, children:0, marriages:0, newComers:0, newWorkers:0, soulsBaptised:0, soulsSaved:0, deaths:0, birth:0 }}

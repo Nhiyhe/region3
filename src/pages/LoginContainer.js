@@ -2,10 +2,11 @@ import React, {useContext} from 'react';
 import {Formik} from 'formik';
 import Login from './Login';
 import * as yup from 'yup';
-import { Redirect } from "react-router-dom";
-import { AuthContext } from '../context/AuthContext';
+import { Redirect, useHistory } from "react-router-dom";
 import jwtDecode from 'jwt-decode';
 import requestAxios from '../util/requestAxios';
+import { ParishAuthContext } from '../context/ParishAuthContext';
+import { AuthContext } from '../context/AuthContext';
 
 const validationSchema = yup.object().shape({
     password:yup.string().required("Password is required").min(5).label("Password"),
@@ -13,16 +14,17 @@ const validationSchema = yup.object().shape({
 })
 
 const LoginContainer = () => {
+    const history = useHistory();
     const {setAuthState, isAuthenticated} = useContext(AuthContext);
 
     if (isAuthenticated()) return <Redirect to="/dashboard" />
     return(
         <Formik
-           initialValues ={{email:"", password:""}} 
+           initialValues ={{email:"", password:"" }} 
            validationSchema={validationSchema}
            onSubmit={async (values,{setSubmitting,resetForm}) =>{
-            try{
-                const {data} = await requestAxios.post("/users/login", values);
+              try{
+                const {data} = await requestAxios.post("/pastors/login", values);
                 const decodeUserInfo = jwtDecode(data.body.token);
                 const userData = {token:data.body.token,decodeUserInfo}
                 setAuthState(userData);
@@ -31,9 +33,10 @@ const LoginContainer = () => {
                 window.location = '/dashboard';
                 // history.push('/dashboard');
             }catch(err){
-                console.log("Something bad happening");
+                console.log(err);
             }
-           }}
+           }
+        }
            component ={Login}
          />
     )

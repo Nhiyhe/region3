@@ -30,7 +30,11 @@ const AuthProvider = ({ children }) => {
     }
 
     const isProvincePastor = () => {
-      return userInfo.position.toLowerCase() === "province pastor"
+      return userInfo.position ? userInfo.position.toLowerCase() === "province pastor" : ''
+    }
+
+    const isParishPastor = () => {
+      return userInfo.position ? userInfo.position.toLowerCase() === "parish pastor" : ''
     }
 
     const logout = () => {
@@ -41,7 +45,7 @@ const AuthProvider = ({ children }) => {
       history.push('/login')
     }
 
-  return <AuthContext.Provider value={{token, userInfo, isAuthenticated, setAuthState, logout, isAdmin, isProvincePastor}}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{token, userInfo, isAuthenticated, setAuthState, logout, isAdmin, isProvincePastor, isParishPastor}}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

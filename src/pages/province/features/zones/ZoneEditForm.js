@@ -5,11 +5,13 @@ import R3Card from '../../../../components/Card';
 import Loading from '../../../../components/Loading';
 import requestAxios from '../../../../util/requestAxios';
 import axios from 'axios';
+import {useAlert} from 'react-alert';
 
 const ZoneEditForm = () => {
     let {id} = useParams();
     const [zone, setZone] = useState({});
     const history = useHistory();
+    const alert = useAlert();
 
     useEffect(() => {
     const source = axios.CancelToken.source();
@@ -20,7 +22,11 @@ const ZoneEditForm = () => {
             setZone(data.body);
 
             }catch(err){
-                console.error(err);
+                if(err.response && err.response.data){
+                    alert.error(err.response.data.message);
+                  }else{
+                  alert.error("An unexpected error occured.");
+                  }
             }
         }
         getZoneById();
@@ -32,13 +38,23 @@ const ZoneEditForm = () => {
     }, [id]);
     
     if(!zone.name) return  <Loading />
+    console.log(id);
     return (
         <Formik
         enableReinitialize={true}
         initialValues={{name: zone.name || "", locationAddress: zone.locationAddress || ""}}
         onSubmit={async (updatedValues) => {
-            await requestAxios.put(`/zones/${id}`,{...updatedValues});
-            history.push('/zones/lists');
+            try{
+                const {data} = await requestAxios.put(`/zones/${id}`,{...updatedValues});
+                alert.info(data.message);
+                history.push('/zones/lists');
+            }catch(err){
+                if(err.response && err.response.data){
+                    alert.error(err.response.data.message);
+                  }else{
+                  alert.error("An unexpected error occured.");
+                  }
+            }
         }}
         >
          {() => (

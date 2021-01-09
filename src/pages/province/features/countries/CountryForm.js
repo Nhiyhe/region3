@@ -63,7 +63,7 @@ const CountryForm = () => {
              
               <div className="form-group">        
                 <label htmlFor="province" className="form-label">Province</label>
-                <Field as="select" className="form-control form-control-lg" id="province" 
+                <Field as="select" className="form-control form-control-lg" name="province" id="province" 
                 onChange={e => {
                     if(e.target.value){
                       setProvinceId(e.target.value);

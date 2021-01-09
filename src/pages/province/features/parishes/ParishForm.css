@@ -9,7 +9,7 @@
 .ParishForm-subTitle{
     font-size: 2rem;
     color:var(--success);
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     border-bottom: 1px solid var(--body-bg);
     padding-bottom: 1rem;
 }

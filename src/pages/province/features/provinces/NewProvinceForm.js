@@ -66,10 +66,10 @@ const NewProvinceForm = ({province, mode}) => {
                           <label>Province Pastor</label>
                           <Field as="select" name="pastor" className="form-control form-control-lg" >
                             <option value="">Select Province Pastor</option>
-                            {pastors.filter(p => p.position.toLowerCase() === 'province pastor').map((pastor) => {
+                            {pastors.filter(p => p.position.toLowerCase() === 'province pastor' && !p.isAdmin).map((pastor) => {
                               return (
                                 <option key={pastor.id} value={pastor.id}>
-                                  {pastor.pastorName}
+                                  {pastor.firstName} {pastor.lastName}
                                 </option>
                               );
                             })}

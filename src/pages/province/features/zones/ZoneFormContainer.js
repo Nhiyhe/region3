@@ -1,9 +1,11 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useContext } from "react";
 import ZoneForm from "./ZoneForm";
 import * as Yup from 'yup';
 import requestAxios from "../../../../util/requestAxios";
 import { useHistory } from "react-router-dom";
+import { AuthContext } from "../../../../context/AuthContext";
+import {useAlert} from 'react-alert';
 
 const validationSchema = Yup.object().shape({
   province:Yup.string().required("Please select a provice"),
@@ -12,19 +14,25 @@ const validationSchema = Yup.object().shape({
 });
 
 const ZoneFormContainer = () => {
+  const alert = useAlert();
+  const {userInfo} = useContext(AuthContext);
   const history = useHistory();
   return (
     <Formik
-      initialValues={{ province: "", name: "", locationAddress:"" }}
+      initialValues={{ province: "", name: "", locationAddress:"", pastor: userInfo.id }}
       component={ZoneForm}
       validationSchema={validationSchema}
       onSubmit={async (values) => {
         try{
           const {data} = await requestAxios.post(`/zones`, values);
-          console.log(data.body);
-        history.push('/dashboard');
+          alert.success(data.message);
+          history.push('/zones/lists');
         }catch(err){
-          console.error(err);
+          if(err.response && err.response.data){
+            alert.error(err.response.data.message);
+          }else{
+          alert.error("An unexpected error occured.");
+          }
         }
       }}
     />

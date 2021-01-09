@@ -1,0 +1,11 @@
+.Home{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15rem;
+}
+
+.Home-logo{
+    margin-bottom: 3rem;
+}

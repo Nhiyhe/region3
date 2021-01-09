@@ -1,13 +1,13 @@
 import React, {useState, useEffect, useContext} from 'react';
 import Card from '../../components/Card';
-import { ParishContext } from '../../context/ParishContext';
+import { ParishAuthContext } from '../../context/ParishAuthContext';
 import requestAxios from '../../util/requestAxios';
 import DataTable from 'react-data-table-component';
 import './MonetaryList.css';
 
 const MonetaryList = () => {
     const [parishMonetaryRecords, setParishMonetaryRecords] = useState([]);
-    const {parishId} = useContext(ParishContext);
+    const {parishId} = useContext(ParishAuthContext);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(3);
 

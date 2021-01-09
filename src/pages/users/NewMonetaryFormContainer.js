@@ -1,11 +1,11 @@
 import { Formik } from 'formik';
 import React, { useContext } from 'react';
-import { ParishContext } from '../../context/ParishContext';
+import { ParishAuthContext } from '../../context/ParishAuthContext';
 import requestAxios from '../../util/requestAxios';
 import NewMonetaryForm from './NewMonetaryForm';
 
 const NewMonetaryFormContainer = () => {
-    const {parishId} = useContext(ParishContext);
+    const {parishId} = useContext(ParishAuthContext);
     return (
         <Formik         
         initialValues={{offering:0, tithe:0, thanksgiving:0, otherOfferings:0, income:0}}
