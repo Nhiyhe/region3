@@ -13,7 +13,7 @@ import {useAlert} from 'react-alert';
 
 
 const ZoneList  = () => {
-const {userInfo, isAdmin} = useContext(AuthContext);
+  const {userInfo, isAdmin} = useContext(AuthContext);
   const [provinces, setProvinces] = useState([]);
   const [zones, setZones] = useState([]);
   const [provinceId, setProvinceId] = useState('5fc38e7d4dc52100044c578e');
@@ -146,7 +146,7 @@ const {userInfo, isAdmin} = useContext(AuthContext);
             <hr/>
 
             <R3Card>
-                <Table rowKey={data =>data.id} columns={columns} dataSource={zones} />
+                <Table rowKey={data => data.id} columns={columns} dataSource={zones } />
             </R3Card>
         </div>
     )

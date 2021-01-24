@@ -8,7 +8,7 @@ import R3Card from "../../../../components/Card";
 import './ZoneForm.css';
 import PageContent from '../../../../components/PageContent';
 import Loading from "../../../../components/Loading";
-
+import {ErrorMessage} from 'formik';
 
 const ZoneForm = () => {
   const {userInfo, isAdmin} = useContext(AuthContext);
@@ -50,15 +50,24 @@ const ZoneForm = () => {
           return <option key={province.id} value={province.id}>{province.name}</option>;
         })}
       </Field>
+      <ErrorMessage name="province">
+          {(msg) => <div className="text-danger">{msg}</div>}
+      </ErrorMessage>
     </div>
       <div className="form-group">
         <label>Zone</label>
         <Field name="name" placeholder="Zone Name" className="form-control form-control-lg" />
+        <ErrorMessage name="name">
+          {(msg) => <div className="text-danger">{msg}</div>}
+        </ErrorMessage>
       </div>
 
       <div className="form-group">
         <label htmlFor="location" className="form-label">Location</label>
         <Field name="locationAddress" placeholder="Location Address" className="form-control form-control-lg" id="location" />
+        <ErrorMessage name="locationAddress">
+          {(msg) => <div className="text-danger">{msg}</div>}
+        </ErrorMessage>
       </div>
 
       <div className="mt-5">

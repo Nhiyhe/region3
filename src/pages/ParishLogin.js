@@ -22,7 +22,7 @@ const ParishLogin = () => {
         <Formik 
             initialValues={{email:"", password:""}}
             validationSchema={validationSchema}
-            onSubmit={ async (values, {resetForm,setSubmitting}) => {
+            onSubmit={ async (values, {resetForm,setSubmitting,setFieldError}) => {
                 try{
                     const {data} = await requestAxios.post("/parishes/login", values);
                     const decodeUserInfo = jwtDecode(data.body.token);
@@ -33,6 +33,7 @@ const ParishLogin = () => {
                     window.location = '/dashboard';
                 }catch(err){
                   if(err.response && err.response.data){
+                     setFieldError("password","Invalid email or password");
                     alert.error(err.response.data.message);
                   }else{
                   alert.error("An unexpected error occured.");
@@ -45,7 +46,7 @@ const ParishLogin = () => {
                  <div className="Login">
                  <Form>
                  <div className="row">
-                   <div className="col-md-6 offset-md-3 col-lg-6 offset-md-3">
+                   <div className="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
                      <h2 className="text-center mb-4 Login-heading">Parish Login.</h2>
                      <div className="form-group mb-4">
                        <Field name="email" placeholder="you@example.com" className="form-control form-control-lg"/>

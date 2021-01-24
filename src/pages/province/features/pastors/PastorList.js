@@ -7,6 +7,7 @@ import Loading from '../../../../components/Loading';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Table, Modal, Space, Tag } from 'antd';
 import {Link} from 'react-router-dom';
+import './PastorList.css';
 
 const PastorList = () => { 
     const { confirm } = Modal;
@@ -22,7 +23,6 @@ const PastorList = () => {
             try{
                 const {data} = await requestAxios.get(`/pastors`,{cancelToken:source.token});
                 setPastors(data.body);
-                console.log(data.body);
             }catch(err){
                 if(err.response && err.response.data){
                     alert.error(err.response.data.message);
@@ -62,22 +62,6 @@ const PastorList = () => {
                 <> <Tag color={p === "Parish Pastor" ? "magenta" : "purple"}>{p.toUpperCase()}</Tag></>
             )
           },
-        // {
-        //   title: 'Parish Pastor',
-        //   dataIndex: 'parishPastor',
-        //   key: 'parishPastor',
-        //   render: pastor =>(
-        //     <>{pastor?.firstName} {pastor?.lastName}</>
-        //   )
-        // },
-        // {
-        //   title: 'Province Pastor',
-        //   dataIndex: 'provincePastor',
-        //   key: 'provincePastor',
-        //   render: pastor =>(
-        //     <>{pastor?.firstName} {pastor?.lastName}</>
-        //   )
-        // },
         {
             title: 'Actions',
             key: 'action',
@@ -89,6 +73,8 @@ const PastorList = () => {
             ),
           },
       ];
+
+      
       function showDeleteConfirm(pastor) {
         confirm({
           title: `Are you sure, you want to delete ${pastor.firstName} ${pastor.lastName}?`,
@@ -109,8 +95,8 @@ const PastorList = () => {
 
     if(!pastors.length) return <Loading />
     return(
-        <div>
-            <h1>Pastors</h1>
+        <div className="PastorList">
+            <h1 className="PastorList-heading">Pastors</h1>
             <Table rowKey={record => record.id} columns={columns} dataSource={pastors} />            
         </div>
     )

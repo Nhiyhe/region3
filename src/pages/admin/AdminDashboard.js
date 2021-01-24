@@ -73,13 +73,13 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         getProvincePastor();
-    },[]);
+    },[userInfo.id]);
 
     if(!provinces.length) return <Loading />
     return(
         <div className="AdminDashboard">
             <div className="container">
-                <h1>Hello, {pastor.firstName} {pastor.lastName}{userInfo.isAdmin ? ' (Administrator)' : ''}.</h1>
+                <h1 className="AdminDashboard-name">Hello, {pastor.firstName} {pastor.lastName}{userInfo.isAdmin ? ' (Administrator)' : ''}.</h1>
                      <R3Card>
                             <div className="row AdminDashboard-container">
                                 <Tile name="Provinces" count={ userInfo.isAdmin ? provinces.length : (provinces.filter(prov => prov.pastor?.id === userInfo.id)).length} color="orange"> <BiWorld /> </Tile>

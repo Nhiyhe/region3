@@ -10,8 +10,10 @@ p{
 
 
 .ParishDetail-name{
-    font-size: 3.5rem;
-    font-weight: 700;
+    font-size: 3rem;
+    font-weight: 400;
+    margin: 3rem 0;
+    /* color: var(--cyan); */
 }
 
 .ParishDetail-container{

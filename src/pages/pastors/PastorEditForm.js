@@ -28,7 +28,6 @@ const PastorEditForm = () => {
             const {data} = await requestAxios.get(`/pastors/${userInfo.id}`, {cancelToken:source.token});
             setPastor(data.body);
             }catch(err){
-                console.error(err);
                 if(err.response && err.response.data){
                     alert.error(err.response.data.message);
                   }else{
@@ -37,7 +36,6 @@ const PastorEditForm = () => {
             }
         }
         getPastor();
-
                 
    return (() => {
     source.cancel()

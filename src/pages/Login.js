@@ -8,8 +8,8 @@ const Login = (props) => {
    <div className="Login">
       <Form>
       <div className="row">
-        <div className="col-md-6 offset-md-3 col-lg-6 offset-md-3">
-          <h2 className="text-center mb-4 Login-heading">Pastors Login.</h2>
+        <div className="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+          <h2 className="text-center mb-4 Login-heading">Admin/Pastors Login.</h2>
           <div className="form-group mb-4">
             <Field name="email" placeholder="you@example.com" className="form-control form-control-lg"/>
             <ErrorMessage name="email">

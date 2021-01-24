@@ -88,7 +88,7 @@ const PastorProfile = () => {
                 <h3 className="PastorProfile-title">Spouse Info</h3>
                 <section>
                   <div className="PastorProfile-item">
-                    {pastor.gender === 'FeMale' ? <FaMale className="PastorProfile-icon"  /> : <FaFemale className="PastorProfile-icon" />}
+                    {pastor.gender === 'Male' ? <FaFemale className="PastorProfile-icon" /> : <FaMale className="PastorProfile-icon"  /> }
                         <div className="PastorProfile-info">
                             <p>Married to {pastor.spouseFirstName} {pastor.spouseLastName}</p>
                             <h5>Relationship</h5>

@@ -1,0 +1,15 @@
+.MonetaryDetail > h3{
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 1.2rem;
+}
+
+.MonetaryDetail-date{
+    font-size: 2.5rem;
+    font-weight: 400;
+}
+.MonetaryDetail-tithe{
+    font-size: 2rem;
+    font-weight: 300;
+}
+

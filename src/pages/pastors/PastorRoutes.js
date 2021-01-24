@@ -11,7 +11,7 @@ const PastorRoutes = () => {
             <Route path={`${path}/pastor/profile`} component={PastorProfile} />
             <Route path={`${path}/pastor/details`} component={PastorEditForm} />
             <Route path={`${path}/pastor/password/reset`} component={PastorPasswordReset} />
-            <Redirect from={path} to={`${path}/pastor/details`} />
+            <Redirect from={path} to={`${path}/pastor/profile`} />
         </Switch>
     )
 }

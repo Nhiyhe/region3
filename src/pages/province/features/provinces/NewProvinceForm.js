@@ -6,6 +6,7 @@ import axios from 'axios';
 import R3Card from '../../../../components/Card';
 import './NewProvinceForm.css';
 import Loading from '../../../../components/Loading';
+import {ErrorMessage} from 'formik';
 
 const NewProvinceForm = ({province, mode}) => {
   const [provinces, setProvinces] = useState([]);
@@ -55,11 +56,17 @@ const NewProvinceForm = ({province, mode}) => {
                         <div className="form-group">
                           <label>Name</label>
                           <Field type="text" name="name" placeholder="Province Name" className="form-control form-control-lg" />
+                            <ErrorMessage name="name">
+                              {(msg) => <div className="text-danger">{msg}</div>}
+                            </ErrorMessage>
                         </div>
 
                         <div className="form-group">
                           <label>Location</label>
                           <Field type="text" name="locationAddress" placeholder="Province Location" className="form-control form-control-lg"  />
+                          <ErrorMessage name="locationAddress">
+                            {(msg) => <div className="text-danger">{msg}</div>}
+                          </ErrorMessage>
                         </div>
 
                         <div  className="form-group">
@@ -74,6 +81,9 @@ const NewProvinceForm = ({province, mode}) => {
                               );
                             })}
                           </Field>
+                            <ErrorMessage name="pastor">
+                              {(msg) => <div className="text-danger">{msg}</div>}
+                            </ErrorMessage>
                         </div>
                         <div className="mt-5">
                         <SubmitButton type="primary" disabled={false}>

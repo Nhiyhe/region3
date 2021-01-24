@@ -10,6 +10,18 @@ import PageContent from '../../../../components/PageContent';
 import {useAlert} from 'react-alert';
 import Loading from "../../../../components/Loading";
 import { dateFormatList } from "../../../../helpers/dateHelper";
+import {ErrorMessage} from 'formik';
+
+import * as yup from 'yup';
+
+const validationSchema = yup.object().shape({
+  email:yup.string().required().email().label("Email"),
+  password:yup.string().required().label("Password"),
+  name:yup.string().required().required().label("Parish Name"),
+  parishEmailAddress:yup.string().required().label("Parish Email Address"),
+  parishPastor:yup.string().required().label("Parish Pastor")
+});
+
 
 const ParishForm = () => {
 
@@ -135,6 +147,7 @@ const ParishForm = () => {
   return (
     <Formik 
     initialValues={{email:"", password:"", name:"", parishEmailAddress:"", parishPastor:"", referenceNo:"",worshipCenterAddress:"",postalAddress:"",phoneNo:"", churchStartDate: new Date().toISOString(), city:""}}
+    validationSchema={validationSchema}
     onSubmit={async (values, actions) => {
       values.provincePastor = province.pastor.id;
       try{
@@ -154,9 +167,9 @@ const ParishForm = () => {
     >
         {() => (
             <PageContent>
-            <Form>
             <h2 className="ParishForm-heading">Create New Parish</h2>
             <R3Card>
+              <Form>
               <div className="container">
                     <div className="">
                     <h3 className="ParishForm-subTitle">Parish Location Information.</h3>   
@@ -211,10 +224,16 @@ const ParishForm = () => {
                       <div className="form-group col">
                           <label>Parish Name</label>
                           <Field name="name" placeholder="Parish Name" className="form-control form-control-lg"/>
+                          <ErrorMessage name="name">
+                            {(msg) => <div className="text-danger">{msg}</div>}
+                          </ErrorMessage>
                       </div>
                       <div className="form-group col">
                           <label>Parish Email</label>
                           <Field name="parishEmailAddress" placeholder="Email" className="form-control form-control-lg" />
+                          <ErrorMessage name="parishEmailAddress">
+                            {(msg) => <div className="text-danger">{msg}</div>}
+                          </ErrorMessage>
                       </div>
                   </div>
     
@@ -227,6 +246,9 @@ const ParishForm = () => {
                               return <option key={pastor.id} value={pastor.id}>{pastor.firstName} {pastor.lastName}</option>
                           })}
                         </Field>
+                        <ErrorMessage name="parishPastor">
+                            {(msg) => <div className="text-danger">{msg}</div>}
+                          </ErrorMessage>
                       </div>
     
                       <div className="form-group mb-5 col-5">
@@ -238,14 +260,23 @@ const ParishForm = () => {
                       <div className="form-group col-4">
                           <label className="form-label">Worship Center Address</label>
                           <Field as="textarea" name="worshipCenterAddress" className="form-control" name="worshipCenterAddress" rows="5"/>
+                          <ErrorMessage name="worshipCenterAddress">
+                          {(msg) => <div className="text-danger">{msg}</div>}
+                        </ErrorMessage>
                       </div>
                       <div className="form-group col-4">
                           <label className="form-label">Postal Address</label>
                           <Field name="postalAddress" as="textarea" name="postalAddress" className="form-control" rows="5"/>
+                          <ErrorMessage name="postalAddress">
+                            {(msg) => <div className="text-danger">{msg}</div>}
+                          </ErrorMessage>
                       </div>
                       <div className="form-group col-4">
                           <label className="form-label">City</label>
                           <Field name="city" placeholder="City" className="form-control form-control-lg" />
+                          <ErrorMessage name="city">
+                            {(msg) => <div className="text-danger">{msg}</div>}
+                          </ErrorMessage>
                       </div>
                   </div>
                   <div className="form-row">
@@ -256,16 +287,25 @@ const ParishForm = () => {
                       <div className="form-group col-5">
                           <label className="form-label">Church Start Date</label>
                           <DatePicker name="churchStartDate" placeholder="Church Start Date" className="form-control form-control-lg" format={dateFormatList[0]} />
+                          <ErrorMessage name="churchStartDate">
+                         {(msg) => <div className="text-danger">{msg}</div>}
+                       </ErrorMessage>
                       </div>
                   </div>
                   <h3 className="ParishForm-subTitle mt-3">Login Details</h3>   
                   <div className="form-group">
                       <label className="form-label" htmlFor="email">Email</label>
                       <Field name="email" placeholder="Email" className="form-control form-control-lg" id="email" />
+                      <ErrorMessage name="email">
+                         {(msg) => <div className="text-danger">{msg}</div>}
+                       </ErrorMessage>
                   </div>
                   <div className="form-group">
                       <label className="form-label" htmlFor="email">Password</label>
                       <Field type="password" name="password" placeholder="Password" className="form-control form-control-lg" id="password" />
+                      <ErrorMessage name="password">
+                         {(msg) => <div className="text-danger">{msg}</div>}
+                       </ErrorMessage>
                   </div>
                  
                    <div className="mt-5">
@@ -274,8 +314,8 @@ const ParishForm = () => {
                    </div>
                 </div>
               </div>
+              </Form>
             </R3Card>
-        </Form>
         </PageContent>
         )}
     </Formik>

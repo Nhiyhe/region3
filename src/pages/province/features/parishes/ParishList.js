@@ -3,11 +3,11 @@ import requestAxios from '../../../../util/requestAxios';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Table, Modal, Space } from 'antd';
 import {Link} from 'react-router-dom';
-
 import axios from 'axios';
 import Loading from '../../../../components/Loading';
 import {AuthContext} from '../../../../context/AuthContext';
 import { useAlert } from 'react-alert';
+import './ParishList.css';
 
 const ParishList = () => {
   const alert = useAlert();
@@ -106,12 +106,11 @@ const ParishList = () => {
           },
       ];
 
-
     if(!parishes.length) return <Loading />
 
     return(
-        <div>
-            <h2>Parishes</h2>
+        <div className="ParishList">
+            <h2 className="ParishList-heading">Parishes</h2>
             <Table rowKey={record => record.id} columns={columns} dataSource={parishes} />
         </div>
     )

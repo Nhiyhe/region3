@@ -1,8 +1,17 @@
-import { Formik } from "formik";
+import { Formik, yupToFormErrors } from "formik";
 import React from "react";
 import requestAxios from "../../../../util/requestAxios";
 import PastorForm from "./PastorForm";
 import {useAlert} from 'react-alert';
+import * as yup from 'yup';
+
+const validationSchema = yup.object().shape({
+  firstName:yup.string().required("FirstName is Required").label("FirstName"),
+  lastName:yup.string().required("LastName is Required"),
+  gender:yup.string().required("Please select gender"),
+  email:yup.string().email().required().label("Email"),
+  password:yup.string().required("Password is required")
+})
 
 const PastorFormContainer = () => {
   const alert = useAlert();
@@ -26,6 +35,7 @@ const PastorFormContainer = () => {
         memorableOccassion:"",
         dateOfMemorableOccassion: new Date().toISOString()
       }}
+      validationSchema={validationSchema}
       component={PastorForm}
       onSubmit={async (values) => {
         try{

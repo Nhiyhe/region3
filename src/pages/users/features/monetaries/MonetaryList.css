@@ -5,3 +5,7 @@
     justify-content: space-between;
     margin-bottom: 3rem;
 }
+.MonetaryList-title{
+    font-size: 3rem;
+    color:var(--gray);
+}

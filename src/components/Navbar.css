@@ -10,6 +10,13 @@
     align-items: center;
 }
 
+.Navbar-btn-name:link,
+.Navbar-btn-name:visited{
+    color: var(--white);
+    margin-left: 5rem;
+    font-size: 2rem;
+}
+
 ul li {
     display: flex;
     align-items: center;

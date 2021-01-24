@@ -1,6 +1,12 @@
 .Footer{
-
     width: 100%;
     height: 7rem;
-    background-color:var(--white);
+    background-color:var(--cyan);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Footer-text{
+    font-size: 1.5rem;    
 }

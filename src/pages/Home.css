@@ -3,9 +3,48 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 15rem;
+    margin-top: 7rem;
 }
 
 .Home-logo{
     margin-bottom: 3rem;
+    width: 23rem;
+}
+
+.Home-buttons{
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.btn-custom:link,
+.btn-custom:visited{
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 15px 40px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.btn-custom:hover{
+    color: var(--white);
+}
+
+.btn-custom-primary{
+    background-color: var(--teal);
+    color: var(--white)
+}
+
+.btn-custom-secondary{
+    background-color: var(--cyan);
+    color: var(--white)
+}
+
+.btn-icon{
+    color: var(--white);
+    margin-left: 10px;
+    font-size: 2.2rem;
+    margin-left: -1px;
+    margin-bottom: 5px;
 }

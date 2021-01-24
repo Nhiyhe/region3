@@ -4,8 +4,16 @@ import ParishForm from './ParishForm';
 import {useAlert} from 'react-alert';
 import requestAxios from '../../../../util/requestAxios';
 import { ProvinceContext } from '../../../../context/ProvinceContext';
+import * as yup from 'yup';
 // import { AuthContext } from '../../../../context/AuthContext';
 
+const validationSchema = yup.object().shape({
+  email:yup.string().required().email(),
+  password:yup.string().required(),
+  name:yup.string().required().required(),
+  parishEmailAddress:yup.string().required(),
+  parishPastor:yup.string().required()
+});
 
 const ParishFormContainer = () => {
   // const {userInfo, isAdmin} = useContext(AuthContext);
@@ -32,10 +40,9 @@ const ParishFormContainer = () => {
         initialValues={{email:"", password:"", name:"", parishEmailAddress:"", parishPastor:"", referenceNo:"",
         worshipCenterAddress:"",postalAddress:"",phoneNo:"", churchStartDate:new Date().toISOString(), city:""}}
         component={ ParishForm }
+        validationSchema={validationSchema}
         onSubmit={async (values, actions) => {
-          console.log(values);
-          return;
-          // values.provincePastor = province.pastor.id;
+        //  values.provincePastor = province.pastor.id;
           try{
             const {data} = await requestAxios.post( "/parishes/signup", values);
             actions.setSubmitting(false);

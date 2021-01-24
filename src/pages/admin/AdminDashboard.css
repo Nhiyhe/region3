@@ -1,6 +1,12 @@
 .AdminDashboard{
 
 }
+.AdminDashboard-name{
+    margin: 2.5rem 0;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--teal);
+}
 
 .AdminDashboard-icon{
     font-size: 5rem;

@@ -4,7 +4,7 @@ import './Footer.css';
 const Footer = () => {
     return(
     <div className="Footer">
-        <h2>Footer</h2>
+        <p className="Footer-text">Region 3 © {new Date().getFullYear()}</p>
     </div>    
     )
 }

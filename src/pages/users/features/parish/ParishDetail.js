@@ -1,30 +1,26 @@
 import React, {useEffect, useContext, useState} from 'react';
-import { AuthContext } from '../../context/AuthContext';
-import requestAxios from '../../util/requestAxios';
+import { AuthContext } from '../../../../context/AuthContext';
+import requestAxios from '../../../../util/requestAxios';
 import axios from 'axios';
-import { ParishAuthContext } from '../../context/ParishAuthContext';
 import './ParishDetail.css';
-import Card from '../../components/Card';
+import Card from '../../../../components/Card';
 import { AiOutlineMail } from 'react-icons/ai';
 import { FaPhoneAlt } from 'react-icons/fa';
 import { ImLocation } from 'react-icons/im';
 import { FcBusinessman, FcBusinesswoman } from 'react-icons/fc';
-import Loading from '../../components/Loading';
+import Loading from '../../../../components/Loading';
 
 const ParishDetail = () => {
     const [parish, setParish] = useState({});
 
     const {userInfo} = useContext(AuthContext); 
-    const {setParishId} = useContext(ParishAuthContext);
 
     useEffect(() => {
         const source = axios.CancelToken.source();
         const getParishDetail = async() => {
             try{
                 const {data} = await requestAxios.get(`/parishes/${userInfo.id}`, {cancelToken:source.cancel()});
-                console.log(data);
                 setParish(data.body);
-                // setParishId(data.body[0].id)
             }catch(ex){
                 console.error(ex.message);
             }

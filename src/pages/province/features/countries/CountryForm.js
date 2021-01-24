@@ -1,5 +1,6 @@
 import { Field, Form, ResetButton, SubmitButton } from "formik-antd";
 import React, { useState, useEffect, useContext } from "react";
+import {ErrorMessage} from 'formik';
 import axios from "axios";
 import requestAxios from '../../../../util/requestAxios';
 import R3Card from '../../../../components/Card';
@@ -97,11 +98,17 @@ const CountryForm = () => {
                 <div className="form-group">
                   <label htmlFor="country" className="form-label">Name</label>
                   <Field name="countryName" placeholder="Country Name" className="form-control form-control-lg" id="country" />
+                  <ErrorMessage name="countryName">
+                    {(msg) => <div className="text-danger">{msg}</div>}
+                  </ErrorMessage>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="capital" className="form-label">Capital </label>
                   <Field name="countryCapital" placeholder="Capital Name" className="form-control form-control-lg" id="capital" />
+                  <ErrorMessage name="countryCapital">
+                    {(msg) => <div className="text-danger">{msg}</div>}
+                  </ErrorMessage>
                 </div>
 
                 <div className="mt-5">

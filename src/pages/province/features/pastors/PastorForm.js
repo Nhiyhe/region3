@@ -6,12 +6,13 @@ import R3Card from '../../../../components/Card';
 import './PastorForm.css';
 import PageContent from '../../../../components/PageContent';
 import { dateFormatList } from '../../../../helpers/dateHelper';
+import {ErrorMessage} from 'formik';
 
 const PastorForm = () => {
     return (
        <PageContent>
            <div className="PastorForm">
-           <h2 className="PastorForm-heading">Create New Pastor</h2>
+           <h1 className="PastorForm-heading">Create New Pastor</h1>
           <div>
           <R3Card>
            <Form>
@@ -20,16 +21,22 @@ const PastorForm = () => {
                 <div className="form-group col-4">
                     <label>FirstName</label>
                     <Field name="firstName" placeholder="FirstName" className="form-control form-control-lg"  />
+                    <ErrorMessage name="firstName">
+                         {(msg) => <div className="text-danger">{msg}</div>}
+                       </ErrorMessage>
                 </div>
 
                 <div className="form-group col-4">
                     <label>MiddleName</label>
-                    <Field name="middleName" placeholder="MiddleName" className="form-control form-control-lg" />
+                    <Field name="middleName" placeholder="MiddleName" className="form-control form-control-lg" />                    
                 </div>
 
                 <div className="form-group col-4"> 
                     <label>LastName</label>
                     <Field name="lastName" placeholder="LastName" className="form-control form-control-lg" />
+                    <ErrorMessage name="lastName">
+                         {(msg) => <div className="text-danger">{msg}</div>}
+                    </ErrorMessage>
                 </div>
             </div>
 
@@ -37,6 +44,7 @@ const PastorForm = () => {
                 <div className="form-group col-4">
                         <label>Date of Birth</label>
                         <DatePicker name="dateOfBirth"  className="form-control form-control-lg" format={dateFormatList[0]}/>
+                       
                     </div>
                     <div className="form-group col-4">
                         <label>Phone</label>
@@ -112,10 +120,16 @@ const PastorForm = () => {
                 <div className="form-group">
                         <label className="form-label" htmlFor="email">Email</label>
                         <Field name="email" className="form-control form-control-lg" id="email" placeholder="Email" />
+                        <ErrorMessage name="email">
+                         {(msg) => <div className="text-danger">{msg}</div>}
+                        </ErrorMessage>
                 </div>
                 <div className="form-group">
                         <label className="form-label" htmlFor="password">Password</label>
                         <Field name="password" type="password" className="form-control form-control-lg" placeholder="Password" id="password" />
+                        <ErrorMessage name="password">
+                         {(msg) => <div className="text-danger">{msg}</div>}
+                        </ErrorMessage>
                 </div>
 
            <div className="form-group mt-5">

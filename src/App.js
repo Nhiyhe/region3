@@ -29,7 +29,7 @@ const App = () => {
                         <Routes />
                       </div>
                     </div>
-                  <Footer/>
+                  {/* <Footer/> */}
               </div>
             </ProvinceContextProvider>
             </Provider>

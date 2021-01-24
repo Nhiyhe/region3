@@ -15,6 +15,12 @@ import PastorIndex from './pages/province/features/pastors/PastorIndex';
 import Home from './pages/Home';
 import ParishLogin from './pages/ParishLogin';
 import PastorDashboard from './pages/pastors/PastorDashboard';
+import AttendanceIndex from  './pages/users/features/attendances/AttendanceIndex';
+import MonetaryIndex from './pages/users/features/monetaries/MonetaryIndex';
+import TestimonyIndex from './pages/users/features/testimonies/TestimonyIndex';
+import OutreachIndex from './pages/users/features/outreaches/OutreachIndex';
+import WelfareIndex from './pages/users/features/welfare/WelfareIndex';
+import ReportIndex from './pages/province/features/reports/ReportIndex';
 
 const Routes =() => {
 const {isProvincePastor, isAdmin, isParishPastor} = useContext(AuthContext);
@@ -38,6 +44,12 @@ const {isProvincePastor, isAdmin, isParishPastor} = useContext(AuthContext);
             <ProvinceRoute path="/countries" component={CountryIndex} />
             <ProvinceRoute path="/parishes" component={ParishIndex}/>
             <ProvinceRoute path="/pastors"  component={PastorIndex}/> 
+            <ProvinceRoute path="/reports"  component={ReportIndex}/> 
+            <AuthenticatedRoute path="/parish/attendances" component={ AttendanceIndex} /> 
+            <AuthenticatedRoute path="/parish/monetaries" component={ MonetaryIndex} /> 
+            <AuthenticatedRoute path="/parish/testimonies" component={ TestimonyIndex} /> 
+            <AuthenticatedRoute path="/parish/outreaches" component={ OutreachIndex} /> 
+            <AuthenticatedRoute path="/parish/welfares" component={ WelfareIndex} /> 
             <Redirect from="/" to="/home" />            
         </Switch>
     )

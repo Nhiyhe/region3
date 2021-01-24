@@ -42,7 +42,7 @@ const AuthProvider = ({ children }) => {
       localStorage.removeItem("userInfo");
       setToken(null);
       setUserInfo({});
-      history.push('/login')
+      history.push('/home')
     }
 
   return <AuthContext.Provider value={{token, userInfo, isAuthenticated, setAuthState, logout, isAdmin, isProvincePastor, isParishPastor}}>{children}</AuthContext.Provider>;
