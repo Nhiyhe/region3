@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react';
+import React,{useContext, useEffect, useState} from 'react';
 import {Field, Form, Formik} from 'formik';
 import { useAlert } from 'react-alert';
 import requestAxios from '../../../../util/requestAxios';
@@ -8,13 +8,14 @@ import Loading from '../../../../components/Loading';
 import { DatePicker } from "formik-antd";
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { Table } from 'antd';
-
+import {AuthContext} from '../../../../context/AuthContext';
 
 const  PzaAllocation = () => {
 
     const [provinces, setProvinces] = useState([]);
     const [pzadata, setPzadata] = useState([]);
     const alert = useAlert();
+    const {userInfo, isAdmin} = useContext(AuthContext);
 
           
   const columns = [
@@ -129,7 +130,12 @@ const  PzaAllocation = () => {
 
                           <Field as="select" name="province" className="form-control form-control-lg">
                               <option value="">Select all</option>
-                              {provinces.map(province => <option key={province.id} value={province.name}>{province.name}</option>) }
+                              {isAdmin() && provinces.map((province) => {
+                              return <option key={province.id} value={province.id}>{province.name}</option>;
+                              })}
+                              { !isAdmin() && provinces.filter((prov => prov.pastor.id === userInfo.id)).map((province) => {
+                              return <option key={province.id} value={province.id}>{province.name}</option>;
+                              })}
                           </Field>
                       </div>
                       <div className="form-group col-3">

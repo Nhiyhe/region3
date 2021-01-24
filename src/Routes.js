@@ -40,10 +40,10 @@ const {isProvincePastor, isAdmin, isParishPastor} = useContext(AuthContext);
                 }
             } } />
             <AdminRoute path="/provinces" component={ProvinceIndex}/>
-            <ProvinceRoute path="/zones" component={ZoneIndex} /> 
-            <ProvinceRoute path="/countries" component={CountryIndex} />
-            <ProvinceRoute path="/parishes" component={ParishIndex}/>
-            <ProvinceRoute path="/pastors"  component={PastorIndex}/> 
+            <AdminRoute path="/zones" component={ZoneIndex} /> 
+            <AdminRoute path="/countries" component={CountryIndex} />
+            <AdminRoute path="/parishes" component={ParishIndex}/>
+            <AdminRoute path="/pastors"  component={PastorIndex}/> 
             <ProvinceRoute path="/reports"  component={ReportIndex}/> 
             <AuthenticatedRoute path="/parish/attendances" component={ AttendanceIndex} /> 
             <AuthenticatedRoute path="/parish/monetaries" component={ MonetaryIndex} /> 

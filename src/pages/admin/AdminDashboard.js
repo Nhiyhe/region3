@@ -3,13 +3,15 @@ import R3Card from '../../components/Card';
 import { FaChurch } from 'react-icons/fa';
 import {BiWorld} from 'react-icons/bi';
 import { AiFillAppstore } from 'react-icons/ai';
-import './AdminDashboard.css';
 import requestAxios from '../../util/requestAxios';
 import Tile from '../../components/Tile';
 import {AuthContext} from '../../context/AuthContext';
 import Loading from '../../components/Loading';
 import R3List from '../../components/R3List';
 import { List, Tag } from 'antd';
+import './AdminDashboard.css';
+
+
 const AdminDashboard = () => {
     const {userInfo} = useContext(AuthContext);
     const [provinces, setProvinces] = useState([]);
@@ -79,7 +81,7 @@ const AdminDashboard = () => {
     return(
         <div className="AdminDashboard">
             <div className="container">
-                <h1 className="AdminDashboard-name">Hello, {pastor.firstName} {pastor.lastName}{userInfo.isAdmin ? ' (Administrator)' : ''}.</h1>
+                <h1 className="AdminDashboard-name">Hello, {pastor.firstName} {pastor.lastName}{userInfo.isAdmin ? ' (Administrator)' : ' (Province Pastor)'}.</h1>
                      <R3Card>
                             <div className="row AdminDashboard-container">
                                 <Tile name="Provinces" count={ userInfo.isAdmin ? provinces.length : (provinces.filter(prov => prov.pastor?.id === userInfo.id)).length} color="orange"> <BiWorld /> </Tile>

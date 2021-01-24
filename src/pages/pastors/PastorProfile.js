@@ -11,6 +11,7 @@ import { FaPhoneAlt } from 'react-icons/fa';
 import { FaMale, FaFemale, FaBirthdayCake } from 'react-icons/fa';
 import moment from 'moment';
 import './PastorProfile.css';
+import {dateFormatList} from '../../helpers/dateHelper';
 
 const PastorProfile = () => {
     const {userInfo} = useContext(AuthContext);
@@ -77,7 +78,7 @@ const PastorProfile = () => {
                     <div className="PastorProfile-item">
                         <FaBirthdayCake className="PastorProfile-icon"  />
                         <div className="PastorProfile-info">
-                            <p>{pastor.dateOfBirth.toString()}</p>
+                            <p>{ moment(pastor.dateOfBirth).format(dateFormatList[0])}</p>
                             <h5>Date of Birth</h5>
                         </div>
                     </div>
@@ -97,7 +98,7 @@ const PastorProfile = () => {
                     <div className="PastorProfile-item">
                         <FaBirthdayCake className="PastorProfile-icon"  />
                         <div className="PastorProfile-info">
-                            <p>{pastor.spouseDateOfBirth.toString()}</p>
+                            <p>{moment(pastor.spouseDateOfBirth).format(dateFormatList[0])}</p>
                             <h5>Date of Birth</h5>
                         </div>
                     </div>
@@ -105,7 +106,7 @@ const PastorProfile = () => {
                     <div className="PastorProfile-item">
                         <BiCalendar className="PastorProfile-icon"  />
                         <div className="PastorProfile-info">
-                            <p>{pastor.dateOfMemorableOccassion}</p>
+                            <p>{moment(pastor.dateOfMemorableOccassion).format(dateFormatList[0])}</p>
                             <h5>{pastor.memorableOccassion}</h5>
                         </div>
                     </div>

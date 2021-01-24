@@ -14,10 +14,10 @@ const Navbar = () => {
             <ul className="Navbar-ul">                
                 <ProvinceListItem to="/dashboard">Dashboard</ProvinceListItem> 
                 <AdminListItem to="/provinces">Provinces</AdminListItem>
-                <ProvinceListItem to="/zones">Zones</ProvinceListItem>
-                <ProvinceListItem to="/countries">Countries</ProvinceListItem>
-                <ProvinceListItem to="/parishes">Parishes</ProvinceListItem>
-                <ProvinceListItem to="/pastors">Pastors</ProvinceListItem>
+                <AdminListItem to="/zones">Zones</AdminListItem>
+                <AdminListItem to="/countries">Countries</AdminListItem>
+                <AdminListItem to="/parishes">Parishes</AdminListItem>
+                <AdminListItem to="/pastors">Pastors</AdminListItem>
                 <ProvinceListItem to="/reports">Reports</ProvinceListItem>
 
                 <UserListItem to="/dashboard">DASHBOARD</UserListItem>
