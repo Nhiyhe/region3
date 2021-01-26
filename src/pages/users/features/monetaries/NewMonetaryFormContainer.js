@@ -70,7 +70,6 @@ const NewMonetaryFormContainer = () => {
             source.cancel();
           })
       }, [userInfo.id])
-      
     return (
         <Formik         
         initialValues={{offering:0, tithe:0, expectedRemittance:0}}
@@ -83,6 +82,7 @@ const NewMonetaryFormContainer = () => {
             values.countryName = parish.country.countryName;
             values.zoneName = parish.country.zone.name;
             values.provinceName = parish.country.zone.province.name;
+            values.parishName = parish.name;
             try{
                 const {data} = await requestAxios.post(`/monetaries`,{...values})
                 alert.success(data.message);

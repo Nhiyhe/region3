@@ -120,8 +120,7 @@ const MonetaryList = () => {
     return (
        <section className="MonetaryList">
            <div>
-               <Card>
-                                      
+               <Card>               
                    <Table 
                    rowKey={record => record.id}
                    columns={columns} 

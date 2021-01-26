@@ -61,7 +61,7 @@ const NewTestimonyForm = () =>{
                             </ErrorMessage>
                       </div>
   
-                      <div className="form-group" htmlFor="amountExpected">
+                      <div className="form-group" htmlFor="testimony">
                           <label htmlFor="testimony">Your Testimony</label>
                           <Field  as="textarea" rows="6" name="body" placeholder="Your testimony" id="testimony" className="form-control form-control-lg"/>
                           <ErrorMessage name="body">

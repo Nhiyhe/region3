@@ -9,28 +9,24 @@ import { DatePicker } from "formik-antd";
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { Table } from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
+import './RegionMonthlyReport.css';
 
-const  PzaAllocation = () => {
+const  RegionMonthlyReport = () => {
 
     const [provinces, setProvinces] = useState([]);
-    const [pzadata, setPzadata] = useState([]);
+    const [regionData, setRegionData] = useState([]);
     const alert = useAlert();
     const {userInfo, isAdmin} = useContext(AuthContext);
 
           
   const columns = [
     {
-      title: 'Province',
-      dataIndex: 'provinceName',
+      title: 'Parish Name',
+      dataIndex: '_id',
       fixed: true,
-      width: 140,
+      width: 160,
     },
-    {
-      title: 'Zone',
-      dataIndex: 'zoneName',
-      fixed: true,
-      width: 140,
-    },
+   
     {
       title: 'Country',
       dataIndex: 'countryName',
@@ -38,50 +34,59 @@ const  PzaAllocation = () => {
       width: 140,
     },
     {
-      title:'Rem. Expected',
-      dataIndex:'remExpected',
-      key:'remExpected',
+      title:'Tithe',
+      dataIndex:'tithe',
+      key:'tithe',
       width: 140,
       render: t => (
         <>€{t?.toFixed(2)}</>
       )
     },
     {
-      title:'Rem. Receieved',
-      dataIndex:'remReceived',
-      key:'remReceived',
+      title:'Offering',
+      dataIndex:'offering',
+      key:'offering',
       width: 140,
-      render: remReceived => (
-        <> €{remReceived?.toFixed(2)}</>
+      render: offering => (
+        <> €{offering?.toFixed(2)}</>
       )
     },
     {
-      title:'Province (3.5%)',
-      dataIndex:'province',
-      key:'province',
+      title:'Totals',
+      dataIndex:'totalRemOfferingAndTithe',
+      key:'totalRemOfferingAndTithe',
       width:140,
       render: province => (
         <>€{province?.toFixed(2)}</>
       )
     },
     {
-      title:'Zone (2.0%)',
-      dataIndex:'zone',
-      key:'zone',
+      title:'25% of Tithe',
+      dataIndex:'regionTithe25',
+      key:'regionTithe25',
       width:140,
-      render: zone => (
-        <>€{zone?.toFixed(2)}</>
+      render: regionTithe => (
+        <>€{regionTithe?.toFixed(2)}</>
       )
     },
     {
-      title:'Area (1.5%)',
-      dataIndex:'area',
-      key:'area',
+      title:'10% of Offerings',
+      dataIndex:'regionOffering10',
+      key:'regionOffering10',
       width:140,
-      render: area => (
-        <>€{area?.toFixed(2)}</>
+      render: regionOffering => (
+        <>€{regionOffering?.toFixed(2)}</>
       )
     },
+    {
+        title:'Total',
+        dataIndex:'regionTotalOfferingAndTithe',
+        key:'regionTotalOfferingAndTithe',
+        width:140,
+        render: regionTotalOfferingAndTithe => (
+          <>€{regionTotalOfferingAndTithe?.toFixed(2)}</>
+        )
+      },
   ]
   
 
@@ -107,7 +112,7 @@ const  PzaAllocation = () => {
           })
      
       }, [])
-      console.log(pzadata);      
+      console.log(regionData);      
 
       if(!provinces.length) return <Loading />
     return(
@@ -115,8 +120,8 @@ const  PzaAllocation = () => {
        initialValues={{province:'', startDate: new Date().toISOString(),endDate: new Date().toISOString() }}
        onSubmit = { async (values) => {
         try{
-          const {data} = await requestAxios.get(`/monetaries/pza-allocation?startDate=${values.startDate}&endDate=${values.endDate}&provinceName=${values.province}`);
-          setPzadata(data.body);
+          const {data} = await requestAxios.get(`/monetaries/monthly/report/by/provinces?startDate=${values.startDate}&endDate=${values.endDate}&provinceName=${values.province}`);
+          setRegionData(data.body);
           }catch(err){
             console.error(err);
           }
@@ -155,42 +160,43 @@ const  PzaAllocation = () => {
                     </div>
                     </Form>
                   </R3Card>
-                    {pzadata.length ? <R3Card>  <Table rowKey={record => record.provinceName} title= {() => <h2>Pza Allocation</h2>} 
+                    {regionData.length ? <div className="RegionMonthlyReport-table"><R3Card>  <Table  rowKey={record => record._id} title= {() => <h2>Country Performance Report</h2>} 
                     columns={columns} 
-                    dataSource={pzadata}
-                    summary={ pagedData => {
-                      let totalRemExpected = 0;
-                      let totalReceived = 0;
-                      let totalProvince = 0;
-                      let totalZone = 0;
-                      let totalArea = 0;
-                      pagedData.forEach(({remExpected, remReceived, province, zone, area}) => {
-                            totalRemExpected+= remExpected;
-                            totalReceived+= remReceived;
-                            totalProvince+= province;
-                            totalZone+= zone;
-                            totalArea+= area;
+                    dataSource={regionData}
+                    pagination = {false}
+                    // summary={ pagedData => {
+                    //   let totalRemExpected = 0;
+                    //   let totalReceived = 0;
+                    //   let totalProvince = 0;
+                    //   let totalZone = 0;
+                    //   let totalArea = 0;
+                    //   pagedData.forEach(({remExpected, remReceived, province, zone, area}) => {
+                    //         totalRemExpected+= remExpected;
+                    //         totalReceived+= remReceived;
+                    //         totalProvince+= province;
+                    //         totalZone+= zone;
+                    //         totalArea+= area;
                            
-                      });
+                    //   });
   
-                      return (
-                        <>
-                          <Table.Summary.Row>
-                          <Table.Summary.Cell></Table.Summary.Cell>
-                          <Table.Summary.Cell></Table.Summary.Cell>
-                          <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
-                          <Table.Summary.Cell><b>€{totalRemExpected?.toFixed(2)}</b></Table.Summary.Cell>
-                          <Table.Summary.Cell><b>€{totalReceived?.toFixed(2)}</b></Table.Summary.Cell>
-                          <Table.Summary.Cell><b>€{totalProvince?.toFixed(2)}</b></Table.Summary.Cell>
-                          <Table.Summary.Cell><b>€{totalZone?.toFixed(2)}</b></Table.Summary.Cell>
-                          <Table.Summary.Cell><b>€{totalArea?.toFixed(2)}</b></Table.Summary.Cell>
-                          </Table.Summary.Row>
-                        </>
-                      )
+                    //   return (
+                    //     <>
+                    //       <Table.Summary.Row>
+                    //       <Table.Summary.Cell></Table.Summary.Cell>
+                    //       <Table.Summary.Cell></Table.Summary.Cell>
+                    //       <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
+                    //       <Table.Summary.Cell><b>€{totalRemExpected?.toFixed(2)}</b></Table.Summary.Cell>
+                    //       <Table.Summary.Cell><b>€{totalReceived?.toFixed(2)}</b></Table.Summary.Cell>
+                    //       <Table.Summary.Cell><b>€{totalProvince?.toFixed(2)}</b></Table.Summary.Cell>
+                    //       <Table.Summary.Cell><b>€{totalZone?.toFixed(2)}</b></Table.Summary.Cell>
+                    //       <Table.Summary.Cell><b>€{totalArea?.toFixed(2)}</b></Table.Summary.Cell>
+                    //       </Table.Summary.Row>
+                    //     </>
+                    //   )
                       
-                     }}
+                    //  }}
                      /> 
-                     </R3Card> : <h3>No Data Found.</h3>}
+                     </R3Card></div> : <h3>No Data Found.</h3>}
                   
                 </>
            )}
@@ -198,4 +204,4 @@ const  PzaAllocation = () => {
     )
 }
 
-export default PzaAllocation
+export default RegionMonthlyReport

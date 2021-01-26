@@ -12,7 +12,7 @@ const NewOutreachForm = () => {
     const alert = useAlert();
     return(
         <Formik
-        initialValues={{newParish:0, newNation:0, churchDedication:0}}
+        initialValues={{newParish:0, newNation:0, churchDedication:0, notes:''}}
         onSubmit={async(values, actions) =>{
             values.parish = userInfo.id;
             try{
@@ -49,7 +49,11 @@ const NewOutreachForm = () => {
                       <div className="form-group" htmlFor="amountExpected">
                           <label htmlFor="churchDedication">Church Dedication</label>
                           <Field type="number" name="churchDedication" placeholder="Your testimony" id="churchDedication" className="form-control form-control-lg"/>
-                      </div>                         
+                      </div>
+                      <div className="form-group" htmlFor="notes">
+                          <label htmlFor="notes">Notes</label>
+                          <Field  as="textarea" rows="6" name="notes" placeholder="Notes" id="notes" className="form-control form-control-lg"/>
+                      </div>                            
                     
                       <input type="submit" value="Submit" className="btn btn-primary btn-lg" />
                       <button type="button" className="btn btn-default btn-lg" onClick={() => history.goBack()}>Go Back</button>

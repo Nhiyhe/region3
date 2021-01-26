@@ -3,6 +3,7 @@ import { Switch, Route, useRouteMatch, Redirect } from 'react-router-dom';
 import ParishAttendanceMonthlyReport from './ParishAttendanceMonthlyReport';
 import ParishMonthlyReport from './ParishMonthlyReport';
 import PzaAllocation from './PzaAllocation';
+import RegionMonthlyReport from './RegionMonthlyReport';
 
 const ReportRoutes = () => {
   const {path} =  useRouteMatch();
@@ -11,7 +12,8 @@ const ReportRoutes = () => {
             <Route path={`${path}/monthly-report`} component={ParishMonthlyReport} />
             <Route path={`${path}/pza-allocation`} component={PzaAllocation} />
             <Route path={`${path}/attendance/report`} component={ParishAttendanceMonthlyReport} />
-            <Redirect from={path} to={`${path}/monthly-report`} />
+            <Route path={`${path}/monthly/report/by/provinces`} component={RegionMonthlyReport} />
+            <Redirect from={path} to={`${path}/monthly/report/by/provinces`} />
         </Switch>
     )
 }

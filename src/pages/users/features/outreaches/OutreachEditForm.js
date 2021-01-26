@@ -39,7 +39,7 @@ const OutreachEditForm = () => {
     return(
         <Formik
         enableReinitialize
-        initialValues={{newParish: outreach.newParish || 0, newNation: outreach.newNation || 0, churchDedication: outreach.churchDedication || 0}}
+        initialValues={{newParish: outreach.newParish || 0, newNation: outreach.newNation || 0, churchDedication: outreach.churchDedication || 0, notes:outreach.notes || ""}}
         onSubmit={async(values, actions) =>{
             try{
                 const {data} = await requestAxios.put(`/outreaches/${id}`, values);
@@ -75,7 +75,12 @@ const OutreachEditForm = () => {
                       <div className="form-group" htmlFor="amountExpected">
                           <label htmlFor="churchDedication">Church Dedication</label>
                           <Field type="number" name="churchDedication" placeholder="Your testimony" id="churchDedication" className="form-control form-control-lg"/>
-                      </div>                         
+                      </div> 
+                      <div className="form-group" htmlFor="notes">
+                          <label htmlFor="notes">Notes</label>
+                          <Field  as="textarea" rows="6" name="notes" placeholder="Notes" id="notes" className="form-control form-control-lg"/>
+                          
+                      </div>                          
                     
                       <input type="submit" value="Update" className="btn btn-primary btn-lg" />
                       <button type="button" className="btn btn-default btn-lg" onClick={() => history.goBack()}>Go Back</button>
