@@ -3,12 +3,13 @@ import R3Card from '../../components/Card';
 import { FaChurch } from 'react-icons/fa';
 import {BiWorld} from 'react-icons/bi';
 import { AiFillAppstore } from 'react-icons/ai';
+import {AiOutlineMail} from 'react-icons/ai';
 import requestAxios from '../../util/requestAxios';
 import Tile from '../../components/Tile';
 import {AuthContext} from '../../context/AuthContext';
 import Loading from '../../components/Loading';
 import R3List from '../../components/R3List';
-import { List, Tag } from 'antd';
+import { List, Space, Table, Tag } from 'antd';
 import './AdminDashboard.css';
 
 
@@ -19,6 +20,8 @@ const AdminDashboard = () => {
     const [countries, setCountries] = useState([]);
     const [parishes, setParishes] = useState([]);
     const [pastor, setPastor] = useState({});
+    const [welfares, setWelfares] = useState([]);
+    const [top10SoulsWinner, setTop10SoulsWinner] = useState([]);
 
     const getProvincePastor = async() => {
         try{
@@ -56,10 +59,29 @@ const AdminDashboard = () => {
         }
     }
 
+    const getTop10SoulsWinner = async () => {
+        try{
+            const {data} = await requestAxios.get('/attendances/top10SoulsWinner');
+            console.log("DATA",data);
+            setTop10SoulsWinner(data.body);
+        }catch(err){
+            console.error(err.message);
+        }
+    }
+
     const getParishes = async () => {
         try{
             const {data} = await requestAxios.get('/parishes');
             setParishes(data.body);
+        }catch(err){
+            console.error(err.message);
+        }
+    }
+
+    const getWelfareCheck = async () => {
+        try{
+            const {data} = await requestAxios.get('/welfares');
+            setWelfares(data.body);
         }catch(err){
             console.error(err.message);
         }
@@ -71,13 +93,64 @@ const AdminDashboard = () => {
         getZones();
         getCountries();
         getParishes();
+        getWelfareCheck();
+        getTop10SoulsWinner();
     }, [])
 
     useEffect(() => {
         getProvincePastor();
     },[userInfo.id]);
 
+    const columns = [
+        {
+            title: '',
+            dataIndex: 'province',
+            key: 'province',
+            render : () => (
+                <div>
+                    <Space size="small">
+                        <Tag color="red">NEW</Tag>
+                        <Tag color="processing">URGENT</Tag>
+                    </Space>
+                </div>
+            )
+          },
+        {
+        title: 'Pastor Name',
+        dataIndex: 'pastorName',
+        key: 'pastorName',
+        render: pName => (
+          <>
+            {pName}
+          </>
+      )
+      },
+      {
+        title: 'Parish',
+        dataIndex: 'parishName',
+        key: 'parishName'
+      },
+      {
+        title: 'Country',
+        dataIndex: 'country',
+        key: 'country'
+      },
+      {
+        title: 'Zone',
+        dataIndex: 'zone',
+        key: 'zone'
+      },
+      {
+        title: 'Province',
+        dataIndex: 'province',
+        key: 'province'
+      },
+     
+    
+    ]
+
     if(!provinces.length) return <Loading />
+    console.log(welfares);
     return(
         <div className="AdminDashboard">
             <div className="container">
@@ -88,9 +161,62 @@ const AdminDashboard = () => {
                                 <Tile name="Zones" count={ userInfo.isAdmin ? zones.length : (zones.filter(zone => zone.pastor?.id === userInfo.id)).length} color="#1BC5BD"><AiFillAppstore /> </Tile>
                                 <Tile name="Countries" count={ userInfo.isAdmin ? countries?.length : (countries.filter(country => country.pastor?.id === userInfo.id)).length} color="#8950FC"><AiFillAppstore /> </Tile>
                                 <Tile name="Parishes" count={ userInfo.isAdmin ? parishes?.length : (parishes.filter(parish => parish.pastor?.id === userInfo.id)).length} color="#17a2b8"><FaChurch/> </Tile>
+                                <Tile name="Unread Messages" count={(welfares.filter(wel => !wel.read)).length} color="red"> <AiOutlineMail /> </Tile>
+
                             </div>
                      </R3Card>
 
+                        <div className="row">
+                            <div className="col-8">
+
+                            <R3Card>
+                                   <Table title={() => <h4>WELFARE CHECK MESSAGES</h4>} dataSource={welfares.filter(welfare => !welfare.read)} columns={columns} pagination={false} size="small" />
+                            </R3Card>
+
+                            </div>
+                            <div className="col-4">
+                                <R3Card>
+                                    <R3List title="Provinces" data={provinces} size="small" renderItem={
+                                        province => (                                                
+                                                    <List.Item>
+                                                        <List.Item.Meta title={province?.name} />
+
+                                                        <div><Tag color="processing">{province?.zones?.length} zones</Tag></div>
+                                                    </List.Item>
+                                          )
+                                    } />
+                                </R3Card>
+
+                                <R3Card>
+                                    <R3List title="Top 5 Countries" data={countries.map(ctry => { return {name : ctry.countryName, parishes:ctry.parishes.length}}).sort(function(a,b){return b.parishes - a.parishes}).slice(0,5)} size="small" renderItem={
+                                            country => (                                                
+                                                        <List.Item>
+                                                            <List.Item.Meta 
+                                                            title={country.name} />
+
+                                                            <div><Tag color="processing">{country.parishes} parishes</Tag></div>
+                                                        </List.Item>
+                                            )
+                                        } />
+                                </R3Card>
+
+                                <R3Card>
+                                    <R3List title="Top 10 Souls Winner" data={top10SoulsWinner.map(data => {return {parishName:data._id, totalSouls:data.totalSouls}})} size="small" renderItem={
+                                            result => (                                                
+                                                        <List.Item>
+                                                            <List.Item.Meta 
+                                                            title={result.parishName} 
+                                                            />
+
+                                                            <div><Tag color="processing">{result.totalSouls} Souls</Tag></div>
+                                                        </List.Item>
+                                            )
+                                        } />
+                                </R3Card>
+
+                            </div>
+                        </div>
+{/* 
                          <div className="row">
                             <div className="col-6">
                                 <R3Card>
@@ -121,7 +247,7 @@ const AdminDashboard = () => {
                                     } />
                                 </R3Card>
                             </div>
-                         </div>
+                         </div> */}
             </div>
         </div>    
     )

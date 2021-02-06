@@ -56,7 +56,7 @@ const  PzaAllocation = () => {
       )
     },
     {
-      title:'Province (3.5%)',
+      title:'Province (5.0%)',
       dataIndex:'province',
       key:'province',
       width:140,
@@ -156,6 +156,7 @@ const  PzaAllocation = () => {
                     </Form>
                   </R3Card>
                     {pzadata.length ? <R3Card>  <Table rowKey={record => record.provinceName} title= {() => <h2>Pza Allocation</h2>} 
+                    pagination={false}
                     columns={columns} 
                     dataSource={pzadata}
                     summary={ pagedData => {

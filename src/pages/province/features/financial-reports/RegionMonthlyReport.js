@@ -164,37 +164,39 @@ const  RegionMonthlyReport = () => {
                     columns={columns} 
                     dataSource={regionData}
                     pagination = {false}
-                    // summary={ pagedData => {
-                    //   let totalRemExpected = 0;
-                    //   let totalReceived = 0;
-                    //   let totalProvince = 0;
-                    //   let totalZone = 0;
-                    //   let totalArea = 0;
-                    //   pagedData.forEach(({remExpected, remReceived, province, zone, area}) => {
-                    //         totalRemExpected+= remExpected;
-                    //         totalReceived+= remReceived;
-                    //         totalProvince+= province;
-                    //         totalZone+= zone;
-                    //         totalArea+= area;
+                    summary={ pagedData => {
+                      let totalTithe = 0;
+                      let totalOffering = 0;
+                      let grandTotalRemOfferingAndTithe = 0;
+                      let totalRegionTithe25 = 0;
+                      let totalRegionOffering10 = 0;
+                      let totalRegionTotalOfferingAndTithe = 0;
+                      pagedData.forEach(({tithe, offering, totalRemOfferingAndTithe, regionTithe25, regionOffering10, regionTotalOfferingAndTithe}) => {
+                            totalTithe+= tithe;
+                            totalOffering+= offering;
+                            grandTotalRemOfferingAndTithe+= totalRemOfferingAndTithe;
+                            totalRegionTithe25+= regionTithe25;
+                            totalRegionOffering10 +=regionOffering10;
+                            totalRegionTotalOfferingAndTithe += regionTotalOfferingAndTithe;
                            
-                    //   });
+                      });
   
-                    //   return (
-                    //     <>
-                    //       <Table.Summary.Row>
-                    //       <Table.Summary.Cell></Table.Summary.Cell>
-                    //       <Table.Summary.Cell></Table.Summary.Cell>
-                    //       <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
-                    //       <Table.Summary.Cell><b>€{totalRemExpected?.toFixed(2)}</b></Table.Summary.Cell>
-                    //       <Table.Summary.Cell><b>€{totalReceived?.toFixed(2)}</b></Table.Summary.Cell>
-                    //       <Table.Summary.Cell><b>€{totalProvince?.toFixed(2)}</b></Table.Summary.Cell>
-                    //       <Table.Summary.Cell><b>€{totalZone?.toFixed(2)}</b></Table.Summary.Cell>
-                    //       <Table.Summary.Cell><b>€{totalArea?.toFixed(2)}</b></Table.Summary.Cell>
-                    //       </Table.Summary.Row>
-                    //     </>
-                    //   )
+                      return (
+                        <>
+                          <Table.Summary.Row>
+                          <Table.Summary.Cell></Table.Summary.Cell>
+                          <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
+                          <Table.Summary.Cell><b>€{totalTithe?.toFixed(2)}</b></Table.Summary.Cell>
+                          <Table.Summary.Cell><b>€{totalOffering?.toFixed(2)}</b></Table.Summary.Cell>
+                          <Table.Summary.Cell><b>€{grandTotalRemOfferingAndTithe?.toFixed(2)}</b></Table.Summary.Cell>
+                          <Table.Summary.Cell><b>€{totalRegionTithe25?.toFixed(2)}</b></Table.Summary.Cell>
+                          <Table.Summary.Cell><b>€{totalRegionOffering10?.toFixed(2)}</b></Table.Summary.Cell>
+                          <Table.Summary.Cell><b>€{totalRegionTotalOfferingAndTithe?.toFixed(2)}</b></Table.Summary.Cell>
+                          </Table.Summary.Row>
+                        </>
+                      )
                       
-                    //  }}
+                     }}
                      /> 
                      </R3Card></div> : <h3>No Data Found.</h3>}
                   

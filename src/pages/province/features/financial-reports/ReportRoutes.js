@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch, Redirect } from 'react-router-dom';
-import ParishAttendanceMonthlyReport from './ParishAttendanceMonthlyReport';
+import ParishAttendanceMonthlyReport from '../non-financial-reports/ParishAttendanceMonthlyReport';
 import ParishMonthlyReport from './ParishMonthlyReport';
 import PzaAllocation from './PzaAllocation';
 import RegionMonthlyReport from './RegionMonthlyReport';

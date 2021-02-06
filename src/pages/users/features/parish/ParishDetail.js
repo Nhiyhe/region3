@@ -19,7 +19,7 @@ const ParishDetail = () => {
         const source = axios.CancelToken.source();
         const getParishDetail = async() => {
             try{
-                const {data} = await requestAxios.get(`/parishes/${userInfo.id}`, {cancelToken:source.cancel()});
+                const {data} = await requestAxios.get(`/parishes/${userInfo.id}`, {cancelToken:source.token});
                 setParish(data.body);
             }catch(ex){
                 console.error(ex.message);

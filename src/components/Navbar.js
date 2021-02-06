@@ -18,7 +18,8 @@ const Navbar = () => {
                 <AdminListItem to="/countries">Countries</AdminListItem>
                 <AdminListItem to="/parishes">Parishes</AdminListItem>
                 <AdminListItem to="/pastors">Pastors</AdminListItem>
-                <ProvinceListItem to="/reports">Reports</ProvinceListItem>
+                <ProvinceListItem to="/financial/reports">Financial Reports</ProvinceListItem>
+                <ProvinceListItem to="/non-financial/reports">Non-Financial Reports</ProvinceListItem>
 
                 <UserListItem to="/dashboard">DASHBOARD</UserListItem>
                 <UserListItem to="/parish/monetaries">MONETARY</UserListItem>

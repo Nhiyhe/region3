@@ -201,7 +201,7 @@ const ParishMonthlyReport  = () => {
       key:'amountRemitted',
       width:140,
       render: paid => (
-        <>€{paid?.toFixed(2)}</>
+        <>€{paid ? paid?.toFixed(2) : paid.toFixed(2)}</>
       )
     },
     {
@@ -210,7 +210,7 @@ const ParishMonthlyReport  = () => {
       key:'closingBalance',
       width:140,
       render: closeBal => (
-        <>€{closeBal?.toFixed(2)}</>
+        <>€{ closeBal ? closeBal?.toFixed(2) : closeBal.toFixed(2)}</>
       )
     },
   ]
@@ -263,7 +263,8 @@ const ParishMonthlyReport  = () => {
   );
 
   if(!provinces.length) return <Loading />
-    console.log(provinces);
+
+  console.log(monetaries);
     return (
         <Formik 
         initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
@@ -271,6 +272,7 @@ const ParishMonthlyReport  = () => {
           try{
             const {data} = await requestAxios.get(`/monetaries/${parishId}/stats?startDate=${values.startDate}&endDate=${values.endDate}`);
             setMonetaries(data.body);
+
         }catch(err){
         }
         }}
@@ -367,7 +369,7 @@ const ParishMonthlyReport  = () => {
                                          <Export onExport={() => downloadCSV(monetaries)} />
                                         </div>
                                       <Table 
-                                      rowKey={record => record.id}
+                                      rowKey={record => record._id}
                                       columns={columns}                                       
                                       dataSource={monetaries}
                                       pagination={{pageSize:10, total:monetaries.length}} 

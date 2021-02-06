@@ -1,11 +1,12 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAlert } from 'react-alert';
 import { useHistory } from 'react-router-dom';
 import R3Card from '../../../../components/Card';
 import { AuthContext } from '../../../../context/AuthContext';
 import requestAxios from '../../../../util/requestAxios';
 import * as yup from 'yup';
+import axios from 'axios';
 
 const validationSchema = yup.object().shape({
     subject:yup.string().required("Subject is Required"),
@@ -17,12 +18,36 @@ const NewWelfareForm = () =>{
     const {userInfo} = useContext(AuthContext);
     const alert = useAlert();
     const history = useHistory();
+    const [parish, setParish] = useState({});
+
+    useEffect(() => {
+        const source = axios.CancelToken.source();
+        const getParishDetail = async() => {
+            try{
+                const {data} = await requestAxios.get(`/parishes/${userInfo.id}`, {cancelToken:source.token});
+                setParish(data.body);
+            }catch(ex){
+                console.error(ex.message);
+            }
+        }
+        getParishDetail();
+        return () => {
+            source.cancel();
+        }
+    },[userInfo.id])
+
+ console.log(parish);
     return(
         <Formik
         initialValues={{subject:"", message:"", status:"" }}
         validationSchema={validationSchema}
         onSubmit={async(values, actions) =>{
             values.parish = userInfo.id;
+            values.parishName = parish?.name;
+            values.province = parish?.country?.zone?.province?.name
+            values.zone = parish?.country?.zone?.name
+            values.pastorName = `${parish?.parishPastor?.firstName} ${parish?.parishPastor?.lastName}`
+            values.country = parish?.country?.countryName
             try{
                 const {data} = await requestAxios.post(`/welfares`, values);
                 alert.success(data.message);
@@ -53,7 +78,7 @@ const NewWelfareForm = () =>{
                             </ErrorMessage>
                       </div>
                     
-                      <div>
+                      <div className="form-group">
                           <label className="form-label" htmlFor="status">Status</label>
                           <Field name="status" as="select" className="form-control form-control-lg" id="status">
                               <option value="">Select Status</option>
@@ -74,7 +99,7 @@ const NewWelfareForm = () =>{
                             </ErrorMessage>
                       </div>                         
                     
-                      <input type="submit" value="Submit" className="btn btn-primary btn-lg" />
+                      <input type="submit" value="Send Message" className="btn btn-primary btn-lg" />
                   </Form>
               </R3Card>
           </div>

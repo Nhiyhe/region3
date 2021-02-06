@@ -20,7 +20,8 @@ import MonetaryIndex from './pages/users/features/monetaries/MonetaryIndex';
 import TestimonyIndex from './pages/users/features/testimonies/TestimonyIndex';
 import OutreachIndex from './pages/users/features/outreaches/OutreachIndex';
 import WelfareIndex from './pages/users/features/welfare/WelfareIndex';
-import ReportIndex from './pages/province/features/reports/ReportIndex';
+import ReportIndex from './pages/province/features/financial-reports/ReportIndex';
+import NonFinancialReportIndex from './pages/province/features/non-financial-reports/NonFinancialReportIndex';
 
 const Routes =() => {
 const {isProvincePastor, isAdmin, isParishPastor} = useContext(AuthContext);
@@ -44,7 +45,8 @@ const {isProvincePastor, isAdmin, isParishPastor} = useContext(AuthContext);
             <AdminRoute path="/countries" component={CountryIndex} />
             <AdminRoute path="/parishes" component={ParishIndex}/>
             <AdminRoute path="/pastors"  component={PastorIndex}/> 
-            <ProvinceRoute path="/reports"  component={ReportIndex}/> 
+            <ProvinceRoute path="/financial/reports"  component={ReportIndex}/> 
+            <ProvinceRoute path="/non-financial/reports"  component={NonFinancialReportIndex}/> 
             <AuthenticatedRoute path="/parish/attendances" component={ AttendanceIndex} /> 
             <AuthenticatedRoute path="/parish/monetaries" component={ MonetaryIndex} /> 
             <AuthenticatedRoute path="/parish/testimonies" component={ TestimonyIndex} /> 

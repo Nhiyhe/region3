@@ -11,7 +11,7 @@ const Login = (props) => {
         <div className="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
           <h2 className="text-center mb-4 Login-heading">Admin/Pastors Login.</h2>
           <div className="form-group mb-4">
-            <Field name="email" placeholder="you@example.com" className="form-control form-control-lg"/>
+            <Field name="email" placeholder="you@example.com" autoFocus className="form-control form-control-lg"/>
             <ErrorMessage name="email">
               {(msg) => <div className="text-danger">{msg}</div>}
             </ErrorMessage>
