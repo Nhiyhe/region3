@@ -11,7 +11,7 @@ const ReportRoutes = () => {
         <Switch>
             <Route path={`${path}/monthly-report`} component={ParishMonthlyReport} />
             <Route path={`${path}/pza-allocation`} component={PzaAllocation} />
-            <Route path={`${path}/attendance/report`} component={ParishAttendanceMonthlyReport} />
+            {/* <Route path={`${path}/attendance/report`} component={ParishAttendanceMonthlyReport} /> */}
             <Route path={`${path}/monthly/report/by/provinces`} component={RegionMonthlyReport} />
             <Redirect from={path} to={`${path}/monthly/report/by/provinces`} />
         </Switch>

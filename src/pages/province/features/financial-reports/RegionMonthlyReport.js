@@ -128,7 +128,8 @@ const  RegionMonthlyReport = () => {
        }}
        >
            {() => (
-                <>
+                <div className="RegionMonthlyReport">
+                <h1 className="RegionMonthlyReport-heading">Region Monthly Report</h1>
                   <R3Card>
                     <Form>
                     <div className="form-row">
@@ -200,7 +201,7 @@ const  RegionMonthlyReport = () => {
                      /> 
                      </R3Card></div> : <h3>No Data Found.</h3>}
                   
-                </>
+                </div>
            )}
        </Formik>
     )

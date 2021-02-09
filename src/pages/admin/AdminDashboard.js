@@ -11,6 +11,7 @@ import Loading from '../../components/Loading';
 import R3List from '../../components/R3List';
 import { List, Space, Table, Tag } from 'antd';
 import './AdminDashboard.css';
+import { Link } from 'react-router-dom';
 
 
 const AdminDashboard = () => {
@@ -21,6 +22,7 @@ const AdminDashboard = () => {
     const [parishes, setParishes] = useState([]);
     const [pastor, setPastor] = useState({});
     const [welfares, setWelfares] = useState([]);
+    const [testimonies, setTestimonies] = useState([]);
     const [top10SoulsWinner, setTop10SoulsWinner] = useState([]);
 
     const getProvincePastor = async() => {
@@ -87,6 +89,15 @@ const AdminDashboard = () => {
         }
     }
 
+    const getTestimonies = async () => {
+        try{
+            const {data} = await requestAxios.get('/testimonies');
+            setTestimonies(data.body);
+        }catch(err){
+            console.error(err.message);
+        }
+    }
+
 
     useEffect(() => {
         getProvinces();
@@ -95,6 +106,7 @@ const AdminDashboard = () => {
         getParishes();
         getWelfareCheck();
         getTop10SoulsWinner();
+        getTestimonies();
     }, [])
 
     useEffect(() => {
@@ -106,11 +118,12 @@ const AdminDashboard = () => {
             title: '',
             dataIndex: 'province',
             key: 'province',
-            render : () => (
+            render : (text, record) => (
                 <div>
                     <Space size="small">
-                        <Tag color="red">NEW</Tag>
-                        <Tag color="processing">URGENT</Tag>
+                        <Tag color="green">NEW</Tag>
+                        <Tag color="red">URGENT</Tag>
+                        <Link className="btn btn-info" to={`non-financial/reports/${record.id}/read`}>READ</Link>
                     </Space>
                 </div>
             )
@@ -144,10 +157,46 @@ const AdminDashboard = () => {
         title: 'Province',
         dataIndex: 'province',
         key: 'province'
-      },
-     
+      },    
     
     ]
+
+    const testimonyColumns = [
+        {
+            title: '',
+            dataIndex: 'province',
+            key: 'province',
+            render : (text, record) => (
+                <div>
+                    <Space size="small">
+                        <Tag color="green">NEW</Tag>
+                        <Link className="btn btn-info" to={`non-financial/reports/${record.id}/testimony/read`}>READ</Link>
+                    </Space>
+                </div>
+            )
+          },
+          {
+            title: 'Parish',
+            dataIndex: 'parishName',
+            key: 'parishName'
+          },
+          {
+            title: 'Country',
+            dataIndex: 'country',
+            key: 'country'
+          },
+          {
+            title: 'Zone',
+            dataIndex: 'zone',
+            key: 'zone'
+          },
+          {
+            title: 'Province',
+            dataIndex: 'province',
+            key: 'province'
+          },    
+    ]
+
 
     if(!provinces.length) return <Loading />
     console.log(welfares);
@@ -170,7 +219,11 @@ const AdminDashboard = () => {
                             <div className="col-8">
 
                             <R3Card>
-                                   <Table title={() => <h4>WELFARE CHECK MESSAGES</h4>} dataSource={welfares.filter(welfare => !welfare.read)} columns={columns} pagination={false} size="small" />
+                                   <Table rowKey={record => record.id} title={() => <h4>NEW WELFARE CHECK MESSAGES</h4>} dataSource={welfares.filter(welfare => !welfare.read)} columns={columns} pagination={false} size="small" />
+                            </R3Card>
+
+                            <R3Card>
+                                   <Table rowKey={record => record.id} title={() => <h4>NEW TESTIMONY BOARD</h4>} dataSource={testimonies.filter(test => !test.read)} columns={testimonyColumns} pagination={false} size="small" />
                             </R3Card>
 
                             </div>

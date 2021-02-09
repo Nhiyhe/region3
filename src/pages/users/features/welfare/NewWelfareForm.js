@@ -36,7 +36,7 @@ const NewWelfareForm = () =>{
         }
     },[userInfo.id])
 
- console.log(parish);
+ 
     return(
         <Formik
         initialValues={{subject:"", message:"", status:"" }}

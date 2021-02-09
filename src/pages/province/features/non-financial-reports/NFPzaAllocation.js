@@ -9,6 +9,7 @@ import { DatePicker } from "formik-antd";
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { Table } from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
+import './NFPzaAllocation.css';
 
 const  NFPzaAllocation = () => {
 
@@ -133,7 +134,8 @@ const  NFPzaAllocation = () => {
        }}
        >
            {() => (
-                <>
+                <div className="NFPzaAllocation">
+                  <h1 className="NFPzaAllocation-heading">Attendance by Country</h1>
                   <R3Card>
                     <Form>
                     <div className="form-row">
@@ -216,7 +218,7 @@ const  NFPzaAllocation = () => {
                      /> 
                      </R3Card> : <h3>No Data Found.</h3>}
                   
-                </>
+                </div>
            )}
        </Formik>
     )

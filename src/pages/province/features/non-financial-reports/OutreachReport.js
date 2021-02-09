@@ -11,9 +11,9 @@ import { dateFormatList } from '../../../../helpers/dateHelper';
 import Loading from '../../../../components/Loading';
 import {Link, useHistory} from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import './WelfareReport.css';
+import './OutreachReport.css';
 
-const WelfareReport = () => {
+const OutreachReport = () => {
     const alert = useAlert();
     const history = useHistory();
     const {userInfo, isAdmin} = useContext(AuthContext);
@@ -21,7 +21,7 @@ const WelfareReport = () => {
     const [zones, setZones] = useState([]);
     const [countries, setCountries] = useState([]);
     const [parishes, setParishes] = useState([]);
-    const [welfares, setWelfares] = useState([]);
+    const [outreaches, setOutreaches] = useState([]);
     const [parish, setParish] = useState([]);
     const [provinceId, setProvinceId] = useState("5fc5d6236c07300004aea00c");
     const [parishId, setParishId] = useState("5fc5d6236c07300004aea00c");
@@ -169,58 +169,68 @@ const WelfareReport = () => {
       }
 
 
+
       const columns = [
-        {
-          title: 'Date',
-          dataIndex: 'createdAt',
-          key:'createdAt',          
-          render: date => (
-              <>{moment(date).format(dateFormatList[0])}</>
-          )
+          {
+              title:'Date',
+              dataIndex:'createdAt',
+              key:'createdAt',
+              render : date => (
+                  <>{moment(date).format(dateFormatList[0])}</>
+              )
+          },
+          {
+            title:'New Nation',
+            dataIndex:'newNation',
+            key:'newNation'
+        },
+          {
+            title:'New Parish',
+            dataIndex:'newParish',
+            key:'newParish'
         },
         {
-            title: 'Subject',
-            dataIndex: 'subject',
-            key:'subject'                  
-          },
-          {
-            title: 'Message',
-            dataIndex: 'message',
-            key:'message',
-            render : msg => (
-              <p>{msg.slice(0,60)}...</p>
+            title:'Church Dedication',
+            dataIndex:'churchDedication',
+            key:'churchDedication'
+        },
+        {
+            title:'Notes',
+            dataIndex:'notes',
+            key:'notes',
+            render: note => (
+                <>{note.length > 40 ? `${note.slice(0,41)}...` : note}</>
             )
-          },
-          {
-            title: 'Actions',
+        },
+         {
+            title: '',
             key: 'action',
             render: (text, record) => (
               <Space size="middle">
-                <Link className="btn btn-info" to={`${record.id}/read`}>Read</Link>
+                <Link className="btn btn-info" to={`${record.id}/outreach/detail`}>Detail</Link>
                 <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
-                { !record.read && <Tag color="magenta">UNREAD MESSAGE</Tag>}
               </Space>
             ),
           },
-      ]
+      ];
 
-      if(!provinces.length) return <Loading />
 
-    return (
-        <Formik
+    if(!provinces.length) return <Loading />
+    return(
+           <Formik
         initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
         onSubmit={ async (values) => {
           try{
-            const {data} = await requestAxios.get(`/parishes/${parishId}/welfares`);
-            setWelfares(data.body);
+            const {data} = await requestAxios.get(`/parishes/${parishId}/outreaches`);
+            setOutreaches(data.body);
         }catch(err){
         }
         }}
         
         >
             {() => (
-                <div className="WelfareReport">
-                  <h1 className="WelfareReport-heading">Welfare Report by Parish</h1>
+                <div className="OutreachReport">
+                  <h1 className="OutreachReport-heading">Outreach Report by Parish</h1>
 
                  <div className="col-6 offset-3">
                  <R3Card>                
@@ -296,11 +306,11 @@ const WelfareReport = () => {
                  </R3Card>
                </div>
                 
-                { welfares.length ?  <Table title={() => <h2>Welfare Check Messages</h2>} rowKey ={record => record.id} columns={columns} dataSource={welfares} /> : null}
+                {outreaches && <Table title={() => <h2>Outreaches</h2>} rowKey ={record => record.id} columns={columns} dataSource={outreaches} />}
                 </div>
             )}
         </Formik>
     )
 }
 
-export default WelfareReport;
+export default OutreachReport;

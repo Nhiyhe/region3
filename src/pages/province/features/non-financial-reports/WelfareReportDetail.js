@@ -1,10 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import requestAxios from '../../../../util/requestAxios';
 import axios from 'axios';
 import R3Card from '../../../../components/Card';
+import moment from 'moment';
+import {dateFormatList} from '../../../../helpers/dateHelper';
+import './WelfareReportDetail.css';
 
 const WelfareReportDetail = () => {
+
+    const history = useHistory();
     const {id} = useParams();
 
     const [message, setMessage] = useState({});
@@ -33,12 +38,15 @@ const WelfareReportDetail = () => {
 
     console.log(message);
     return (
-        <div>
+        <div className="WelfareReportDetail">
             <R3Card>
-                <h2>{message.parishName}</h2>
-                <h2>{message.pastorName}</h2>
-                <h3>{message.subject}</h3>
-                <p>{message.message}</p>
+                <h2 className="WelfareReportDetail-title">Welfare Check Message</h2>
+                <h4 className="WelfareReportDetail-h4">Date: {moment(message.createdAt).format(dateFormatList[0])}</h4>
+                <h4 className="WelfareReportDetail-h4">Church: {message.parishName}</h4>
+                <h4 className="WelfareReportDetail-h4">Pastor Name: {message.pastorName}</h4>
+                <h4 className="WelfareReportDetail-subject">Subject: {message.subject}</h4>
+                <p className="WelfareReportDetail-message">{message.message}</p>
+                <div><button className="btn btn-info btn-lg" onClick={() => history.goBack()}>Go Back</button></div>
             </R3Card>
         </div>
     )

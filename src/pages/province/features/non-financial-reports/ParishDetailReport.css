@@ -1,0 +1,17 @@
+.ParishDetailReport{
+}
+
+.ParishDetailReport-heading{
+    font-size: 3rem;
+    text-align:center;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.ParishDetailReport-location{
+    font-size: 2rem;
+}
+
+.ParishDetailReport-pastor{
+    
+}

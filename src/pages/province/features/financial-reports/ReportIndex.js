@@ -12,7 +12,7 @@ const ReportIndex = () => {
                 <li><NavLink exact activeClassName="active-link" to={`${url}/monthly/report/by/provinces`}><h4>Region Monthly Report</h4></NavLink></li>
                 <li><NavLink exact activeClassName="active-link" to={`${url}/pza-allocation`}><h4>PZA Allocation</h4></NavLink></li>
                 <li><NavLink exact activeClassName="active-link" to={`${url}/monthly-report`}><h4>Parish Monthly Report</h4></NavLink></li>
-                <li><NavLink exact activeClassName="active-link" to={`${url}/attendance/report`}><h4>Attendance Statistics Report</h4></NavLink></li>
+                {/* <li><NavLink exact activeClassName="active-link" to={`${url}/attendance/report`}><h4>Attendance Statistics Report</h4></NavLink></li> */}
             </SubNavBar>
             <PageContent>
                 <ReportRoutes />

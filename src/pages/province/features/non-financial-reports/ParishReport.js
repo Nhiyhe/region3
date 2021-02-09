@@ -11,9 +11,10 @@ import { dateFormatList } from '../../../../helpers/dateHelper';
 import Loading from '../../../../components/Loading';
 import {Link, useHistory} from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import './WelfareReport.css';
+import './ParishReport';
 
-const WelfareReport = () => {
+const ParishReport = () => {
+
     const alert = useAlert();
     const history = useHistory();
     const {userInfo, isAdmin} = useContext(AuthContext);
@@ -21,7 +22,6 @@ const WelfareReport = () => {
     const [zones, setZones] = useState([]);
     const [countries, setCountries] = useState([]);
     const [parishes, setParishes] = useState([]);
-    const [welfares, setWelfares] = useState([]);
     const [parish, setParish] = useState([]);
     const [provinceId, setProvinceId] = useState("5fc5d6236c07300004aea00c");
     const [parishId, setParishId] = useState("5fc5d6236c07300004aea00c");
@@ -32,7 +32,7 @@ const WelfareReport = () => {
     const [pagination, setPagination] = useState({page:1, limit:10});
     const { confirm } = Modal;
 
-
+    
     useEffect(() => {
         const source = axios.CancelToken.source();
         const getProvinces = async () => {
@@ -149,78 +149,51 @@ const WelfareReport = () => {
         })
       },[parishId])
 
-            
-      function showDeleteConfirm(welfare) {
-        confirm({
-          title: `Are you sure, you want to delete?`,
-          icon: <ExclamationCircleOutlined />,
-          content: 'This operation is not reversible.',
-          okText: 'Yes',
-          okType: 'danger',
-          cancelText: 'No',
-          async onOk() {
-            const {data} = await requestAxios.delete(`/welfares/${welfare.id}`);
-            window.location = `/non-financial/reports/welfare`;  
-            alert.success(data.message);
-          },
-          onCancel() {
-          },
-        });
-      }
 
 
-      const columns = [
+    const columns =[
         {
-          title: 'Date',
-          dataIndex: 'createdAt',
-          key:'createdAt',          
-          render: date => (
-              <>{moment(date).format(dateFormatList[0])}</>
-          )
+            'title':'Parish Name',
+            'dataIndex':'name',
+            'key':'name'
         },
         {
-            title: 'Subject',
-            dataIndex: 'subject',
-            key:'subject'                  
-          },
-          {
-            title: 'Message',
-            dataIndex: 'message',
-            key:'message',
-            render : msg => (
-              <p>{msg.slice(0,60)}...</p>
-            )
-          },
-          {
-            title: 'Actions',
+            'title':'Email Address',
+            'dataIndex':'parishEmailAddress',
+            'key':'parishEmailAddress'
+        },
+        {
+            'title':'Phone Number',
+            'dataIndex':'phoneNo',
+            'key':'phoneNo'
+        },
+        {
+            title: '',
             key: 'action',
             render: (text, record) => (
               <Space size="middle">
-                <Link className="btn btn-info" to={`${record.id}/read`}>Read</Link>
-                <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
-                { !record.read && <Tag color="magenta">UNREAD MESSAGE</Tag>}
+                <Link className="btn btn-info" to={`${record.id}/parish/detail`}>Detail</Link>
               </Space>
             ),
           },
-      ]
+    ];
 
-      if(!provinces.length) return <Loading />
-
+    console.log(parishes);
     return (
         <Formik
         initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
         onSubmit={ async (values) => {
           try{
-            const {data} = await requestAxios.get(`/parishes/${parishId}/welfares`);
-            setWelfares(data.body);
+            const {data} = await requestAxios.get(`/parishes/${parishId}/outreaches`);
+            // setOutreaches(data.body);
         }catch(err){
         }
         }}
         
         >
             {() => (
-                <div className="WelfareReport">
-                  <h1 className="WelfareReport-heading">Welfare Report by Parish</h1>
+                <div className="ParishReport">
+                  <h1 className="ParishReport-heading">Parish Detail Report</h1>
 
                  <div className="col-6 offset-3">
                  <R3Card>                
@@ -276,31 +249,18 @@ const WelfareReport = () => {
                          </Field>
                        </div> 
  
-                       <div className="form-group mb-5">
-                         <label>Parish</label>
-                         <Field as="select" name="parishes" className="form-control form-control-lg" onChange={(e) => {
-                             if(e.target.value){
-                                 setParishId(e.target.value);
-                             }
-                         }} disabled = {disableCountryDropdownList}>
-                           <option value="">Select Parish</option>
-                           {parishes.map((parish) => {
-                               return <option key={parish.id} value={parish.id}>{parish.name}</option>
-                           })}
-                         </Field>
-                       </div>
-                          <input type="submit" value="Search" className="btn btn-primary btn-block btn-lg mt-5" />
+                        {/* <input type="submit" value="Search" className="btn btn-primary btn-block btn-lg mt-5" /> */}
                      </div>
                    </div>
                    </Form>
                  </R3Card>
                </div>
                 
-                { welfares.length ?  <Table title={() => <h2>Welfare Check Messages</h2>} rowKey ={record => record.id} columns={columns} dataSource={welfares} /> : null}
+                {parishes && <Table title={() => <h2>Parishes</h2>} rowKey ={record => record.id} columns={columns} dataSource={parishes} />}
                 </div>
             )}
         </Formik>
     )
 }
 
-export default WelfareReport;
+export default ParishReport;

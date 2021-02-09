@@ -2,6 +2,11 @@
 .RegionMonthlyReport{
 
 }
+
+.RegionMonthlyReport-heading{
+    font-size:2.5rem;
+    font-weight: 400;
+}
 .RegionMonthlyReport-table{
     margin-bottom: 50rem;
 

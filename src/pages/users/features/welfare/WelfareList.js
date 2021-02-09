@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAlert } from 'react-alert';
 import R3Card from '../../../../components/Card';
@@ -10,6 +10,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Loading from '../../../../components/Loading';
 import DataTable from 'react-data-table-component';
+import { AuthContext } from '../../../../context/AuthContext';
 
 const WelfareList  = () => {
 
@@ -17,14 +18,15 @@ const WelfareList  = () => {
     const alert = useAlert();
     const history = useHistory();
     const { confirm } = Modal;
-
+    const {userInfo} = useContext(AuthContext);
 
     useEffect(() => {
         const source = axios.CancelToken.source();
 
         const getWelfares = async () => {
             try{
-                const {data} = await requestAxios.get(`/welfares`, {cancelToken:source.token});
+                const {data} = await requestAxios.get(`/parishes/${userInfo.id}/welfares`, {cancelToken:source.token});
+                // const {data} = await requestAxios.get(`/welfares`, {cancelToken:source.token});
                 setWelfares(data.body);
 
             }catch(err){
@@ -53,7 +55,7 @@ const WelfareList  = () => {
           cancelText: 'No',
           async onOk() {
             await requestAxios.delete(`/welfares/${welfare.id}`);
-            history.push(`/parish/welfares/list`);           
+            history.push(`/parish/welfares/list`); 
           },
           onCancel() {
           },
@@ -63,30 +65,38 @@ const WelfareList  = () => {
  
     const columns = [
       {
-        name: 'Date',
-        selector: 'date',
-        sortable: true,
-        format: row => `${moment(row.date).format(dateFormatList[0])}`,
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'key',
+        render: date => `${moment(date).format(dateFormatList[0])}`,
       },
       {
-        name: 'Subject',
-        selector: 'subject',
+        title: 'Subject',
+        dataIndex: 'subject',
+        key:'subject',
+        render: sub => (
+          <> {sub.slice(0,25).toUpperCase()} ... </>
+        )
       },
       {
-        name: 'Status',
-        selector: 'status',
-        sortable:true,
+        title: 'Status',
+        dataIndex: 'status',
+        key:'status',
       },
       {
-        name: 'Message',
-        selector: 'message',
+        title: 'Message',
+        dataIndex: 'message',
+        key:'message',
+        render: msg => (
+          <> {msg.slice(0,60)}.. </>
+        )
       },
       {
-        name:'Actions',
-        cell: row => (
+        title:'Actions',
+        render: (text, record) => (
           <Space size="middle">
-            <Link className="btn btn-info" to={`${row.id}/edit`}>Edit</Link>
-            <button className="btn btn-danger" onClick={() => showDeleteConfirm(row)}>Delete</button>
+            <Link className="btn btn-info" to={`${record.id}/edit`}>Edit</Link>
+            <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
           </Space>
         ),
       }
@@ -96,7 +106,7 @@ const WelfareList  = () => {
     return(
         <div>
             <R3Card>
-                <DataTable title="Welfares" columns={columns} data={welfares} />
+                <Table title= {() => <h2>Welfares</h2>} columns={columns} dataSource={welfares} />
             </R3Card>
         </div>
     )

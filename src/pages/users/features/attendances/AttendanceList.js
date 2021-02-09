@@ -12,29 +12,37 @@ import './AttendanceList.css';
 
 const AttendanceList = () => {
     const [attendances, setAttendances] = useState([]);
+    const [total, setTotal] = useState(0);
     const {userInfo} = useContext(AuthContext);
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(3);
+    const [pagination, setPagination] = useState({page:1, pageSize:5})
     const {confirm} = Modal;
+
+    const getParishAttendances  = async page => {
+      try{
+          const {data} = await requestAxios.get(`/parishes/${userInfo.id}/attendances?page=${page}&limit=${pagination.pageSize}`);
+          setAttendances(data.body);
+          setTotal(data.total);
+      }catch(err){
+          console.error(err.message);
+      }
+  }
     
     useEffect(() => {
         const source = axios.CancelToken.source();
-        const getParishAttendances  = async () => {
-            try{
-                const {data} = await requestAxios.get(`/parishes/${userInfo.id}/attendances?page=${page}&limit=${limit}`,{cancelToken:source.token});
-                setAttendances(data.body);
-            }catch(err){
-                console.error(err.message);
-            }
-        }
-
-        getParishAttendances();
+       
+        getParishAttendances(1);
 
         return(()=>{
             source.cancel();
         })
 
     },[])
+
+    
+  const handlePageChange = page => {
+    console.log("PAGE NUMBER",page);
+    getParishAttendances(page);
+  };
 
     function showDeleteConfirm(attendance) {
       confirm({
@@ -122,9 +130,9 @@ const AttendanceList = () => {
     )
   } 
 ]
-
+console.log(attendances);
 if(!attendances.length) return <h1>No Data Yet..</h1>
-
+console.log(attendances.length, total);
  const data = attendances.map(att => {
    return {
     id:att.id, 
@@ -144,7 +152,7 @@ if(!attendances.length) return <h1>No Data Yet..</h1>
         <section>            
             <div>
                 <R3Card>
-                  <Table rowKey={record => record.id} title={() => <h2 className="AttendanceList-title">Attendance Lists</h2>}  columns={columns} dataSource={data}/>
+                  <Table rowKey={record => record._id} title={() => <h2 className="AttendanceList-title">Attendance Lists</h2>}  columns={columns} dataSource={data} pagination={{total, onChange:handlePageChange, ...pagination}} />
                 </R3Card>
             </div>
         </section>

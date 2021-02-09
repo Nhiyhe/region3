@@ -9,6 +9,7 @@ import { DatePicker } from "formik-antd";
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { Table } from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
+import './PzaAllocation.css';
 
 const  PzaAllocation = () => {
 
@@ -123,7 +124,9 @@ const  PzaAllocation = () => {
        }}
        >
            {() => (
-                <>
+                <div className="PzaAllocation">
+                <h1 className="PzaAllocation-heading">PZA Allocation</h1>
+
                   <R3Card>
                     <Form>
                     <div className="form-row">
@@ -193,7 +196,7 @@ const  PzaAllocation = () => {
                      /> 
                      </R3Card> : <h3>No Data Found.</h3>}
                   
-                </>
+                </div>
            )}
        </Formik>
     )

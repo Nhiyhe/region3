@@ -10,7 +10,7 @@ import moment from 'moment';
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { DatePicker } from "formik-antd";
 import Loading from '../../../../components/Loading';
-
+import './ParishMonthlyReport.css';
 
 const ParishMonthlyReport  = () => {
     const alert = useAlert();
@@ -278,7 +278,9 @@ const ParishMonthlyReport  = () => {
         }}
          >
             {() => (
-                <>           
+                <div className="ParishMonthlyReport">
+                <h1 className="ParishMonthlyReport-heading">Parish Monthly Report</h1>
+
                <div className="col-6 offset-3">
                 <R3Card>                
                    <Form>
@@ -406,7 +408,7 @@ const ParishMonthlyReport  = () => {
                                       }}
                                       />
                                   </R3Card> : null}
-            </>
+            </div>
             )}
         </Formik>
     )

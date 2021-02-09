@@ -10,6 +10,7 @@ import moment from 'moment';
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { DatePicker } from "formik-antd";
 import Loading from '../../../../components/Loading';
+import './ParishAttendanceMonthlyReport.css';
 
 const ParishAttendanceMonthlyReport = () => {
     const alert = useAlert();
@@ -205,7 +206,8 @@ const ParishAttendanceMonthlyReport = () => {
        
        >
            {() => (
-               <>
+               <div className="ParishAttendanceMonthlyReport">
+                  <h1 className="ParishAttendanceMonthlyReport-heading">Attendance by Parish</h1>
                 <div className="col-6 offset-3">
                 <R3Card>                
                    <Form>
@@ -293,7 +295,7 @@ const ParishAttendanceMonthlyReport = () => {
               </div>
                
                { attendanceStat.length ?  <Table rowKey ={record => record.totalMen} columns={columns} dataSource={attendanceStat} pagination={false}/> : null}
-               </>
+               </div>
            )}
        </Formik>
    )

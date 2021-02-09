@@ -53,7 +53,7 @@ const TestimonyLists = () => {
           cancelText: 'No',
           async onOk() {
             await requestAxios.delete(`/testimonies/${testimony.id}`);
-            history.push(`/parish/testimonies/list`);           
+            history.goBack();        
           },
           onCancel() {
             console.log('Cancel');

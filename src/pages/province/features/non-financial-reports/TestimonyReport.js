@@ -1,6 +1,6 @@
 import { Formik, Field, Form } from 'formik';
 import React, { useContext, useState, useEffect } from 'react';
-import {Table, Space, Modal} from 'antd';
+import {Table, Space, Modal, Tag} from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
 import axios from 'axios';
 import requestAxios from '../../../../util/requestAxios';
@@ -8,10 +8,10 @@ import R3Card from '../../../../components/Card';
 import { useAlert } from 'react-alert';
 import moment from 'moment';
 import { dateFormatList } from '../../../../helpers/dateHelper';
-import { DatePicker } from "formik-antd";
 import Loading from '../../../../components/Loading';
 import {Link} from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import './TestimonyReport.css';
 
 const TestimonyReport = () => {
     const alert = useAlert();
@@ -150,7 +150,7 @@ const TestimonyReport = () => {
 
          
                  
-      function showDeleteConfirm(welfare) {
+      function showDeleteConfirm(testimony) {
         confirm({
           title: `Are you sure, you want to delete?`,
           icon: <ExclamationCircleOutlined />,
@@ -159,17 +159,60 @@ const TestimonyReport = () => {
           okType: 'danger',
           cancelText: 'No',
           async onOk() {
-            const {data} = await requestAxios.delete(`/welfares/${welfare.id}`);
-            alert.success(data.body);           
+            const {data} = await requestAxios.delete(`/testimonies/${testimony.id}`);
+            alert.success(data.message);
+            window.location = `/non-financial/reports/testimony`;  
+                    
           },
           onCancel() {
           },
         });
       }
 
-    const columns = [];
+    const columns = [
+      {
+        title:'Date',
+        dataIndex:'createdAt',
+        key:'createdAt',
+        render: date => (
+          <>{moment(date).format(dateFormatList[0])}</>
+        )
+      },
+      {
+        title:'Title',
+        dataIndex:'title',
+        key:'title',
+        
+      },
+      {
+        title:'Testifier',
+        dataIndex:'testifier',
+        key:'testifier'
+      },
+      {
+        title:'Testimony',
+        dataIndex:'body',
+        key:'body',
+        render: txt => (
+          <>{txt.slice(0,50)}...</>
+        )
+      },
+      {
+        title: 'Actions',
+        key: 'action',
+        render: (text, record) => (
+          <Space size="middle">
+            <Link className="btn btn-info" to={`${record.id}/testimony/read`}>Read</Link>
+            <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
+            { !record.read && <Tag color="magenta">UNREAD TESTIMONY</Tag>}
+          </Space>
+        ),
+      },
+    ];
 
     console.log(testimonies);
+
+    if(!provinces.length) return <Loading />
 
     return (
         <Formik
@@ -184,7 +227,8 @@ const TestimonyReport = () => {
         
         >
             {() => (
-                <>
+                <div className="TestimonyReport">
+                  <h1 className="TestimonyReport-heading">Testimony Report by Parish</h1>
                  <div className="col-6 offset-3">
                  <R3Card>                
                     <Form>
@@ -253,17 +297,6 @@ const TestimonyReport = () => {
                          </Field>
                        </div>
  
-                        <div className="form-row">
-                           
-                           <div className="form-group col-6">
-                               <label className="form-label">Start Date</label>
-                               <DatePicker name="startDate" placeholder="Start Date" className="form-control form-control-lg" format={dateFormatList[0]} />
-                           </div>
-                           <div className="form-group col-6">
-                               <label className="form-label">End Date</label>
-                               <DatePicker name="endDate" placeholder="End Date" className="form-control form-control-lg" format={dateFormatList[0]} />
-                           </div>
-                       </div> 
                          <input type="submit" value="Search" className="btn btn-primary btn-block btn-lg mt-5" />
                      </div>
                    </div>
@@ -271,8 +304,8 @@ const TestimonyReport = () => {
                  </R3Card>
                </div>
                 
-                { testimonies.length ?  <Table rowKey ={record => record.id} columns={columns} dataSource={testimonies} /> : null}
-                </>
+                { testimonies.length ?  <Table title={() => <h2>Testimonies</h2>} rowKey ={record => record.id} columns={columns} dataSource={testimonies} /> : null}
+                </div>
             )}
         </Formik>
     )

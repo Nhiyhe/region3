@@ -1,0 +1,37 @@
+.TestimonyReportDetail{
+    font-family: 'Lato';
+}
+.TestimonyReportDetail-heading{
+    font-size: 3rem;
+    text-transform: uppercase;
+    text-align:center;
+    font-weight: 700;
+}
+
+.TestimonyReportDetail-title{
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+.TestimonyReportDetail-date{
+    font-weight: 300;
+    font-size: 2.5rem;
+}
+
+.TestimonyReportDetail-testifier{
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.TestimonyReportDetail-details > h4{
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+.TestimonyReportDetail-details > p{
+    font-size: 2rem;
+    margin-left: 13rem;
+    font-weight: 300;
+}
