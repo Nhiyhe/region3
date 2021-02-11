@@ -9,35 +9,40 @@ import axios from 'axios';
 import moment from 'moment';
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import Loading from '../../../../components/Loading';
 
 
 const MonetaryList = () => {
     const [parishMonetaryRecords, setParishMonetaryRecords] = useState([]);
+    const [total, setTotal] = useState(0);
     const {userInfo} = useContext(AuthContext);
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(3);
     const { confirm } = Modal;
-    const [pagination, setPagination] = useState({page:1, limit:10})
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
 
+
+    const getParishMonetaryRecords  = async (page) => {          
+      try{
+          const {data} = await requestAxios.get(`/parishes/${userInfo.id}/monetaryrecords?page=${page}&limit=${pagination.pageSize}`);
+          setParishMonetaryRecords(data.body);
+          setTotal(data.total);
+      }catch(err){
+      }
+  }
 
     useEffect(() => {
       const source = axios.CancelToken.source();
-        const getParishMonetaryRecords  = async() => {          
-            try{
-                const {data} = await requestAxios.get(`/parishes/${userInfo.id}/monetaryrecords?page=${pagination.page}&limit=${pagination.limit}`,{cancelToken:source.token});
-                setParishMonetaryRecords(data.body);
-            }catch(err){
-            }
-        }
-
-        getParishMonetaryRecords();
+      
+      getParishMonetaryRecords(1);
 
         return(()=>{
           source.cancel();
         })
-    }, [userInfo.id, page, limit])
+    }, [userInfo.id])
 
-   
+    const handlePageChange = page => {
+      console.log(page);
+      getParishMonetaryRecords(page);
+    };
 
     function showDeleteConfirm(outreach) {
       confirm({
@@ -105,27 +110,28 @@ const MonetaryList = () => {
     },
     {
       title:'Actions',
-      render: row => (
+      render: (text, record) => (
         <Space size="middle">
-               <Link className="btn btn-outline-success" to={`${row.id}/detail`}>DETAILS</Link>
-              {!row.paymentMade && <Link className="btn btn-info" to={`${row.id}/edit`}>MAKE A PAYMENT</Link>}
-              {row.paymentMade && <Tag color="success">TRANSACTION COMPLETED</Tag>}
+               <Link className="btn btn-outline-success" to={`${record._id}/detail`}>DETAILS</Link>
+              {!record.paymentMade && <Link className="btn btn-info" to={`${record._id}/edit`}>MAKE A PAYMENT</Link>}
+              {record.paymentMade && <Tag color="success">TRANSACTION COMPLETED</Tag>}
        </Space>
       )
     }
   ]
 
- if(!parishMonetaryRecords.length) return <h1>No Data Yet..</h1>
+ if(!parishMonetaryRecords.length) return <Loading />
 
+ 
     return (
        <section className="MonetaryList">
            <div>
                <Card>               
                    <Table 
-                   rowKey={record => record.id}
+                   rowKey={record => record._id}
                    columns={columns} 
                    dataSource={parishMonetaryRecords}
-                   pagination={{pageSize:10, total:parishMonetaryRecords.length}} 
+                   pagination={{total, onChange:handlePageChange, ...pagination}} 
                    summary={ pagedData => {
                     let totalTithe = 0;
                     let totalOffering = 0;

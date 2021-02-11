@@ -9,7 +9,6 @@ import requestAxios from '../../../../util/requestAxios';
 import { Link, useHistory } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Loading from '../../../../components/Loading';
-import DataTable from 'react-data-table-component';
 import { AuthContext } from '../../../../context/AuthContext';
 
 const WelfareList  = () => {
@@ -19,27 +18,27 @@ const WelfareList  = () => {
     const history = useHistory();
     const { confirm } = Modal;
     const {userInfo} = useContext(AuthContext);
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
+    const [total, setTotal] = useState(0);
+
+    const getWelfares = async (page) => {
+      try{
+          const {data} = await requestAxios.get(`/parishes/${userInfo.id}/welfares?page=${page}&limit=${pagination.pageSize}`);
+          setWelfares(data.body);
+          setTotal(data.total);
+
+      }catch(err){
+          if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+      }
+  }
 
     useEffect(() => {
         const source = axios.CancelToken.source();
-
-        const getWelfares = async () => {
-            try{
-                const {data} = await requestAxios.get(`/parishes/${userInfo.id}/welfares`, {cancelToken:source.token});
-                // const {data} = await requestAxios.get(`/welfares`, {cancelToken:source.token});
-                setWelfares(data.body);
-
-            }catch(err){
-                if(err.response && err.response.data){
-                    alert.error(err.response.data.message);
-                  }else{
-                  alert.error("An unexpected error occured.");
-                  }
-            }
-        }
-
-        getWelfares();
-
+        getWelfares(1);
         return (() =>{
             source.cancel();
         })
@@ -62,12 +61,15 @@ const WelfareList  = () => {
         });
       }
 
+      const handlePageChange = page => {
+        getWelfares(page);
+      };
  
     const columns = [
       {
         title: 'Date',
-        dataIndex: 'date',
-        key: 'key',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
         render: date => `${moment(date).format(dateFormatList[0])}`,
       },
       {
@@ -95,18 +97,19 @@ const WelfareList  = () => {
         title:'Actions',
         render: (text, record) => (
           <Space size="middle">
-            <Link className="btn btn-info" to={`${record.id}/edit`}>Edit</Link>
+            <Link className="btn btn-info" to={`${record._id}/edit`}>Edit</Link>
             <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
           </Space>
         ),
       }
     ]
 
-    if(!welfares.length) return <h1>No Data Yet..</h1>
+    if(!welfares.length) return <Loading />
+
     return(
         <div>
             <R3Card>
-                <Table title= {() => <h2>Welfares</h2>} columns={columns} dataSource={welfares} />
+                <Table rowKey={record => record._id} title= {() => <h2>Welfares</h2>} columns={columns} dataSource={welfares} pagination={{total, onChange:handlePageChange, ...pagination}} />
             </R3Card>
         </div>
     )

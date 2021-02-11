@@ -9,12 +9,13 @@ import moment from 'moment';
 import {dateFormatList} from '../../../../helpers/dateHelper';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import './AttendanceList.css';
+import Loading from '../../../../components/Loading';
 
 const AttendanceList = () => {
     const [attendances, setAttendances] = useState([]);
     const [total, setTotal] = useState(0);
     const {userInfo} = useContext(AuthContext);
-    const [pagination, setPagination] = useState({page:1, pageSize:5})
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
     const {confirm} = Modal;
 
     const getParishAttendances  = async page => {
@@ -40,7 +41,6 @@ const AttendanceList = () => {
 
     
   const handlePageChange = page => {
-    console.log("PAGE NUMBER",page);
     getParishAttendances(page);
   };
 
@@ -64,8 +64,8 @@ const AttendanceList = () => {
    const columns = [
     {
       title: 'Date',
-      dataIndex: 'date',
-      key:'date',
+      dataIndex: 'createdAt',
+      key:'createdAt',
       render: date => (
         <>{moment(date).format(dateFormatList[0])}</>
       )
@@ -122,20 +122,20 @@ const AttendanceList = () => {
   },
   {
     title:'Actions',
-    render: row => (
+    render: (text, record) => (
       <Space size="middle">
-             <Link className="btn btn-info" to={`${row.id}/edit`}>Edit</Link>
-             <button className="btn btn-danger" onClick={() => showDeleteConfirm(row)}>Delete</button>
+             <Link className="btn btn-info" to={`${record._id}/edit`}>Edit</Link>
+             <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
      </Space>
     )
   } 
 ]
-console.log(attendances);
-if(!attendances.length) return <h1>No Data Yet..</h1>
-console.log(attendances.length, total);
+if(!attendances.length) return <Loading />
+
+
  const data = attendances.map(att => {
    return {
-    id:att.id, 
+    id:att._id, 
     men:att.men, 
     women:att.women, 
     marriages:att.marriages, 
@@ -145,14 +145,15 @@ console.log(attendances.length, total);
     newWorkers:att.newWorkers,
     deaths:att.deaths,
     birth:att.birth,
-    youths:att.children 
+    youths:att.children,
+    createdAt:att.createdAt 
   }
  })
     return (
         <section>            
             <div>
                 <R3Card>
-                  <Table rowKey={record => record._id} title={() => <h2 className="AttendanceList-title">Attendance Lists</h2>}  columns={columns} dataSource={data} pagination={{total, onChange:handlePageChange, ...pagination}} />
+                  <Table rowKey={record => record.id} title={() => <h2 className="AttendanceList-title">Attendance Lists</h2>}  columns={columns} dataSource={data} pagination={{total, onChange:handlePageChange, ...pagination}} />
                 </R3Card>
             </div>
         </section>

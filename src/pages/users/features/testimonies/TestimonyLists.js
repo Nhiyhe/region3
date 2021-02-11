@@ -1,46 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAlert } from 'react-alert';
 import R3Card from '../../../../components/Card';
 import requestAxios from '../../../../util/requestAxios';
-import axios from 'axios';
 import { Space, Table, Modal } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import Loading from '../../../../components/Loading';
 import moment from 'moment';
 import {dateFormatList} from '../../../../helpers/dateHelper';
-import DataTable from 'react-data-table-component';
+import { AuthContext } from '../../../../context/AuthContext';
+import Loading from '../../../../components/Loading';
 
 
 const TestimonyLists = () => {
+    const {userInfo} = useContext(AuthContext);
     const [testimonies, setTestimonies] = useState([]);
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
+    const [total, setTotal] = useState(0);
+
     const alert= useAlert();
     const { confirm } = Modal;
     const history = useHistory();
 
-    useEffect(() => {
-        const source = axios.CancelToken.source();
 
-        const getTestimonies = async () => {
-            try{
-                const {data} = await requestAxios.get(`/testimonies`, {cancelToken:source.token});
-                setTestimonies(data.body);
+    const getTestimonies = async page => {
+      try{
+          const {data} = await requestAxios.get(`/parishes/${userInfo.id}/testimonies?page=${page}&limit=${pagination.pageSize}`);
+          setTestimonies(data.body);
+          setTotal(data.total);
 
-            }catch(err){
-                if(err.response && err.response.data){
-                    alert.error(err.response.data.message);
-                  }else{
-                  alert.error("An unexpected error occured.");
-                  }
+      }catch(err){
+          if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
             }
-        }
+      }
+  }
 
-        getTestimonies();
-
-        return (() =>{
-            source.cancel();
-        })
+    useEffect(() => {
+        getTestimonies(1);       
     },[]);
+
+       
+  const handlePageChange = page => {
+    getTestimonies(page);
+  };
 
 
     function showDeleteConfirm(testimony) {
@@ -64,48 +68,48 @@ const TestimonyLists = () => {
    
     const columns = [
       {
-        name: 'Date',
-        selector: 'createdAt',
-        sortable: true,
-        maxWidth: '120px',
-        format: row => `${moment(row.createdAt).format(dateFormatList[0])}`,
+        title: 'Date',
+        dataIndex: 'createdAt',
+        key:'createdAt',
+        render: date => `${moment(date).format(dateFormatList[0])}`,
       },
       {
-        name: 'Title',
-        selector: 'title',
-        maxWidth: '300px',
-        format: row => `${row.title.toUpperCase()}`,
+        title: 'Title',
+        dataIndex: 'title',
+        key:'title',
+        // maxWidth: '300px',
+        format: title => `${title.toUpperCase()}`,
 
       },
       {
-        name: 'Testifier',
-        selector: 'testifier',
-        sortable:true,
+        title: 'Testifier',
+        dataIndex:'testifier',
+        key: 'testifier',
       },
       {
-        name: 'Testimony',
-        selector: 'body',
-        maxWidth: '400px',
-        format: row => `${row.body.slice(0, 90)}...`,
+        title: 'Testimony',
+        dataIndex: 'body',
+        key:'body',
+        render: body => `${body.slice(0, 60)}...`,
       },
       {
-        name:'Actions',
-        cell: row => (
+        title:'Actions',
+        render: (text, record) => (
           <Space size="middle">
-            <Link className="btn btn-success" to={`${row.id}/detail`}>Read</Link>
-            <Link className="btn btn-info" to={`${row.id}/edit`}>Edit</Link>
-            <button className="btn btn-danger" onClick={() => showDeleteConfirm(row)}>Delete</button>
+            <Link className="btn btn-success" to={`${record._id}/detail`}>Read</Link>
+            <Link className="btn btn-info" to={`${record._id}/edit`}>Edit</Link>
+            <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
           </Space>
         ),
       }
     ]
 
-    if(!testimonies.length) return <h1>No Data Yet..</h1>
+    if(!testimonies.length) return <Loading />
 
     return(
       <div>
             <R3Card>                
-                <DataTable title="Testimonies" columns={columns} data={testimonies}/>
+                <Table rowKey={record => record._id} title={() => <h2>Testimonies</h2>} columns={columns} dataSource={testimonies} pagination={{total, onChange:handlePageChange, ...pagination}} />
             </R3Card>
       </div>
     )

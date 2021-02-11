@@ -1,45 +1,42 @@
 import { Space, Table, Modal } from 'antd';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import requestAxios from '../../../../util/requestAxios';
 import { useAlert } from 'react-alert';
 import moment from 'moment';
 import {dateFormatList} from '../../../../helpers/dateHelper';
 import R3Card from '../../../../components/Card';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import DataTable from 'react-data-table-component';
+import { AuthContext } from '../../../../context/AuthContext';
+import Loading from '../../../../components/Loading';
 
 
 const OutreachList = () => {
     const [outreaches, setOutreaches] = useState([]);
+    const {userInfo} = useContext(AuthContext);
+    const [total, setTotal] = useState(0);
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
     const alert = useAlert();
     const { confirm } = Modal;
-    const history = useHistory();
+
+    const getOutreaches = async page => {
+      try{
+        const {data} = await requestAxios.get(`/parishes/${userInfo.id}/outreaches?page=${page}&limit=${pagination.pageSize}`);
+          setOutreaches(data.body);
+          setTotal(data.total);
+
+      }catch(err){
+          if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+      }
+  }
 
 
     useEffect(() => {
-        const source = axios.CancelToken.source();
-
-        const getOutreaches = async () => {
-            try{
-                const {data} = await requestAxios.get(`/outreaches`, {cancelToken:source.token});
-                setOutreaches(data.body);
-
-            }catch(err){
-                if(err.response && err.response.data){
-                    alert.error(err.response.data.message);
-                  }else{
-                  alert.error("An unexpected error occured.");
-                  }
-            }
-        }
-
-        getOutreaches();
-
-        return (() =>{
-            source.cancel();
-        })
+        getOutreaches(1);
     }, []);
 
     function showDeleteConfirm(outreach) {
@@ -51,7 +48,7 @@ const OutreachList = () => {
           okType: 'danger',
           cancelText: 'No',
           async onOk() {
-            await requestAxios.delete(`/outreaches/${outreach.id}`);
+            await requestAxios.delete(`/outreaches/${outreach._id}`);
             window.location = `/parish/outreaches/lists`;           
           },
           onCancel() {
@@ -59,80 +56,52 @@ const OutreachList = () => {
         });
       }
 
-    // const columns = [
-    //     {
-    //       title: 'Date',
-    //       dataIndex: 'date',
-    //       key: 'date',
-    //       render: date => (
-    //         <>{moment(date).format(dateFormatList[0])}</>
-    //       )
-    //     },
-    //     {
-    //         title: 'Church Dedication',
-    //         dataIndex: 'churchDedication',
-    //         key: 'churchDedication'
-    //       },
-    //       {
-    //         title: 'New Parish',
-    //         dataIndex: 'newParish',
-    //         key: 'newParish'
-    //       },
-    //       {
-    //         title: 'New Nation',
-    //         dataIndex: 'newNation',
-    //         key: 'newNation'
-    //       },
-    //       {
-    //         title: 'Actions',
-    //         key: 'action',
-    //         render: (text, record) => (
-    //           <Space size="middle">
-    //             <Link className="btn btn-info" to={`${record.id}/edit`}>Edit</Link>
-    //             <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
-    //           </Space>
-    //         ),
-    //       },
-    // ]
+      const handlePageChange = page => {
+        getOutreaches(page);
+      };
 
     const columns = [
-      {
-        name: 'Date',
-        selector: 'date',
-        sortable: true,
-        cell: row => `${moment(row.date).format(dateFormatList[0])}`,
-      },
-      {
-        name:'New Parish',
-        selector:'newParish'
-      },
-      {
-        name:'New Nation',
-        selector:'newNation'
-      },
-      {
-        name:'Church Dedication',
-        selector:'churchDedication'
-      },
-      {
-        name:'Actions',
-        cell: row => (
-          <Space size="middle">
-            <Link className="btn btn-info" to={`${row.id}/edit`}>Edit</Link>
-            <button className="btn btn-danger" onClick={() => showDeleteConfirm(row)}>Delete</button>
-          </Space>
-        ),
-      }
-    
+        {
+          title: 'Date',
+          dataIndex: 'date',
+          key: 'date',
+          render: date => (
+            <>{moment(date).format(dateFormatList[0])}</>
+          )
+        },
+        {
+            title: 'Church Dedication',
+            dataIndex: 'churchDedication',
+            key: 'churchDedication'
+          },
+          {
+            title: 'New Parish',
+            dataIndex: 'newParish',
+            key: 'newParish'
+          },
+          {
+            title: 'New Nation',
+            dataIndex: 'newNation',
+            key: 'newNation'
+          },
+          {
+            title: 'Actions',
+            key: 'action',
+            render: (text, record) => (
+              <Space size="middle">
+                <Link className="btn btn-info" to={`${record._id}/edit`}>Edit</Link>
+                <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
+              </Space>
+            ),
+          },
     ]
 
-    if(!outreaches.length) return <h1>No Data Yet..</h1>
+    if(!outreaches.length) return <Loading />
 
     return(
         <div>
                 <R3Card>
-                    {/* <Table rowKey={record => record.id}  dataSource={outreaches} columns={columns} /> */}
-                    <DataTable title="Outreaches" columns={columns} data={outreaches} pagination />
+                    <Table rowKey={record => record._id}  dataSource={outreaches} columns={columns} pagination={{total, onChange:handlePageChange, ...pagination}} />
                 </R3Card>
         </div>
     )
