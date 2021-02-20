@@ -135,7 +135,7 @@ const  NFPzaAllocation = () => {
        >
            {() => (
                 <div className="NFPzaAllocation">
-                  <h1 className="NFPzaAllocation-heading">Attendance by Country</h1>
+                  <h1 className="NFPzaAllocation-heading">Data Records by Country</h1>
                   <R3Card>
                     <Form>
                     <div className="form-row">
@@ -167,7 +167,7 @@ const  NFPzaAllocation = () => {
                     </div>
                     </Form>
                   </R3Card>
-                    {attendance.length ? <R3Card>  <Table rowKey={record => record.provinceName} title= {() => <h2>Attendance Statistics by Country</h2>} 
+                    {attendance.length ? <R3Card>  <Table rowKey={record => record.provinceName} title= {() => <h2>Data Records by Country</h2>} 
                     pagination={false}
                     columns={columns} 
                     dataSource={attendance}

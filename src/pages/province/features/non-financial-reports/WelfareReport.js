@@ -205,7 +205,7 @@ const WelfareReport = () => {
       ]
 
       if(!provinces.length) return <Loading />
-
+ console.log(welfares);
     return (
         <Formik
         initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
@@ -271,7 +271,7 @@ const WelfareReport = () => {
                          }} disabled = {disableCountryDropdownList}>
                            <option value="">Select Country</option>
                            {countries.map((country) => {
-                               return <option key={country.id} value={country.id}>{country.countryName}</option>
+                               return <option key={country._id} value={country._id}>{country.countryName}</option>
                            })}
                          </Field>
                        </div> 
@@ -285,7 +285,7 @@ const WelfareReport = () => {
                          }} disabled = {disableCountryDropdownList}>
                            <option value="">Select Parish</option>
                            {parishes.map((parish) => {
-                               return <option key={parish.id} value={parish.id}>{parish.name}</option>
+                               return <option key={parish._id} value={parish._id}>{parish.name}</option>
                            })}
                          </Field>
                        </div>
@@ -296,7 +296,7 @@ const WelfareReport = () => {
                  </R3Card>
                </div>
                 
-                { welfares.length ?  <Table title={() => <h2>Welfare Check Messages</h2>} rowKey ={record => record.id} columns={columns} dataSource={welfares} /> : null}
+                { welfares.length ?  <Table title={() => <h2>Welfare Check Messages</h2>} rowKey ={record => record._id} columns={columns} dataSource={welfares} /> : null}
                 </div>
             )}
         </Formik>
