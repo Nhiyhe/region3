@@ -17,9 +17,9 @@ import { Link } from 'react-router-dom';
 const AdminDashboard = () => {
     const {userInfo} = useContext(AuthContext);
     const [provinces, setProvinces] = useState([]);
-    const [zones, setZones] = useState([]);
+    const [zones, setZones] = useState(0);
     const [countries, setCountries] = useState([]);
-    const [parishes, setParishes] = useState([]);
+    const [parishes, setParishes] = useState(0);
     const [pastor, setPastor] = useState({});
     const [welfares, setWelfares] = useState([]);
     const [testimonies, setTestimonies] = useState([]);
@@ -46,9 +46,9 @@ const AdminDashboard = () => {
     const getZones = async () => {
         try{
             const {data} = await requestAxios.get('/zones');
-            setZones(data.body);
+            setZones(data.total);
         }catch(err){
-            console.error(err.message);
+            console.error(err);
         }
     }
 
@@ -64,7 +64,6 @@ const AdminDashboard = () => {
     const getTop10SoulsWinner = async () => {
         try{
             const {data} = await requestAxios.get('/attendances/top10SoulsWinner');
-            console.log("DATA",data);
             setTop10SoulsWinner(data.body);
         }catch(err){
             console.error(err.message);
@@ -74,9 +73,9 @@ const AdminDashboard = () => {
     const getParishes = async () => {
         try{
             const {data} = await requestAxios.get('/parishes');
-            setParishes(data.body);
+            setParishes(data.total);
         }catch(err){
-            console.error(err.message);
+            console.error(err);
         }
     }
 
@@ -199,7 +198,7 @@ const AdminDashboard = () => {
 
 
     if(!provinces.length) return <Loading />
-    console.log(welfares);
+
     return(
         <div className="AdminDashboard">
             <div className="container">
@@ -207,9 +206,9 @@ const AdminDashboard = () => {
                      <R3Card>
                             <div className="row AdminDashboard-container">
                                 <Tile name="Provinces" count={ userInfo.isAdmin ? provinces.length : (provinces.filter(prov => prov.pastor?.id === userInfo.id)).length} color="orange"> <BiWorld /> </Tile>
-                                <Tile name="Zones" count={ userInfo.isAdmin ? zones.length : (zones.filter(zone => zone.pastor?.id === userInfo.id)).length} color="#1BC5BD"><AiFillAppstore /> </Tile>
+                                <Tile name="Zones" count={ zones} color="#1BC5BD"><AiFillAppstore /> </Tile>
                                 <Tile name="Countries" count={ userInfo.isAdmin ? countries?.length : (countries.filter(country => country.pastor?.id === userInfo.id)).length} color="#8950FC"><AiFillAppstore /> </Tile>
-                                <Tile name="Parishes" count={ userInfo.isAdmin ? parishes?.length : (parishes.filter(parish => parish.pastor?.id === userInfo.id)).length} color="#17a2b8"><FaChurch/> </Tile>
+                                <Tile name="Parishes" count={ parishes} color="#17a2b8"><FaChurch/> </Tile>
                                 <Tile name="Unread Messages" count={(welfares.filter(wel => !wel.read)).length} color="red"> <AiOutlineMail /> </Tile>
 
                             </div>
@@ -269,38 +268,6 @@ const AdminDashboard = () => {
 
                             </div>
                         </div>
-{/* 
-                         <div className="row">
-                            <div className="col-6">
-                                <R3Card>
-                                    <R3List title="Provinces" data={provinces} size="small" renderItem={
-                                        province => (                                                
-                                                    <List.Item>
-                                                        <List.Item.Meta title={province?.name} />
-
-                                                        <div><Tag color="processing">{province?.zones?.length} zones</Tag></div>
-                                                    </List.Item>
-                                          )
-                                    } />
-                                    </R3Card>
-                            </div>
-
-                            <div className="col-6">
-                                <R3Card>
-                                <R3List title="Zones" data={zones} size="small" renderItem={
-                                        zone => (                                                
-                                                    <List.Item>
-                                                        <List.Item.Meta 
-                                                        title={zone.province?.name} 
-                                                        description={`${zone.name}, ${zone.locationAddress}`} />
-
-                                                        <div><Tag color="processing">{zone.countries?.length} countries</Tag></div>
-                                                    </List.Item>
-                                          )
-                                    } />
-                                </R3Card>
-                            </div>
-                         </div> */}
             </div>
         </div>    
     )

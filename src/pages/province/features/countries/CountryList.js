@@ -9,15 +9,21 @@ import {AuthContext} from '../../../../context/AuthContext';
 import {Field, Form, Formik} from 'formik';
 import R3Card from '../../../../components/Card';
 import {useAlert} from 'react-alert';
+import './CountryList.css';
 
 const CountryList = () => {
     const [countries, setCountries] = useState([]);
     const [provinces, setProvinces] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [zones, setZones] = useState([]);
     const {isAdmin, userInfo} = useContext(AuthContext);
 
     const [provinceId, setProvinceId] = useState("5fc5d6236c07300004aea00c");
-    const [zoneId, setZoneId] = useState("5fc5d6236c07300004aea00c");
+    const [zoneId, setZoneId] = useState("5ff06695ba40b74a90f32105");
+    const [getAllCountries, setGetAllCountries] = useState(false);
+    const [getAllCountriesByProvinceId, setGetAllCountriesByProvinceId] = useState(false);
+    const [disableZoneDropdownList, setDisableZoneDropDownList] = useState(true);
+
     const { confirm } = Modal;
     const alert = useAlert();
     const history = useHistory();
@@ -28,6 +34,8 @@ const CountryList = () => {
         try{
           const { data } = await requestAxios.get("/provinces",{cancelToken:source.token});
           setProvinces(data.body);
+          setIsLoading(false);                                                               
+
         }catch(err){
           console.error(err.message)
         }
@@ -48,6 +56,8 @@ const CountryList = () => {
         try{
           const { data } = await requestAxios.get(`/provinces/${provinceId}/zones`, {cancelToken:source.token});
           setZones(data.body);
+          setIsLoading(false);                                                                
+
         }catch(err){
           console.error(err.message)
         }
@@ -59,6 +69,71 @@ const CountryList = () => {
       })
     },[provinceId]);
 
+    
+    useEffect(() => {
+
+      const source = axios.CancelToken.source();
+
+      const getCountriesByProvinceId= async (provinceId) => {
+        try{
+          const { data } = await requestAxios.get(`/provinces/${provinceId}/countries`, {cancelToken:source.token});
+          setCountries(data.body);
+          setIsLoading(false);                                                                
+
+        }catch(err){
+          console.error(err.message)
+        }
+      };
+      getCountriesByProvinceId(provinceId);
+
+      return (() => {
+        source.cancel();
+      })
+    },[provinceId]);
+
+
+    useEffect(() => {
+
+      const source = axios.CancelToken.source();
+
+      const getCountriesByProvinceId= async (provinceId) => {
+        try{
+          const { data } = await requestAxios.get(`/provinces/${provinceId}/countries`, {cancelToken:source.token});
+          setCountries(data.body);
+          setIsLoading(false);                                                                
+
+        }catch(err){
+          console.error(err.message)
+        }
+      };
+      getCountriesByProvinceId(provinceId);
+
+      return (() => {
+        source.cancel();
+      })
+    },[getAllCountriesByProvinceId ]);
+
+    
+    useEffect( ()=> {
+      const source = axios.CancelToken.source();
+
+      const getCountries = async() => {
+          try{
+              const {data} = await requestAxios.get(`/countries`, {cancelToken:source.token});
+               setCountries(data.body);
+               setIsLoading(false);                                                               
+
+          }catch(err){
+              console.error(err);
+          }
+      }
+      getCountries();
+
+      return (() =>{
+          source.cancel();
+      })
+  },[getAllCountries])
+
 
     useEffect( ()=> {
         const source = axios.CancelToken.source();
@@ -67,6 +142,8 @@ const CountryList = () => {
             try{
                 const {data} = await requestAxios.get(`/zones/${zoneId}/countries`, {cancelToken:source.token});
                  setCountries(data.body);
+                 setIsLoading(false);                                                                
+
             }catch(err){
                 console.error(err);
             }
@@ -106,19 +183,19 @@ const CountryList = () => {
 
     const columns = [
       {
+        title: 'Province',
+        dataIndex: 'province',
+        key: 'province'
+      },
+      {
         title: 'Zone',
         dataIndex: 'zone',
-        key: 'zone',
-        render: c => (
-          <>
-            {c.name}
-          </>
-      )
+        key: 'zone'
       },
         {
           title: 'Country Name',
-          dataIndex: 'countryName',
-          key: 'countryName',
+          dataIndex: 'country',
+          key: 'country',
         },
         {
           title: 'Country Capital',
@@ -152,14 +229,27 @@ const CountryList = () => {
                      <div className="form-group">
                     <label htmlFor="province" className="form-label">Province</label>
                     <Field as="select" name="province" className="form-control form-control-lg" id="province" onChange={(e) => {
-                      if(e.target.value)
-                        setProvinceId(e.target.value);
+                      const value = e.target.value;
+                      if(value && value == 'all'){
+                        setGetAllCountries(!getAllCountries);
+                        setDisableZoneDropDownList(true);
+                        setIsLoading(true);                                                               
+
+                      }else{
+                        setDisableZoneDropDownList(false)
+                        setProvinceId(value);
                         setZones([]);
-                        // setDisableZoneDropdownList(false);
+                        setIsLoading(true);                                                                
+
+                      }
+                         // setDisableZoneDropdownList(false);
                         // setCountries([]);
                         // setDisableCountryDropdownList(true);
+                        
                     }}>
                       <option value="">Select Province</option>
+                      <option value="all">Show All Provinces</option>
+                      
                       {isAdmin() && provinces.map((province) => {
                       return <option key={province.id} value={province.id}>{province.name}</option>;
                       })}
@@ -172,12 +262,20 @@ const CountryList = () => {
                 <div className="form-group">
                   <label>Zone</label>
                   <Field as="select" name="zone" className="form-control form-control-lg" onChange={(e) => {
-                    if (e.target.value)
-                      setZoneId(e.target.value);
+                    const value = e.target.value;
+                    if (value && value === 'all'){
+                      setGetAllCountriesByProvinceId(!getAllCountriesByProvinceId);
+                      setIsLoading(true); 
+                    }
+                    else{
+                      setZoneId(value);
+                      setIsLoading(true);
+                    }
                       // setDisableCountryDropdownList(false);
                       //disableZoneDropdownList
-                  }} disabled={false}>
+                  }} disabled={disableZoneDropdownList}>
                     <option value="">Select Zone</option>
+                    <option value="all">Show All Zones</option>
                     {zones.map((zone) => {
                         return <option key={zone.id} value={zone.id}>{zone.name}</option>
                     })}
@@ -190,9 +288,7 @@ const CountryList = () => {
       </div>
       </div>
 
-      <hr/>
-
-        {countries && <Table rowKey={record => record.id} dataSource={countries} columns={columns} />}
+        {countries && <Table title={() => <h1 className="CountryList-heading">Countries</h1>} loading={isLoading} rowKey={record => record.id} dataSource={countries.map(c => ({id:c.id, province:c.province?.name, zone:c?.zone.name, country:c.countryName, countryCapital:c.countryCapital}))} columns={columns} pagination={false} />}
      </>
     )
 }

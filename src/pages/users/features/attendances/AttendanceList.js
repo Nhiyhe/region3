@@ -124,7 +124,7 @@ const AttendanceList = () => {
     title:'Actions',
     render: (text, record) => (
       <Space size="middle">
-             <Link className="btn btn-info" to={`${record._id}/edit`}>Edit</Link>
+             <Link className="btn btn-info" to={`${record.id}/edit`}>Edit</Link>
              <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
      </Space>
     )
@@ -153,7 +153,7 @@ if(!attendances.length) return <Loading />
         <section>            
             <div>
                 <R3Card>
-                  <Table rowKey={record => record.id} title={() => <h2 className="AttendanceList-title">Attendance Lists</h2>}  columns={columns} dataSource={data} pagination={{total, onChange:handlePageChange, ...pagination}} />
+                  <Table rowKey={record => record.id} title={() => <h2 className="AttendanceList-title">Data Records</h2>}  columns={columns} dataSource={data} pagination={{total, onChange:handlePageChange, ...pagination}} />
                 </R3Card>
             </div>
         </section>

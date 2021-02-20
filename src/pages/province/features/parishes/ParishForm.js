@@ -150,6 +150,8 @@ const ParishForm = () => {
     validationSchema={validationSchema}
     onSubmit={async (values, actions) => {
       values.provincePastor = province.pastor.id;
+      values.province = provinceId;
+      values.zone = zoneId;
       try{
         const {data} = await requestAxios.post( "/parishes/signup", values);
         actions.setSubmitting(false);

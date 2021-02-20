@@ -9,8 +9,8 @@ const NonFinancialReportIndex = () => {
     return(
         <div>
             <SubNavBar>
-                <li><NavLink exact activeClassName="active-link" to={`${url}/pza-allocation`}><h4>Attendance by Country</h4></NavLink></li>
-                <li><NavLink exact activeClassName="active-link" to={`${url}/monthly-report`}><h4>Attendance by Parish</h4></NavLink></li>
+                <li><NavLink exact activeClassName="active-link" to={`${url}/pza-allocation`}><h4>Data Records by Country</h4></NavLink></li>
+                <li><NavLink exact activeClassName="active-link" to={`${url}/monthly-report`}><h4>Data Record by Parish</h4></NavLink></li>
                 <li><NavLink exact activeClassName="active-link" to={`${url}/welfare`}><h4>Welfare</h4></NavLink></li>
                 <li><NavLink exact activeClassName="active-link" to={`${url}/outreach`}><h4>Outreach</h4></NavLink></li>
                 <li><NavLink exact activeClassName="active-link" to={`${url}/testimony`}><h4>Testimony</h4></NavLink></li>

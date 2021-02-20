@@ -12,7 +12,7 @@ const NewAttendanceForm = ({editing}) => {
         <div className="NewAttendanceForm">
             <div className="col-8 offset-2">
             <Card>    
-                <h2 className="NewAttendanceForm-title">{ editing ? 'Editing Attendance' : 'New Attendance'}</h2>
+                <h2 className="NewAttendanceForm-title">{ editing ? 'Editing Data Record' : 'New Data Record'}</h2>
                 <Form>
                 <div className="form-group">
                     <label htmlFor="men">Men</label>

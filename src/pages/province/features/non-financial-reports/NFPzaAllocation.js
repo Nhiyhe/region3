@@ -117,9 +117,9 @@ const  NFPzaAllocation = () => {
           })
      
       }, [])
-      console.log(attendance);      
 
-      if(!provinces.length) return <Loading />
+    if(!provinces.length) return <Loading />
+    
     return(
        <Formik
        initialValues={{province:'', startDate: new Date().toISOString(),endDate: new Date().toISOString() }}

@@ -10,13 +10,17 @@ import {Link} from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Loading from '../../../../components/Loading';
 import {useAlert} from 'react-alert';
+import './ZoneList.css';
 
 
 const ZoneList  = () => {
   const {userInfo, isAdmin} = useContext(AuthContext);
   const [provinces, setProvinces] = useState([]);
   const [zones, setZones] = useState([]);
+  const [isLoading, setIsLoading]= useState(true);
   const [provinceId, setProvinceId] = useState('5fc38e7d4dc52100044c578e');
+  const [getAllZones, setGetAllZones] = useState(false);
+  const [getAllZonesOnInitialLoad, setGetAllZonesOnInitialLoad] = useState(false);
   const alert = useAlert();
 
   const { confirm } = Modal;
@@ -27,6 +31,7 @@ const ZoneList  = () => {
       try{
         const { data } = await requestAxios.get('/provinces',{cancelToken:source.token});
         setProvinces(data.body);
+        setIsLoading(false);
       }catch(err){
         console.error(err.message)
       }
@@ -72,6 +77,8 @@ const ZoneList  = () => {
     try{
         const {data} = await requestAxios.get(`/provinces/${provinceId}/zones`,{cancelToken:source.token});
         setZones(data.body);
+        setIsLoading(false);                                                               
+
     }catch(err){
         console.error(err);
     }    
@@ -84,11 +91,36 @@ const ZoneList  = () => {
   })
   },[provinceId]);
 
+  useEffect(() => {
+    const source = axios.CancelToken.source();
+   const getAllZones = async() => {
+    try{
+        const {data} = await requestAxios.get(`/zones`,{cancelToken:source.token});
+        setZones(data.body);
+        setIsLoading(false);                                                                
+
+    }catch(err){
+        console.error(err);
+    }    
+   }
+
+   getAllZones();
+
+   return (() => {
+    source.cancel()
+  })
+  },[ getAllZones ]);
+
   const columns = [
     {
+      title: 'Province',
+      dataIndex: 'province',
+      key: 'province'
+    },
+    {
       title: 'Zone',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'zone',
+      key: 'zone',
     },
     {
       title: 'Location',
@@ -109,7 +141,7 @@ const ZoneList  = () => {
   ];
 
   if(!provinces.length) return <Loading />;
-  
+
     return(
         <div>
             <div className="col-6 offset-3">
@@ -122,13 +154,22 @@ const ZoneList  = () => {
                       <div className="form-group">
                           <label className="form-label">Provinces</label>
                           <Field as="select" name="province" className="form-control form-control-lg" onChange={(e)=>{
-                              if(e.target.value){
-                                  setProvinceId(e.target.value);
-                              }else{
+                              const value = e.target.value;
+                                if(value && value === 'all'){
+                                  setGetAllZones(!getAllZones);  
+                                  setIsLoading(true);                                                                
+                              }else if(value){
+                                setProvinceId(value);
+                                setIsLoading(true); 
+                              }
+                              else{
                                   setZones([]);
+                                  setIsLoading(true);                                                              
+
                               }
                           }}>
                               <option value="">Select Province</option>
+                              <option value="all">Show All Provinces</option>
                               {isAdmin() && provinces.map((province) => {
                               return <option key={province.id} value={province.id}>{province.name}</option>;
                               })}
@@ -142,11 +183,8 @@ const ZoneList  = () => {
               </Formik>
             </R3Card>
             </div>
-
-            <hr/>
-
             <R3Card>
-                <Table rowKey={data => data.id} columns={columns} dataSource={zones } />
+                <Table title={() => <h1 className="ZoneList-heading">Zones</h1>} loading={isLoading} rowKey={data => data._id} columns={columns} dataSource={zones.map(z => ({id:z.id || z._id, province:z.province?.name, zone:z.name, locationAddress:z.locationAddress})) } pagination={false} />
             </R3Card>
         </div>
     )

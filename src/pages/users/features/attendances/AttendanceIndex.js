@@ -9,8 +9,8 @@ const AttendanceIndex = () => {
     return(
         <div>
             <SubNavBar>
-                <li><NavLink exact activeClassName="active-link" to={`${url}/lists`}><h4>Show Attendances</h4></NavLink></li>
-                <li><NavLink exact activeClassName="active-link" to={`${url}/new`}><h4>New Attendance Record</h4></NavLink></li>
+                <li><NavLink exact activeClassName="active-link" to={`${url}/lists`}><h4>Show Data Records</h4></NavLink></li>
+                <li><NavLink exact activeClassName="active-link" to={`${url}/new`}><h4>New Data Record</h4></NavLink></li>
             </SubNavBar>
             <PageContent>
                 <AttendanceRoutes />

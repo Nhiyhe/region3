@@ -92,7 +92,7 @@ const PastorForm = () => {
                 </div>
 
                 <div className="form-group col-4">
-                    <label>MiddleName</label>
+                    <label>LastName</label>
                     <Field name="spouseLastName" placeholder="LastName" className="form-control form-control-lg" />
                 </div>
             </div>

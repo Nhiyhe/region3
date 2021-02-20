@@ -102,8 +102,8 @@ const ProvinceList = () => {
     return (
        <div className="ProvinceList">
           <PageContent>
-            <h1 className="ProvinceList-heading">Provinces</h1>
-            <Table rowKey={data =>data.id}  dataSource={provinces} columns={columns} />
+            {/* <h1 className="ProvinceList-heading">Provinces</h1> */}
+            <Table title={() => <h1 className="ProvinceList-heading">Provinces</h1>} rowKey={data =>data.id}  dataSource={provinces} columns={columns} pagination={false} />
         </PageContent>
        </div>
     )

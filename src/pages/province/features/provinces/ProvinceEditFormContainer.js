@@ -7,6 +7,7 @@ import { Form } from "formik";
 import { Field, ResetButton, SubmitButton } from "formik-antd";
 import axios from 'axios';
 import R3Card from '../../../../components/Card';
+import Loading from '../../../../components/Loading';
 
 const ProvinceEditFormContainer = ()  => {
     let alert = useAlert();
@@ -51,6 +52,8 @@ const ProvinceEditFormContainer = ()  => {
         }
         getProvinces();
     }, []);
+
+    if(!province.name) return <Loading />
     
     return (
         <Formik

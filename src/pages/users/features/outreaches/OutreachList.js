@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { AuthContext } from '../../../../context/AuthContext';
 import Loading from '../../../../components/Loading';
+import axios from 'axios';
 
 
 const OutreachList = () => {
@@ -19,7 +20,9 @@ const OutreachList = () => {
     const alert = useAlert();
     const { confirm } = Modal;
 
+
     const getOutreaches = async page => {
+      
       try{
         const {data} = await requestAxios.get(`/parishes/${userInfo.id}/outreaches?page=${page}&limit=${pagination.pageSize}`);
           setOutreaches(data.body);

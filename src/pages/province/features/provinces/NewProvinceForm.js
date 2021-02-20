@@ -47,6 +47,9 @@ const NewProvinceForm = ({province, mode}) => {
   if(!province.name && mode === 'editing'){
     return <Loading />
   }
+
+  if(mode !== 'editing' && !pastors.length) return <Loading />
+  
   return (
      <div className="NewProvinceForm">
           <h2 className="ProvinceForm-heading">{province.name ? `Editing ${province.name}` : 'Create New Province'}</h2>

@@ -7,8 +7,10 @@ import R3Card from '../../../../components/Card';
 import { useAlert } from 'react-alert';
 import { AuthContext } from '../../../../context/AuthContext';
 import * as yup from 'yup';
+import './PayMent.css';
 
-const validationSchema = yup.object().shape({amountRemitted:yup.number().required().positive("Please provide a positive number")});
+const validationSchema = yup.object()
+.shape({amountRemitted:yup.number().required().positive("Please provide a positive number"),proof:yup.mixed().required('Please provide evidence of payment')});
 
 const PayMent = () => {
     const {id} = useParams();
@@ -65,15 +67,28 @@ const PayMent = () => {
             offering: remmittance.offering || 0, 
             tithe: remmittance.tithe || 0, 
             // expectedRemittance: ((remmittance.expectedRemittance || 0) - (currentBal.currentClosingBalance ? currentBal.currentClosingBalance : 0))
-            expectedRemittance:remmittance.expectedRemittance || 0
+            expectedRemittance:remmittance.expectedRemittance || 0,
+            proof:null
         }}
         onSubmit = {async(values) => {
             try{   
+                
                 let calculatedClosingBal = values.amountRemitted - totalExpectedRemittance;
                 values.closingBalance =  calculatedClosingBal;
-                values.paymentMade = true;           
-                const {data} = await requestAxios.put(`/monetaries/${id}`, values);  
-                const {openingBalance, closingBalance} = data.body;
+                values.paymentMade = true; 
+                
+                const formData = new FormData();
+                formData.append('closingBalance', values.closingBalance);
+                formData.append('paymentMade', values.paymentMade);
+                formData.append('amountRemitted', values.amountRemitted);
+
+                for(var x = 0; x < values.proof.length; x++) {
+                    formData.append('proof', values.proof[x])
+                }
+
+
+                const {data} = await requestAxios.put(`/monetaries/${id}`, formData);  
+                const {openingBalance} = data.body;
                 await requestAxios.put(`/remittances/parish/${userInfo.id}`, {currentOpeningBalance:openingBalance, currentClosingBalance:calculatedClosingBal});  
                 alert.success(data.message);
                 history.push(`/parish/monetaries/lists`)
@@ -86,7 +101,7 @@ const PayMent = () => {
             }
         }}
        >
-            {() => (
+            {(props) => (
             <div className="row">
                 <div className="col-md-8 offset-2"> 
                 <R3Card>
@@ -102,22 +117,34 @@ const PayMent = () => {
                             <Field type="number" name="tithe" disabled={true} placeholder="Tithe" id="tithe" className="form-control form-control-lg"/>
                         </div>
     
-                        <div className="form-group" htmlFor="amountExpected">
+                        <div className="form-group">
                             <label htmlFor="expectedRemittance">Amount Expected</label>
                             {/* <Field type="number" name="expectedRemittance" disabled={true} placeholder="Amount Expected" id="expectedRemittance" className="form-control form-control-lg"/> */}
-                            <p>{totalExpectedRemittance}</p>
+                            <p>{totalExpectedRemittance.toFixed(2)}</p>
                         </div>
                            
-                        <div className="form-group" htmlFor="amountExpected">
-                            <label htmlFor="amountRemitted">Pay</label>
+                        <div className="form-group">
+                            <label htmlFor="amountRemitted">How much did you pay into the account?</label>
                             <Field type="number" name="amountRemitted" placeholder="Amount Remmitted" id="amountRemitted" className="form-control form-control-lg"/>
                             <ErrorMessage name="amountRemitted">
                                  {(msg) => <div className="text-danger">{msg}</div>}
                             </ErrorMessage>
                         </div>
+
+                        <div className="form-group mt-5">
+                        <label htmlFor="customFile">Choose Proof of Payment</label>
+                            <input id="customfile" type="file" name="proof" className="form-control-file" multiple onChange={(event) => {
+                                props.setFieldValue("proof", event.currentTarget.files)
+                             }} />
+                             <ErrorMessage name="proof">
+                                 {(msg) => <div className="text-danger">{msg}</div>}
+                            </ErrorMessage>
+                        </div>
     
-                        <input type="submit" value="Make Payment" className="btn btn-primary btn-lg" />
-                        <button type="button" className="btn btn-default btn-lg" onClick={() => history.goBack()}>Go Back</button>
+                        <div className="mt-5">
+                            <input type="submit" value="Make Payment" className="btn btn-primary btn-lg" />
+                            <button type="button" className="btn btn-default btn-lg" onClick={() => history.goBack()}>Go Back</button>
+                        </div>
                     </Form>
                 </R3Card>
             </div>
