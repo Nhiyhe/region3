@@ -1,20 +1,48 @@
 import { Formik, Form, Field } from 'formik';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAlert } from 'react-alert';
 import { useHistory } from 'react-router-dom';
 import R3Card from '../../../../components/Card';
 import { AuthContext } from '../../../../context/AuthContext';
 import requestAxios from '../../../../util/requestAxios';
+import axios from 'axios';
 
 const NewOutreachForm = () => {
     const history = useHistory();
     const {userInfo} = useContext(AuthContext);
     const alert = useAlert();
+    const [parish, setParish] = useState({});
+
+    
+    useEffect(() => {
+        const source = axios.CancelToken.source();
+       
+        const getParishDetail = async() => {
+            try{
+                const {data} = await requestAxios.get(`/parishes/${userInfo.id}`, {cancelToken:source.cancel()});
+                setParish(data.body);
+            }catch(err){               
+                return;
+            }
+        }
+
+        getParishDetail();
+        return () => {
+            source.cancel();
+        }
+    },[])
+
+    console.log(parish);
+
     return(
         <Formik
         initialValues={{newParish:0, newNation:0, churchDedication:0, notes:''}}
         onSubmit={async(values, actions) =>{
             values.parish = userInfo.id;
+            values.province = parish.country?.zone?.province?._id;
+            values.zone = parish.country?.zone?._id;
+            values.country = parish.country?._id;
+
             try{
                 const {data} = await requestAxios.post(`/outreaches`, values);
                 alert.success(data.message);

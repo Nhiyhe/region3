@@ -202,7 +202,7 @@ const TestimonyReport = () => {
         key: 'action',
         render: (text, record) => (
           <Space size="middle">
-            <Link className="btn btn-info" to={`${record.id}/testimony/read`}>Read</Link>
+            <Link className="btn btn-info" to={`${record._id}/testimony/read`}>Read</Link>
             <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
             { !record.read && <Tag color="magenta">UNREAD TESTIMONY</Tag>}
           </Space>
@@ -216,16 +216,15 @@ const TestimonyReport = () => {
 
     return (
         <Formik
-        initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
-        onSubmit={ async (values) => {
-          try{
-            const {data} = await requestAxios.get(`/parishes/${parishId}/testimonies`);
-            setTestimonies(data.body);
-        }catch(err){
-        }
-        }}
-        
-        >
+            initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
+            onSubmit={ async (values) => {
+              try{
+                const {data} = await requestAxios.get(`/parishes/${parishId}/testimonies`);
+                setTestimonies(data.body);
+            }catch(err){
+            }
+            }}        
+            >
             {() => (
                 <div className="TestimonyReport">
                   <h1 className="TestimonyReport-heading">Testimony Report by Parish</h1>
@@ -233,78 +232,76 @@ const TestimonyReport = () => {
                  <R3Card>                
                     <Form>
                    <div className="container">
-                         <div className="">
-                         <div className="form-group">
-                             <label className="form-label" htmlFor="province">Province</label>
-                             <Field as="select" name="province" className="form-control form-control-lg" id="province" onChange={(e) => {
-                               if(e.target.value)
-                                 setProvinceId(e.target.value);
-                                 // getProvincePastor(e.target.value);
-                                 setZones([]);
-                                 setDisableZoneDropdownList(false);
-                                 setCountries([]);
-                                 setDisableCountryDropdownList(true);
-                             }}>
-                               <option value="">Select Province</option>
-                               {isAdmin() && provinces.map((province) => {
-                               return <option key={province.id} value={province.id}>{province.name}</option>;
-                               })}
-                               { !isAdmin() && provinces.filter((prov => prov.pastor.id === userInfo.id)).map((province) => {
-                               return <option key={province.id} value={province.id}>{province.name}</option>;
-                               })}
-                             </Field>
-                         </div>
-         
-                         <div className="form-group">
-                           <label>Zone</label>
-                           <Field as="select" name="zone" className="form-control form-control-lg" onChange={(e) => {
-                             if (e.target.value)
-                               setZoneId(e.target.value);
-                               setDisableCountryDropdownList(false);
-                           }} disabled={disableZoneDropdownList}>
-                             <option value="">Select Zone</option>
-                             {zones.map((zone) => {
-                                 return <option key={zone.id} value={zone.id}>{zone.name}</option>
-                             })}
-                           </Field>
-                         </div>
-         
-                       <div className="form-group">
-                         <label>Country</label>
-                         <Field as="select" name="country" className="form-control form-control-lg" onChange={(e) => {
-                             if(e.target.value){
-                                 setCountryId(e.target.value);
-                             }
-                         }} disabled = {disableCountryDropdownList}>
-                           <option value="">Select Country</option>
-                           {countries.map((country) => {
-                               return <option key={country._id} value={country._id}>{country.countryName}</option>
-                           })}
-                         </Field>
-                       </div> 
- 
-                       <div className="form-group mb-5">
-                         <label>Parish</label>
-                         <Field as="select" name="parishes" className="form-control form-control-lg" onChange={(e) => {
-                             if(e.target.value){
-                                 setParishId(e.target.value);
-                             }
-                         }} disabled = {disableCountryDropdownList}>
-                           <option value="">Select Parish</option>
-                           {parishes.map((parish) => {
-                               return <option key={parish._id} value={parish._id}>{parish.name}</option>
-                           })}
-                         </Field>
-                       </div>
- 
-                         <input type="submit" value="Search" className="btn btn-primary btn-block btn-lg mt-5" />
-                     </div>
+                            <div className="form-group">
+                                <label className="form-label" htmlFor="province">Province</label>
+                                <Field as="select" name="province" className="form-control form-control-lg" id="province" onChange={(e) => {
+                                  if(e.target.value)
+                                    setProvinceId(e.target.value);
+                                    // getProvincePastor(e.target.value);
+                                    setZones([]);
+                                    setDisableZoneDropdownList(false);
+                                    setCountries([]);
+                                    setDisableCountryDropdownList(true);
+                                }}>
+                                  <option value="">Select Province</option>
+                                  {isAdmin() && provinces.map((province) => {
+                                  return <option key={province.id} value={province.id}>{province.name}</option>;
+                                  })}
+                                  { !isAdmin() && provinces.filter((prov => prov.pastor.id === userInfo.id)).map((province) => {
+                                  return <option key={province.id} value={province.id}>{province.name}</option>;
+                                  })}
+                                </Field>
+                            </div>
+            
+                            <div className="form-group">
+                              <label>Zone</label>
+                              <Field as="select" name="zone" className="form-control form-control-lg" onChange={(e) => {
+                                if (e.target.value)
+                                  setZoneId(e.target.value);
+                                  setDisableCountryDropdownList(false);
+                              }} disabled={disableZoneDropdownList}>
+                                <option value="">Select Zone</option>
+                                {zones.map((zone) => {
+                                    return <option key={zone.id} value={zone.id}>{zone.name}</option>
+                                })}
+                              </Field>
+                            </div>
+            
+                            <div className="form-group">
+                            <label>Country</label>
+                            <Field as="select" name="country" className="form-control form-control-lg" onChange={(e) => {
+                                if(e.target.value){
+                                    setCountryId(e.target.value);
+                                }
+                            }} disabled = {disableCountryDropdownList}>
+                              <option value="">Select Country</option>
+                              {countries.map((country) => {
+                                  return <option key={country._id} value={country._id}>{country.countryName}</option>
+                              })}
+                            </Field>
+                          </div> 
+    
+                          <div className="form-group mb-5">
+                            <label>Parish</label>
+                            <Field as="select" name="parishes" className="form-control form-control-lg" onChange={(e) => {
+                                if(e.target.value){
+                                    setParishId(e.target.value);
+                                }
+                            }} disabled = {disableCountryDropdownList}>
+                              <option value="">Select Parish</option>
+                              {parishes.map((parish) => {
+                                  return <option key={parish._id} value={parish._id}>{parish.name}</option>
+                              })}
+                            </Field>
+                          </div>
+    
+                            <input type="submit" value="Search" className="btn btn-primary btn-block btn-lg mt-5" />
                    </div>
                    </Form>
                  </R3Card>
                </div>
                 
-                { testimonies.length ?  <Table title={() => <h2>Testimonies</h2>} rowKey ={record => record.id} columns={columns} dataSource={testimonies} /> : null}
+                { testimonies.length ?  <Table title={() => <h2>Testimonies</h2>} rowKey ={record => record._id} columns={columns} dataSource={testimonies} /> : null}
                 </div>
             )}
         </Formik>

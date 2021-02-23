@@ -4,12 +4,12 @@ import NFPzaAllocation from './NFPzaAllocation';
 import OutrechDetailReport from './OutreachDetailReport';
 import OutrechReport from './OutreachReport';
 import ParishAttendanceMonthlyReport from './ParishAttendanceMonthlyReport';
-import ParishDetailReport from './ParishDetailReport';
-import ParishReport from './ParishReport';
+import PastorDetailReport from './PastorDetailReport';
 import TestimonyReport from './TestimonyReport';
 import TestimonyReportDetail from './TestimonyReportDetail';
 import WelfareReport from './WelfareReport';
 import WelfareReportDetail from './WelfareReportDetail';
+import ParishDetailReport from './ParishDetailReport';
 
 const ReportRoutes = () => {
   const {path} =  useRouteMatch();
@@ -20,7 +20,7 @@ const ReportRoutes = () => {
             <Route path={`${path}/welfare`} component={WelfareReport}/>
             <Route path={`${path}/testimony`} component={TestimonyReport}/>
             <Route path={`${path}/outreach`} component={OutrechReport}/>
-            <Route path={`${path}/parish`} component={ParishReport}/>
+            <Route path={`${path}/parish`} component={PastorDetailReport}/>
             <Route path={`${path}/:id/parish/detail`} component={ParishDetailReport}/>
             <Route path={`${path}/:id/outreach/detail`} component = {OutrechDetailReport}/>
             <Route path={`${path}/:id/testimony/read`} component={TestimonyReportDetail}/>

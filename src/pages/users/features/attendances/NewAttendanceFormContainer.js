@@ -31,7 +31,7 @@ const NewAttendanceFormContainer = () => {
             source.cancel();
         }
     },[])
-
+     console.log(parish);
     return (
         <Formik
          initialValues={{men: 0, women: 0, children:0, marriages:0, newComers:0, newWorkers:0, soulsBaptised:0, soulsSaved:0, deaths:0, birth:0 }}
@@ -42,6 +42,10 @@ const NewAttendanceFormContainer = () => {
             values.zoneName = parish.country.zone.name;
             values.provinceName = parish.country.zone.province.name;
             values.parishName = parish.name;
+            values.province = parish?.country?.zone?.province?._id;
+            values.zone = parish?.country?.zone?._id;
+            values.country = parish?.country?._id;
+
             try{
                 const {data} = await requestAxios.post(`/attendances`,{...values})
                 alert.success(data.message);

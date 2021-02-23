@@ -330,7 +330,7 @@ const ParishMonthlyReport  = () => {
                         }} disabled = {disableCountryDropdownList}>
                           <option value="">Select Country</option>
                           {countries.map((country) => {
-                              return <option key={country.id} value={country.id}>{country.countryName}</option>
+                              return <option key={country._id} value={country._id}>{country.countryName}</option>
                           })}
                         </Field>
                       </div> 
@@ -344,7 +344,7 @@ const ParishMonthlyReport  = () => {
                         }} disabled = {disableCountryDropdownList}>
                           <option value="">Select Parish</option>
                           {parishes.map((parish) => {
-                              return <option key={parish.id} value={parish.id}>{parish.name}</option>
+                              return <option key={parish._id} value={parish._id}>{parish.name}</option>
                           })}
                         </Field>
                       </div>

@@ -23,7 +23,7 @@ const Navbar = () => {
 
                 <UserListItem to="/dashboard">DASHBOARD</UserListItem>
                 <UserListItem to="/parish/monetaries">MONETARY</UserListItem>
-                <UserListItem to="/parish/attendances">DATA RECORD</UserListItem>
+                <UserListItem to="/parish/attendances">DATA RECORDS</UserListItem>
                 <UserListItem to="/parish/testimonies">TESTIMONY</UserListItem>
                 <UserListItem to="/parish/outreaches">OUTREACH</UserListItem>                
                 <UserListItem to="/parish/welfares">WELFARE CHECK</UserListItem>
