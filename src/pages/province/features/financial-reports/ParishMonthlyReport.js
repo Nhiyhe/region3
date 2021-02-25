@@ -27,6 +27,11 @@ const ParishMonthlyReport  = () => {
     const [countryId, setCountryId] = useState("5fc5d6236c07300004aea00c");
     const [disableZoneDropdownList, setDisableZoneDropdownList] = useState(true);
     const [disableCountryDropdownList, setDisableCountryDropdownList] = useState(true);
+    const [disableParishDropdownList, setDisableParishDropdownList] = useState(true);
+    const [getAllMonetaries, setGetAllMonetaries] = useState(false);
+    const [getAllZonesMonetaries, setGetAllZonesMonetaries] = useState(false);
+    const [getAllCountriesMonetaries, setGetAllCountriesMonetaries] = useState(false);
+    const [getAllParishesMonetaries, setGetAllParishesMonetaries] = useState(false);
     const [pagination, setPagination] = useState({page:1, limit:10})
 
 
@@ -77,6 +82,80 @@ const ParishMonthlyReport  = () => {
         })
         
       },[provinceId])
+
+      useEffect(() => {
+
+        const source = axios.CancelToken.source();
+        const getAllMonetaries = async () => {
+          try{
+            const { data } = await requestAxios.get(`/monetaries`, {cancelToken:source.token});
+            setMonetaries(data.body);
+          }
+          catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+        };
+      }
+        getAllMonetaries();
+  
+        return (() => {
+          source.cancel();
+        })
+        
+      },[getAllMonetaries])
+
+
+      useEffect(() => {
+
+        const source = axios.CancelToken.source();
+        const getMonetariesByProvinceId = async () => {
+          try{
+            const { data } = await requestAxios.get(`/monetaries?province=${provinceId}`, {cancelToken:source.token});
+            setMonetaries(data.body);
+            console.log(data);
+          }
+          catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+        };
+      }
+        getMonetariesByProvinceId();
+  
+        return (() => {
+          source.cancel();
+        })
+        
+      },[provinceId])
+
+      useEffect(() => {
+
+        const source = axios.CancelToken.source();
+        const getMonetariesByProvinceId = async () => {
+          try{
+            const { data } = await requestAxios.get(`/monetaries?province=${provinceId}`, {cancelToken:source.token});
+            setMonetaries(data.body);
+          }
+          catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+        };
+      }
+        getMonetariesByProvinceId();
+  
+        return (() => {
+          source.cancel();
+        })
+        
+      },[getAllZonesMonetaries])
   
       useEffect(() => {
         const source = axios.CancelToken.source();
@@ -99,6 +178,51 @@ const ParishMonthlyReport  = () => {
           source.cancel();
         })
       },[zoneId])
+
+      useEffect(() => {
+        const source = axios.CancelToken.source();
+  
+        const getMonetariesByZoneId = async (zoneId) => {
+          try{
+           const { data } = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}`, {cancelToken:source.token});
+             setMonetaries(data.body);
+          }catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+          }
+        }
+        getMonetariesByZoneId(zoneId);
+  
+        return (() => {
+          source.cancel();
+        })
+      },[zoneId])
+
+      
+      useEffect(() => {
+        const source = axios.CancelToken.source();
+  
+        const getMonetariesByZoneId = async (zoneId) => {
+          try{
+           const { data } = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}`, {cancelToken:source.token});
+             setMonetaries(data.body);
+          }catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+          }
+        }
+        getMonetariesByZoneId(zoneId);
+  
+        return (() => {
+          source.cancel();
+        })
+      },[getAllCountriesMonetaries])
 
         
       useEffect(() => {
@@ -123,8 +247,50 @@ const ParishMonthlyReport  = () => {
         })
       },[countryId])
 
+      useEffect(() => {
+        const source = axios.CancelToken.source();
+  
+        const getMonetariesByCountryId = async () => {
+          try{
+           const { data } = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}&country=${countryId}`, {cancelToken:source.token});
+             setMonetaries(data.body);
+          }catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+          }
+        }
+        getMonetariesByCountryId();
+  
+        return (() => {
+          source.cancel();
+        })
+      },[countryId])
 
-         
+      useEffect(() => {
+        const source = axios.CancelToken.source();
+  
+        const getMonetariesByCountryId = async () => {
+          try{
+           const { data } = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}&country=${countryId}`, {cancelToken:source.token});
+             setMonetaries(data.body);
+          }catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+          }
+        }
+        getMonetariesByCountryId();
+  
+        return (() => {
+          source.cancel();
+        })
+      },[getAllParishesMonetaries])
+
       useEffect(() => {
         const source = axios.CancelToken.source();
   
@@ -141,6 +307,28 @@ const ParishMonthlyReport  = () => {
           }
         }
         getParishById();
+  
+        return (() => {
+          source.cancel();
+        })
+      },[parishId])
+
+      useEffect(() => {
+        const source = axios.CancelToken.source();
+  
+        const getMonetariesByCountryId = async () => {
+          try{
+           const { data } = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}&country=${countryId}&parish=${parishId}`, {cancelToken:source.token});
+             setMonetaries(data.body);
+          }catch(err){
+            if(err.response && err.response.data){
+              alert.error(err.response.data.message);
+            }else{
+            alert.error("An unexpected error occured.");
+            }
+          }
+        }
+        getMonetariesByCountryId();
   
         return (() => {
           source.cancel();
@@ -205,7 +393,7 @@ const ParishMonthlyReport  = () => {
       )
     },
     {
-      title:'Arrears',
+      title:'Closing Balance',
       dataIndex:'closingBalance',
       key:'closingBalance',
       width:140,
@@ -270,7 +458,8 @@ const ParishMonthlyReport  = () => {
         initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
         onSubmit={ async (values) => {
           try{
-            const {data} = await requestAxios.get(`/monetaries/${parishId}/stats?startDate=${values.startDate}&endDate=${values.endDate}`);
+            // const {data} = await requestAxios.get(`/monetaries/${parishId}/stats?startDate=${values.startDate}&endDate=${values.endDate}`);
+            const {data} = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}&country=${countryId}&parish=${parishId}&startDate=${values.startDate}&endDate=${values.endDate}`);
             setMonetaries(data.body);
 
         }catch(err){
@@ -289,15 +478,24 @@ const ParishMonthlyReport  = () => {
                         <div className="form-group">
                             <label className="form-label" htmlFor="province">Province</label>
                             <Field as="select" name="province" className="form-control form-control-lg" id="province" onChange={(e) => {
-                              if(e.target.value)
+                              const value = e.target.value;
+                              if(value && value === 'all'){
+                                  setGetAllMonetaries(!getAllMonetaries);
+                                  setDisableZoneDropdownList(true);
+                              }else if (value){
                                 setProvinceId(e.target.value);
                                 // getProvincePastor(e.target.value);
                                 setZones([]);
                                 setDisableZoneDropdownList(false);
                                 setCountries([]);
                                 setDisableCountryDropdownList(true);
+                              }
+                              else{
+                                return
+                              }
                             }}>
                               <option value="">Select Province</option>
+                              <option value="all">Show All Provinces</option>
                               {isAdmin() && provinces.map((province) => {
                               return <option key={province.id} value={province.id}>{province.name}</option>;
                               })}
@@ -310,11 +508,20 @@ const ParishMonthlyReport  = () => {
                         <div className="form-group">
                           <label>Zone</label>
                           <Field as="select" name="zone" className="form-control form-control-lg" onChange={(e) => {
-                            if (e.target.value)
+                            const value = e.target.value;                            
+                            if (value && value ==='all'){
+                              setGetAllZonesMonetaries(!getAllZonesMonetaries);
+                              setDisableCountryDropdownList(true);
+                            }else if(value){
                               setZoneId(e.target.value);
                               setDisableCountryDropdownList(false);
+                            }else{
+                              return;
+                            }
+                              
                           }} disabled={disableZoneDropdownList}>
                             <option value="">Select Zone</option>
+                            <option value="all">Show All Zones</option>
                             {zones.map((zone) => {
                                 return <option key={zone.id} value={zone.id}>{zone.name}</option>
                             })}
@@ -324,11 +531,19 @@ const ParishMonthlyReport  = () => {
                       <div className="form-group">
                         <label>Country</label>
                         <Field as="select" name="country" className="form-control form-control-lg" onChange={(e) => {
-                            if(e.target.value){
-                                setCountryId(e.target.value);
+                          const value = e.target.value;
+                            if(value && value === 'all'){
+                                setGetAllCountriesMonetaries(!getAllCountriesMonetaries);
+                                setDisableParishDropdownList(true);
+                            }else if(value){
+                              setCountryId(e.target.value);
+                              setDisableParishDropdownList(false);
+                            }else{
+                              return;
                             }
                         }} disabled = {disableCountryDropdownList}>
                           <option value="">Select Country</option>
+                          <option value="all">Show All Countries</option>
                           {countries.map((country) => {
                               return <option key={country._id} value={country._id}>{country.countryName}</option>
                           })}
@@ -338,11 +553,17 @@ const ParishMonthlyReport  = () => {
                       <div className="form-group mb-5">
                         <label>Parish</label>
                         <Field as="select" name="parishes" className="form-control form-control-lg" onChange={(e) => {
-                            if(e.target.value){
-                                setParishId(e.target.value);
+                          const value = e.target.value;                          
+                            if(value && value === 'all'){
+                                setGetAllParishesMonetaries(!getAllParishesMonetaries);
+                            }else if(value){
+                              setParishId(e.target.value);
+                            }else{
+                              return;
                             }
-                        }} disabled = {disableCountryDropdownList}>
+                        }} disabled = {disableParishDropdownList}>
                           <option value="">Select Parish</option>
+                          <option value="all">Show All Parishes</option>
                           {parishes.map((parish) => {
                               return <option key={parish._id} value={parish._id}>{parish.name}</option>
                           })}
@@ -366,7 +587,7 @@ const ParishMonthlyReport  = () => {
                   </Form>
                 </R3Card>
               </div>
-                { monetaries.length ? <R3Card>
+                { !!monetaries.length ? <R3Card>
                                         <div>
                                          <Export onExport={() => downloadCSV(monetaries)} />
                                         </div>

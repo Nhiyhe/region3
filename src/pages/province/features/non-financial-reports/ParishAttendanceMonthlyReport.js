@@ -449,7 +449,7 @@ const ParishAttendanceMonthlyReport = () => {
           >
            {() => (
                <div className="ParishAttendanceMonthlyReport">
-                  <h1 className="ParishAttendanceMonthlyReport-heading">Attendance by Parish</h1>
+                  <h1 className="ParishAttendanceMonthlyReport-heading">Data Records by Parish</h1>
                 <div className="col-6 offset-3">
                 <R3Card>                
                    <Form>

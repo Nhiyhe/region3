@@ -233,10 +233,6 @@ const ParishList = () => {
       })
       
     },[getAllParishesByProvinceId])
-
-
-
-
     
     useEffect(() => {
       const source = axios.CancelToken.source();

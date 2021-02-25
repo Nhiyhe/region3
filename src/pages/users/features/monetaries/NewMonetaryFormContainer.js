@@ -80,9 +80,13 @@ const NewMonetaryFormContainer = () => {
             values.expectedRemittance = (values.offering * .1) + (values.tithe *.25);
             values.parish = userInfo.id;
             values.countryName = parish.country.countryName;
-            values.zoneName = parish.country.zone.name;
-            values.provinceName = parish.country.zone.province.name;
+            values.zoneName = parish.country?.zone?.name;
+            values.provinceName = parish.country?.zone?.province?.name;
             values.parishName = parish.name;
+            values.province =  parish?.country?.zone?.province?._id;
+            values.country = parish?.country?._id;
+            values.zone = parish?.country?.zone?._id;
+
             try{
                 const {data} = await requestAxios.post(`/monetaries`,{...values})
                 alert.success(data.message);
