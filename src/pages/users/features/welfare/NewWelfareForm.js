@@ -44,10 +44,14 @@ const NewWelfareForm = () =>{
         onSubmit={async(values, actions) =>{
             values.parish = userInfo.id;
             values.parishName = parish?.name;
-            values.province = parish?.country?.zone?.province?.name
-            values.zone = parish?.country?.zone?.name
+            values.provinceName = parish?.country?.zone?.province?.name
+            values.zoneName = parish?.country?.zone?.name
             values.pastorName = `${parish?.parishPastor?.firstName} ${parish?.parishPastor?.lastName}`
-            values.country = parish?.country?.countryName
+            values.countryName = parish?.country?.countryName;
+            values.province =  parish?.country?.zone?.province?._id;
+            values.country = parish?.country?._id;
+            values.zone = parish?.country?.zone?._id;
+            
             try{
                 const {data} = await requestAxios.post(`/welfares`, values);
                 alert.success(data.message);

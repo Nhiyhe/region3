@@ -39,6 +39,8 @@ const ParishDetailReport = () => {
             source.cancel();
         })
     },[]);
+
+    
     return(
         <div className="ParishDetailReport">
             <R3Card>

@@ -49,9 +49,9 @@ const ProvinceList = () => {
             setProvinces(data.body);
             }catch(err){
               if(err.response && err.response.data){
-                alert.error(err.response.data.message);
+                console.error(err.response.data.message);
               }else{
-              alert.error("An unexpected error occured.");
+              console.error("An unexpected error occured.");
               }
             }
         }

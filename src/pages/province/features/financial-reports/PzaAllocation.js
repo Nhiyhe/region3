@@ -9,7 +9,12 @@ import { DatePicker } from "formik-antd";
 import { dateFormatList } from '../../../../helpers/dateHelper';
 import { Table } from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import './PzaAllocation.css';
+import { generatePDF } from '../../../../util/reportGenerator';
+import { CSVLink } from "react-csv";
+
 
 const  PzaAllocation = () => {
 
@@ -17,6 +22,7 @@ const  PzaAllocation = () => {
     const [pzadata, setPzadata] = useState([]);
     const alert = useAlert();
     const {userInfo, isAdmin} = useContext(AuthContext);
+    let footer;
 
           
   const columns = [
@@ -108,16 +114,47 @@ const  PzaAllocation = () => {
           })
      
       }, [])
-      console.log(pzadata);      
 
-      if(!provinces.length) return <Loading />
+      // const exportPDF = () => {
+      //   const unit = "pt";
+      //   const size = "A4"; // Use A1, A2, A3 or A4
+      //   const orientation = "landscape"; // portrait or landscape
+      
+      //   const marginLeft = 40;
+      //   const doc = new jsPDF(orientation, unit, size);
+      
+      //   doc.setFontSize(15);
+      
+      //   const title = "My Awesome Report";
+      //   // const headers = [["ZONE", "PROVINCE"]];
+      //   const headers = [columns.map(c => (c.title))];
+      
+      //   const data = pzadata.map(elt=> [elt.province, elt.zone, elt.countryName, elt.remExpected, elt.remReceived,elt.province, elt.zone, elt.area]);
+      
+      //   let content = {
+      //     startY: 50,
+      //     head: headers,
+      //     body: data,
+      //     // foot:footer
+      //   };
+      
+      //   doc.text(title, marginLeft, 40);
+      //   doc.autoTable(content);
+      //   doc.save("report.pdf")
+      // }
+      
+     
+
+    if(!provinces.length) return <Loading />
+    
+    
     return(
        <Formik
        initialValues={{province:'', startDate: new Date().toISOString(),endDate: new Date().toISOString() }}
        onSubmit = { async (values) => {
         try{
           const {data} = await requestAxios.get(`/monetaries/pza-allocation?startDate=${values.startDate}&endDate=${values.endDate}&provinceName=${values.province}`);
-          setPzadata(data.body);
+          setPzadata(data.body.map((data, index) => ({id:index, area:data.area, countryName:data.countryName, province:data.province, provinceName:data.provinceName, remExpected:data.remExpected, remReceived:data.remReceived, zone:data.zone, zoneName:data.zoneName})));
           }catch(err){
             console.error(err);
           }
@@ -126,7 +163,7 @@ const  PzaAllocation = () => {
            {() => (
                 <div className="PzaAllocation">
                 <h1 className="PzaAllocation-heading">PZA Allocation</h1>
-
+                {/* <button onClick= {() => exportPDF()}>Generate</button> */}
                   <R3Card>
                     <Form>
                     <div className="form-row">
@@ -134,7 +171,7 @@ const  PzaAllocation = () => {
                          <label className="form-label">Select Province</label>
 
                           <Field as="select" name="province" className="form-control form-control-lg">
-                              <option value="">Select all</option>
+                              {isAdmin() && <option value="">Select all</option>}
                               {isAdmin() && provinces.map((province) => {
                               return <option key={province.id} value={province.name}>{province.name}</option>;
                               })}
@@ -158,7 +195,7 @@ const  PzaAllocation = () => {
                     </div>
                     </Form>
                   </R3Card>
-                    {pzadata.length ? <R3Card>  <Table rowKey={record => record.provinceName} title= {() => <h2>Pza Allocation</h2>} 
+                    {pzadata.length ? <R3Card>  <Table rowKey={record => record.id} title= {() => <h2>Pza Allocation</h2>} 
                     pagination={false}
                     columns={columns} 
                     dataSource={pzadata}
@@ -176,12 +213,15 @@ const  PzaAllocation = () => {
                             totalArea+= area;
                            
                       });
-  
+                      const footerData = ["","","", totalRemExpected, totalReceived, totalProvince,totalZone, totalArea];
+                      const reportData = pagedData.map(elt=> [elt.provinceName, elt.zoneName, elt.countryName, `€${elt.remExpected?.toFixed(2)}`, `€${elt.remReceived?.toFixed(2)}`,`€${elt.province?.toFixed(2)}`, `€${elt.zone?.toFixed(2)}`, `€${elt.area?.toFixed(2)}`]);
+                      // const excelReportData = pagedData.map(elt => (elt.provinceName, elt.zoneName, elt.countryName, `€${elt.remExpected?.toFixed(2)}`, `€${elt.remReceived?.toFixed(2)}`,`€${elt.province?.toFixed(2)}`, `€${elt.zone?.toFixed(2)}`, `€${elt.area?.toFixed(2)}`));
+                      
                       return (
                         <>
                           <Table.Summary.Row>
-                          <Table.Summary.Cell></Table.Summary.Cell>
-                          <Table.Summary.Cell></Table.Summary.Cell>
+                          {/* <Table.Summary.Cell><CSVLink className="btn btn-info" data={pagedData} headers={columns.map(c => ({label:c.title, key:c.dataIndex}))}>Export to Excel</CSVLink></Table.Summary.Cell> */}
+                          <Table.Summary.Cell><button className="btn btn-secondary" onClick={() => generatePDF(columns, reportData, "PZA Allocation",footerData)}>EXPORT</button></Table.Summary.Cell>
                           <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
                           <Table.Summary.Cell><b>€{totalRemExpected?.toFixed(2)}</b></Table.Summary.Cell>
                           <Table.Summary.Cell><b>€{totalReceived?.toFixed(2)}</b></Table.Summary.Cell>
@@ -200,6 +240,9 @@ const  PzaAllocation = () => {
            )}
        </Formik>
     )
+
+    
 }
 
-export default PzaAllocation
+export default PzaAllocation;
+

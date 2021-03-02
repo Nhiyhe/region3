@@ -36,7 +36,6 @@ const WelfareReportDetail = () => {
 
     }, [])
 
-    console.log(message);
     return (
         <div className="WelfareReportDetail">
             <R3Card>

@@ -11,8 +11,8 @@ const PastorIndex = () => {
         <div>
         <SubNavBar>
             <li><NavLink exact activeClassName="active-link" to={`${url}/pastor/profile`}><h4>Profile</h4></NavLink></li>
-            <li><NavLink exact activeClassName="active-link" to={`${url}/pastor/details`}><h4>Edit Profile</h4></NavLink></li>
-            <li><NavLink exact activeClassName="active-link" to={`${url}/pastor/password/reset`}><h4>Change Password</h4></NavLink></li>
+            {/* <li><NavLink exact activeClassName="active-link" to={`${url}/pastor/details`}><h4>Edit Profile</h4></NavLink></li> */}
+            {/* <li><NavLink exact activeClassName="active-link" to={`${url}/pastor/password/reset`}><h4>Change Password</h4></NavLink></li> */}
 
         </SubNavBar>
         <PageContent>

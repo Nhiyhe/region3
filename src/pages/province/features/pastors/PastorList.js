@@ -15,28 +15,41 @@ const PastorList = () => {
     const alert = useAlert();
     const {userInfo} = useContext(AuthContext);
     const [pastors, setPastors] = useState([]);
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
+    const [total, setTotal] = useState(0);
+
+
+    const source = axios.CancelToken.source();
+
+    const getPastors = async (page) => {
+      try{
+          const {data} = await requestAxios.get(`/pastors?page=${page}&limit=${pagination.pageSize}`,{cancelToken:source.token});
+          setPastors(data.body);
+          setTotal(data.total);
+      }catch(err){         
+            if(axios.isCancel(err)){
+              return;
+            }else{
+              console.error("There was a problem");
+            }
+
+      }
+    }
 
     useEffect(() => {
-        const source = axios.CancelToken.source();
-
-        const getAllParishes = async () => {
-            try{
-                const {data} = await requestAxios.get(`/pastors`,{cancelToken:source.token});
-                setPastors(data.body);
-            }catch(err){
-                if(err.response && err.response.data){
-                    alert.error(err.response.data.message);
-                  }else{
-                  alert.error("An unexpected error occured.");
-                  }
-            }
-        }
-        getAllParishes();
+        
+        getPastors(1)
+       
         return (() =>{
             source.cancel();
         })
         
     }, []);
+
+    const handlePageChange = page => {
+      getPastors(page);
+    };
+  
 
     const columns = [
         {
@@ -97,7 +110,11 @@ const PastorList = () => {
     return(
         <div className="PastorList">
             <h1 className="PastorList-heading">Pastors</h1>
-            <Table rowKey={record => record.id} columns={columns} dataSource={pastors} />            
+            <Table 
+            rowKey={record => record._id} 
+            columns={columns} 
+            dataSource={pastors}
+            pagination={{total, onChange:handlePageChange, ...pagination}} />            
         </div>
     )
 }

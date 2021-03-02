@@ -11,8 +11,10 @@ import { dateFormatList } from '../../../../helpers/dateHelper';
 import { DatePicker } from "formik-antd";
 import Loading from '../../../../components/Loading';
 import './ParishAttendanceMonthlyReport.css';
+import { generatePDF } from '../../../../util/reportGenerator';
 
 const ParishAttendanceMonthlyReport = () => {
+    const defaultId = '5fc5d6236c07300004aea00c';
     const alert = useAlert();
     const {userInfo, isAdmin} = useContext(AuthContext);
     const [provinces, setProvinces] = useState([]);
@@ -26,18 +28,36 @@ const ParishAttendanceMonthlyReport = () => {
     const [parishId, setParishId] = useState("5fc5d6236c07300004aea00c");
     const [zoneId, setZoneId] = useState("5fc5d6236c07300004aea00c");
     const [countryId, setCountryId] = useState("5fc5d6236c07300004aea00c");
-    const [showSearchByDate, setShowSearchByDate] = useState(false);
     const [disableZoneDropdownList, setDisableZoneDropdownList] = useState(true);
     const [getAllAttendances, setGetAllAttendances] = useState(true);
-    const [getAllAttendancesByProvinceId, setGetAllAttendancesByProvinceId] = useState(false);
-    const [getAllAttendancesByZoneId, setGetAllAttendancesByZoneId] = useState(false);
-    const [getAllAttendancesByCountryId, setGetAllAttendancesByCountryId] = useState(false);
     const [disableCountryDropdownList, setDisableCountryDropdownList] = useState(true);
     const [disableParishDropdownList, setDisableParishDropdownList] = useState(true);
-    const [pagination, setPagination] = useState({page:1, limit:10});
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
+    const [startDate, setStartDate] = useState(new Date().toISOString());
+    const [endDate, setEndDate] = useState(new Date().toISOString());
+    const [dateChange, setDateChange] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [total, setTotal] = useState(0);
 
-    
+
+    const requestToken = axios.CancelToken.source();
+
+    const getAttendances = async (page) => {
+      try{
+        const { data } = await requestAxios.get(`/attendances?province=${provinceId}&zone=${zoneId}&country=${countryId}&parish=${parishId}&page=${page}&limit=${pagination.pageSize}&startDate=${startDate}&endDate=${endDate}`,{cancelToken:requestToken.token});
+        const mappedData = data.body.map(att => ({id: att._id, createdAt:att.createdAt, men:att.men, women:att.women, youths:att.children, births:att.birth, deaths:att.deaths, marriages:att.marriages, newComers:att.newComers, newWorkers:att.newWorkers, soulsSaved:att.soulsSaved, soulsBaptised:att.soulsBaptised, province:att.province?.name, zone:att.zone?.name, country:att.country?.countryName, parish:att.parish?.name}))
+        setAttendances(mappedData);
+        setTotal(data.total);
+        setIsLoading(false);
+      }catch(err){
+        if(axios.isCancel(err)){
+          return;
+        }else{
+          console.error("There was a problem");
+        }
+      }
+    };
+
     
     useEffect(() => {
         const source = axios.CancelToken.source();
@@ -54,34 +74,46 @@ const ParishAttendanceMonthlyReport = () => {
           }
         };
           getProvinces();
+
+          getAttendances(1);
   
           return (() => {
             source.cancel();
+            requestToken.cancel();
           })
      
       }, [])
-  
+
+   useEffect(() => {
+      getAttendances(1);
+
+      return (() => {
+        requestToken.cancel();
+      })
+   }, [dateChange])
     
       useEffect(() => {
         const source = axios.CancelToken.source();
-        const getAllAttendances = async () => {
-          try{
-            const { data } = await requestAxios.get("/attendances",{cancelToken:source.token});
-            setAttendances(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        };
-          getAllAttendances();
+        // const getAllAttendances = async () => {
+        //   try{
+        //     const { data } = await requestAxios.get("/attendances",{cancelToken:source.token});
+        //     setAttendances(data.body);
+        //     setIsLoading(false);
+        //   }catch(err){
+        //     if(err.response && err.response.data){
+        //       alert.error(err.response.data.message);
+        //     }else{
+        //     alert.error("An unexpected error occured.");
+        //     }
+        //   }
+        // };
+        //   getAllAttendances();
+
+        getAttendances(1);
   
-          return (() => {
-            source.cancel();
-          })
+        return (() => {
+          requestToken.cancel();
+        })
      
       }, [getAllAttendances])
   
@@ -112,52 +144,54 @@ const ParishAttendanceMonthlyReport = () => {
 
       
     useEffect(() => {
-      const source = axios.CancelToken.source();
-      const getAttendancesByProvinceId = async () => {
-        try{
-          const { data } = await requestAxios.get(`/provinces/${provinceId}/attendances`, {cancelToken:source.token});
-          setAttendances(data.body);
-          setIsLoading(false);
-        }
-        catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
-      };
-    }
-      getAttendancesByProvinceId();
+    
+    //   const getAttendancesByProvinceId = async () => {
+    //     try{
+    //       const { data } = await requestAxios.get(`/provinces/${provinceId}/attendances`, {cancelToken:source.token});
+    //       setAttendances(data.body);
+    //       setIsLoading(false);
+    //     }
+    //     catch(err){
+    //       if(err.response && err.response.data){
+    //         alert.error(err.response.data.message);
+    //       }else{
+    //       alert.error("An unexpected error occured.");
+    //       }
+    //   };
+    // }
+    //   getAttendancesByProvinceId();
 
-      return (() => {
-        source.cancel();
-      })
+     getAttendances(1)
+
+     return (() => {
+      requestToken.cancel();
+    })
       
     },[provinceId])
 
-    useEffect(() => {
-      const source = axios.CancelToken.source();
-      const getAttendancesByProvinceId = async () => {
-        try{
-          const { data } = await requestAxios.get(`/provinces/${provinceId}/attendances`, {cancelToken:source.token});
-          setAttendances(data.body);
-          setIsLoading(false);
-        }
-        catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
-      };
-    }
-      getAttendancesByProvinceId();
+    // useEffect(() => {
+    //   const source = axios.CancelToken.source();
+    //   const getAttendancesByProvinceId = async () => {
+    //     try{
+    //       const { data } = await requestAxios.get(`/provinces/${provinceId}/attendances`, {cancelToken:source.token});
+    //       setAttendances(data.body);
+    //       setIsLoading(false);
+    //     }
+    //     catch(err){
+    //       if(err.response && err.response.data){
+    //         alert.error(err.response.data.message);
+    //       }else{
+    //       alert.error("An unexpected error occured.");
+    //       }
+    //   };
+    // }
+    //   getAttendancesByProvinceId();
 
-      return (() => {
-        source.cancel();
-      })
+    //   return (() => {
+    //     source.cancel();
+    //   })
       
-    },[getAllAttendancesByProvinceId])
+    // },[getAllAttendancesByProvinceId])
   
       useEffect(() => {
         const source = axios.CancelToken.source();
@@ -183,51 +217,29 @@ const ParishAttendanceMonthlyReport = () => {
 
         
       useEffect(() => {
-        const source = axios.CancelToken.source();
-  
-        const getAttendancesByZoneId = async (zoneId) => {
-          try{
-            const {data} = await requestAxios.get(`zones/${zoneId}/attendances`, {cancelToken:source.token});
-            setAttendances(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-        getAttendancesByZoneId(zoneId);
+          
+        // const getAttendancesByZoneId = async (zoneId) => {
+        //   try{
+        //     const {data} = await requestAxios.get(`zones/${zoneId}/attendances`, {cancelToken:source.token});
+        //     setAttendances(data.body);
+        //     setIsLoading(false);
+        //   }catch(err){
+        //     if(err.response && err.response.data){
+        //       alert.error(err.response.data.message);
+        //     }else{
+        //     alert.error("An unexpected error occured.");
+        //     }
+        //   }
+        // }
+        // getAttendancesByZoneId(zoneId);
+
+        getAttendances(1);
   
         return (() => {
-          source.cancel();
+          requestToken.cancel();
         })
       },[zoneId])
 
-              
-      useEffect(() => {
-        const source = axios.CancelToken.source();
-  
-        const getAttendancesByZoneId = async (zoneId) => {
-          try{
-            const {data} = await requestAxios.get(`zones/${zoneId}/attendances`, {cancelToken:source.token});
-            setAttendances(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-        getAttendancesByZoneId(zoneId);
-  
-        return (() => {
-          source.cancel();
-        })
-      },[getAllAttendancesByZoneId])
 
 
       useEffect(() => {
@@ -256,70 +268,73 @@ const ParishAttendanceMonthlyReport = () => {
       useEffect(() => {
         const source = axios.CancelToken.source();
   
-        const getAttendancesByCountryId = async () => {
-          try{
-            const {data} = await requestAxios.get(`countries/${countryId}/attendances`, {cancelToken:source.token});
-            setAttendances(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-        getAttendancesByCountryId();
+        // const getAttendancesByCountryId = async () => {
+        //   try{
+        //     const {data} = await requestAxios.get(`countries/${countryId}/attendances`, {cancelToken:source.token});
+        //     setAttendances(data.body);
+        //     setIsLoading(false);
+        //   }catch(err){
+        //     if(err.response && err.response.data){
+        //       alert.error(err.response.data.message);
+        //     }else{
+        //     alert.error("An unexpected error occured.");
+        //     }
+        //   }
+        // }
+        // getAttendancesByCountryId();
+
+        getAttendances(1);
   
         return (() => {
           source.cancel();
         })
       },[countryId])
 
-      useEffect(() => {
-        const source = axios.CancelToken.source();
+      // useEffect(() => {
+      //   const source = axios.CancelToken.source();
   
-        const getAttendancesByCountryId = async () => {
-          try{
-            const {data} = await requestAxios.get(`countries/${countryId}/attendances`, {cancelToken:source.token});
-            setAttendances(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-        getAttendancesByCountryId();
+      //   const getAttendancesByCountryId = async () => {
+      //     try{
+      //       const {data} = await requestAxios.get(`countries/${countryId}/attendances`, {cancelToken:source.token});
+      //       setAttendances(data.body);
+      //       setIsLoading(false);
+      //     }catch(err){
+      //       if(err.response && err.response.data){
+      //         alert.error(err.response.data.message);
+      //       }else{
+      //       alert.error("An unexpected error occured.");
+      //       }
+      //     }
+      //   }
+      //   getAttendancesByCountryId();
   
-        return (() => {
-          source.cancel();
-        })
-      },[getAllAttendancesByCountryId])
+      //   return (() => {
+      //     source.cancel();
+      //   })
+      // },[getAllAttendancesByCountryId])
 
 
       useEffect(() => {
-        const source = axios.CancelToken.source();
-  
-        const getAttendancesByParishId = async () => {
-          try{
-            const {data} = await requestAxios.get(`parishes/${parishId}/attendances`, {cancelToken:source.token});
-            setAttendances(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-        getAttendancesByParishId();
+         
+        // const getAttendancesByParishId = async () => {
+        //   try{
+        //     const {data} = await requestAxios.get(`parishes/${parishId}/attendances`, {cancelToken:source.token});
+        //     setAttendances(data.body);
+        //     setIsLoading(false);
+        //   }catch(err){
+        //     if(err.response && err.response.data){
+        //       alert.error(err.response.data.message);
+        //     }else{
+        //     alert.error("An unexpected error occured.");
+        //     }
+        //   }
+        // }
+        // getAttendancesByParishId();
+
+        getAttendances(1);
   
         return (() => {
-          source.cancel();
+          requestToken.cancel();
         })
       },[parishId])
 
@@ -346,7 +361,10 @@ const ParishAttendanceMonthlyReport = () => {
         })
       },[parishId])
 
- 
+       
+      const handlePageChange = page => {
+        getAttendances(page);
+      };
 
   const columns = [    
     // {
@@ -390,7 +408,7 @@ const ParishAttendanceMonthlyReport = () => {
       key:'women',
     },
     {
-        title:'Children',
+        title:'Child',
         dataIndex:'youths',
         key:'youths',
       },
@@ -433,7 +451,6 @@ const ParishAttendanceMonthlyReport = () => {
   ]
   
   if(!provinces.length) return <Loading />
-
    return(
        <Formik
           initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
@@ -460,13 +477,20 @@ const ParishAttendanceMonthlyReport = () => {
                             <Field as="select" name="province" className="form-control form-control-lg" id="province" onChange={(e) => {
                               const value = e.target.value;
                               if(value && value === 'all'){
+                                setProvinceId(defaultId);
+                                setZoneId(defaultId);
+                                setCountryId(defaultId);
+                                setParishId(defaultId);
                                 setIsLoading(true);
                                 setGetAllAttendances(!getAllAttendances);
                                 setDisableZoneDropdownList(true);
                                 setDisableParishDropdownList(true);
-                                setShowSearchByDate(false);
+                                setDisableCountryDropdownList(true);
 
                               }else if (value){
+                                setZoneId(defaultId);
+                                setCountryId(defaultId);
+                                setParishId(defaultId);
                                 setProvinceId(value);
                                 // getProvincePastor(e.target.value);
                                 setIsLoading(true);
@@ -475,13 +499,12 @@ const ParishAttendanceMonthlyReport = () => {
                                 setCountries([]);
                                 setDisableCountryDropdownList(true);
                                 setDisableParishDropdownList(true);
-                                setShowSearchByDate(false);
                               }else{
                                 return
                               }
                             }}>
                               <option value="">Select Province</option>
-                              <option value="all">Show All Provinces</option>
+                              {isAdmin() && <option value="all">Show All Provinces</option>}
                               {isAdmin() && provinces.map((province) => {
                               return <option key={province.id} value={province.id}>{province.name}</option>;
                               })}
@@ -496,12 +519,19 @@ const ParishAttendanceMonthlyReport = () => {
                           <Field as="select" name="zone" className="form-control form-control-lg" onChange={(e) => {
                             const value = e.target.value;
                             if (value && value === 'all'){
-                              setGetAllAttendancesByProvinceId(!getAllAttendancesByProvinceId);
+                              setZoneId(defaultId);
+                              setCountryId(defaultId);
+                              setParishId(defaultId);
                               setIsLoading(true);
+                              setGetAllAttendances(!getAllAttendances);
                               setDisableCountryDropdownList(true);
                             }else if(value){
+                              setCountryId(defaultId);
+                              setParishId(defaultId);
+                              setIsLoading(true);
                               setZoneId(value);
                               setDisableCountryDropdownList(false);
+                              setDisableParishDropdownList(true);
                               setIsLoading(true);
                             }else{
                               return
@@ -521,9 +551,12 @@ const ParishAttendanceMonthlyReport = () => {
                         <Field as="select" name="country" className="form-control form-control-lg" onChange={(e) => {
                             const value = e.target.value;
                             if(value && value === 'all'){
-                              setGetAllAttendancesByZoneId(!getAllAttendancesByZoneId);
-                                setIsLoading(true);
+                              setCountryId(defaultId);
+                              setParishId(defaultId);
+                              setIsLoading(true);
+                              setGetAllAttendances(!getAllAttendances);
                             }else if(value){
+                              setParishId(defaultId);
                               setCountryId(value);
                               setIsLoading(true);
                               setDisableParishDropdownList(false);
@@ -544,12 +577,12 @@ const ParishAttendanceMonthlyReport = () => {
                         <Field as="select" name="parishes" className="form-control form-control-lg" onChange={(e) => {
                             const value = e.target.value;
                             if(value && value === "all"){
-                              setGetAllAttendancesByCountryId(!getAllAttendancesByCountryId);
+                                setParishId(defaultId);
                                 setIsLoading(true);
+                                setGetAllAttendances(!getAllAttendances);
                             }else if (value){
-                              setParishId(value);
                               setIsLoading(true);
-                              setShowSearchByDate(true);
+                              setParishId(value);
                             }else{
                               return
                             }
@@ -561,33 +594,41 @@ const ParishAttendanceMonthlyReport = () => {
                           })}
                         </Field>
                       </div>
-                        { showSearchByDate &&
-                        <>
-                             <div className="form-row">
+                      <div className="form-row">
                           
                           <div className="form-group col-6">
                               <label className="form-label">Start Date</label>
-                              <DatePicker name="startDate" placeholder="Start Date" className="form-control form-control-lg" format={dateFormatList[0]} />
+                              <DatePicker name="startDate" placeholder="Start Date" className="form-control form-control-lg" format={dateFormatList[0]} onChange={(date,dateString) => {
+                                const dateResult = dateString.split('/').reverse().join('-');
+                                setStartDate(new Date(dateResult).toISOString());
+                                setIsLoading(true);
+                                setDateChange(!dateChange);
+                              }} />
                           </div>
+
                           <div className="form-group col-6">
                               <label className="form-label">End Date</label>
-                              <DatePicker name="endDate" placeholder="End Date" className="form-control form-control-lg" format={dateFormatList[0]} />
+                              <DatePicker name="endDate" placeholder="End Date" className="form-control form-control-lg" format={dateFormatList[0]} onChange={(date,dateString) => {
+                                const dateResult = dateString.split('/').reverse().join('-');
+                                setEndDate(new Date(dateResult).toISOString());
+                                setIsLoading(true);
+                                setDateChange(!dateChange);
+                              }} />
                           </div>
                       </div> 
-                      <input type="submit" value="Search" className="btn btn-primary btn-block btn-lg mt-5" />
-                        </>
-                        }
                     </div>
                   </div>
                   </Form>
                 </R3Card>
               </div>
-               { !!attendances.length &&
-                 <Table 
+               {
+                !!attendances.length && <Table 
                  rowKey={record => record.id} 
                  loading={isLoading}  
                  columns={columns} 
-                 dataSource={attendances.map(att => ({id: att._id, createdAt:att.createdAt, men:att.men, women:att.women, youths:att.children, births:att.birth, deaths:att.deaths, marriages:att.marriages, newComers:att.newComers, newWorkers:att.newWorkers, soulsSaved:att.soulsSaved, soulsBaptised:att.soulsBaptised, province:att.province?.name, zone:att.zone?.name, country:att.country?.countryName, parish:att.parish?.name}))}
+                 pagination={{total:total, onChange : handlePageChange, ...pagination}}
+                //attendances.map(att => ({id: att._id, createdAt:att.createdAt, men:att.men, women:att.women, youths:att.children, births:att.birth, deaths:att.deaths, marriages:att.marriages, newComers:att.newComers, newWorkers:att.newWorkers, soulsSaved:att.soulsSaved, soulsBaptised:att.soulsBaptised, province:att.province?.name, zone:att.zone?.name, country:att.country?.countryName, parish:att.parish?.name}))
+                 dataSource={attendances}
                  summary={ pagedData => {
                   let totalMen = 0;
                   let totalWomen = 0;
@@ -612,10 +653,14 @@ const ParishAttendanceMonthlyReport = () => {
                         totalSoulsBaptised+=soulsBaptised;
                   });
 
+                  const footerData = ["", "", totalMen, totalWomen, totalYouths,totalBirths,totalNewWorkers, totalNewComers,totalMarriages,totalDeaths,totalSoulsSaved,totalSoulsBaptised ];                                      
+                  const reportData = pagedData.map(elt=> [elt.parish, `${moment(elt.createdAt).format(dateFormatList[0])}`, elt.men, elt.women, elt.youths, elt.births, elt.newWorkers, elt.newComers, elt.marriages, elt.deaths, elt.soulsSaved, elt.soulsBaptised]);
+
+
                   return (
                     <>
                       <Table.Summary.Row>
-                      <Table.Summary.Cell></Table.Summary.Cell>
+                      <Table.Summary.Cell><button className="btn btn-secondary" onClick={() => generatePDF(columns, reportData, "Data Records by Parish",footerData, true)}>EXPORT</button></Table.Summary.Cell>
                       <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
                       <Table.Summary.Cell><b>{totalMen}</b></Table.Summary.Cell>
                       <Table.Summary.Cell><b>{totalWomen}</b></Table.Summary.Cell>

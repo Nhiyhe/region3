@@ -12,6 +12,7 @@ import R3List from '../../components/R3List';
 import { List, Space, Table, Tag } from 'antd';
 import './AdminDashboard.css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 
 const AdminDashboard = () => {
@@ -25,75 +26,109 @@ const AdminDashboard = () => {
     const [testimonies, setTestimonies] = useState([]);
     const [top10SoulsWinner, setTop10SoulsWinner] = useState([]);
 
+    const requestToken = axios.CancelToken.source();
+
     const getProvincePastor = async() => {
         try{
-            const {data} = await requestAxios.get(`/pastors/${userInfo.id}`);
+            const {data} = await requestAxios.get(`/pastors/${userInfo.id}`,{cancelToken:requestToken.token});
             setPastor(data.body);
         }catch(err){
-            console.error(err);
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
     
     const getProvinces = async () => {
         try{
-            const {data} = await requestAxios.get('/provinces');
+            const {data} = await requestAxios.get('/provinces',{cancelToken:requestToken.token});
             setProvinces(data.body);
         }catch(err){
-            console.error(err.message)
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
 
     const getZones = async () => {
         try{
-            const {data} = await requestAxios.get('/zones');
+            const {data} = await requestAxios.get('/zones',{cancelToken:requestToken.token});
             setZones(data.total);
         }catch(err){
-            console.error(err);
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
 
     const getCountries = async () => {
         try{
-            const {data} = await requestAxios.get('/countries');
+            const {data} = await requestAxios.get('/countries',{cancelToken:requestToken.token});
             setCountries(data.body);
         }catch(err){
-            console.error(err.message);
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
 
     const getTop10SoulsWinner = async () => {
         try{
-            const {data} = await requestAxios.get('/attendances/top10SoulsWinner');
+            const {data} = await requestAxios.get('/attendances/top10SoulsWinner',{cancelToken:requestToken.token});
             setTop10SoulsWinner(data.body);
         }catch(err){
-            console.error(err.message);
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
 
     const getParishes = async () => {
         try{
-            const {data} = await requestAxios.get('/parishes');
+            const {data} = await requestAxios.get('/parishes',{cancelToken:requestToken.token});
             setParishes(data.total);
         }catch(err){
-            console.error(err);
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
 
     const getWelfareCheck = async () => {
         try{
-            const {data} = await requestAxios.get('/welfares');
+            const {data} = await requestAxios.get('/welfares',{cancelToken:requestToken.token});
             setWelfares(data.body);
         }catch(err){
-            console.error(err.message);
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
 
     const getTestimonies = async () => {
         try{
-            const {data} = await requestAxios.get('/testimonies');
+            const {data} = await requestAxios.get('/testimonies',{cancelToken:requestToken.token});
             setTestimonies(data.body);
         }catch(err){
-            console.error(err.message);
+            if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
         }
     }
 
@@ -106,10 +141,20 @@ const AdminDashboard = () => {
         getWelfareCheck();
         getTop10SoulsWinner();
         getTestimonies();
+
+        return (() => {
+            requestToken.cancel();
+          })
+
     }, [])
 
     useEffect(() => {
         getProvincePastor();
+       
+        return (() => {
+            requestToken.cancel();
+          })
+
     },[userInfo.id]);
 
     const columns = [
@@ -122,7 +167,7 @@ const AdminDashboard = () => {
                     <Space size="small">
                         <Tag color="green">NEW</Tag>
                         <Tag color="red">URGENT</Tag>
-                        <Link className="btn btn-info" to={`non-financial/reports/${record.id}/read`}>READ</Link>
+                        <Link className="btn btn-info" to={`non-financial/reports/${record._id}/read`}>READ</Link>
                     </Space>
                 </div>
             )
@@ -144,18 +189,18 @@ const AdminDashboard = () => {
       },
       {
         title: 'Country',
-        dataIndex: 'country',
-        key: 'country'
+        dataIndex: 'countryName',
+        key: 'countryName'
       },
       {
         title: 'Zone',
-        dataIndex: 'zone',
-        key: 'zone'
+        dataIndex: 'zoneName',
+        key: 'zoneName'
       },
       {
         title: 'Province',
-        dataIndex: 'province',
-        key: 'province'
+        dataIndex: 'provinceName',
+        key: 'provinceName'
       },    
     
     ]
@@ -169,7 +214,7 @@ const AdminDashboard = () => {
                 <div>
                     <Space size="small">
                         <Tag color="green">NEW</Tag>
-                        <Link className="btn btn-info" to={`non-financial/reports/${record.id}/testimony/read`}>READ</Link>
+                        <Link className="btn btn-info" to={`non-financial/reports/${record._id}/testimony/read`}>READ</Link>
                     </Space>
                 </div>
             )
@@ -181,24 +226,23 @@ const AdminDashboard = () => {
           },
           {
             title: 'Country',
-            dataIndex: 'country',
-            key: 'country'
+            dataIndex: 'countryName',
+            key: 'countryName'
           },
           {
             title: 'Zone',
-            dataIndex: 'zone',
-            key: 'zone'
+            dataIndex: 'zoneName',
+            key: 'zoneName'
           },
           {
             title: 'Province',
-            dataIndex: 'province',
-            key: 'province'
+            dataIndex: 'provinceName',
+            key: 'provinceName'
           },    
     ]
 
 
     if(!provinces.length) return <Loading />
-
     return(
         <div className="AdminDashboard">
             <div className="container">
@@ -218,11 +262,11 @@ const AdminDashboard = () => {
                             <div className="col-8">
 
                             <R3Card>
-                                   <Table rowKey={record => record.id} title={() => <h4>NEW WELFARE CHECK MESSAGES</h4>} dataSource={welfares.filter(welfare => !welfare.read)} columns={columns} pagination={false} size="small" />
+                                   <Table rowKey={record => record._id} title={() => <h4>NEW WELFARE CHECK MESSAGES</h4>} dataSource={welfares.filter(welfare => !welfare.read)} columns={columns} pagination={false} size="small" />
                             </R3Card>
 
                             <R3Card>
-                                   <Table rowKey={record => record.id} title={() => <h4>NEW TESTIMONY BOARD</h4>} dataSource={testimonies.filter(test => !test.read)} columns={testimonyColumns} pagination={false} size="small" />
+                                   <Table rowKey={record => record._id} title={() => <h4>NEW TESTIMONY BOARD</h4>} dataSource={testimonies.filter(test => !test.read)} columns={testimonyColumns} pagination={false} size="small" />
                             </R3Card>
 
                             </div>

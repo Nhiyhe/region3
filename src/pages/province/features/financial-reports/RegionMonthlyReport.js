@@ -10,6 +10,7 @@ import { dateFormatList } from '../../../../helpers/dateHelper';
 import { Table } from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
 import './RegionMonthlyReport.css';
+import { generatePDF } from '../../../../util/reportGenerator';
 
 const  RegionMonthlyReport = () => {
 
@@ -22,7 +23,7 @@ const  RegionMonthlyReport = () => {
   const columns = [
     {
       title: 'Parish Name',
-      dataIndex: '_id',
+      dataIndex: 'parishName',
       fixed: true,
       width: 160,
     },
@@ -121,7 +122,8 @@ const  RegionMonthlyReport = () => {
        onSubmit = { async (values) => {
         try{
           const {data} = await requestAxios.get(`/monetaries/monthly/report/by/provinces?startDate=${values.startDate}&endDate=${values.endDate}&provinceName=${values.province}`);
-          setRegionData(data.body);
+          const mappedResult = data.body.map( (d, i) => ({id:i, countryName:d.countryName, offering:d.offering, tithe:d.tithe, parishName:d._id, regionOffering10:d.regionOffering10, regionTithe25:d.regionTithe25,totalRemOfferingAndTithe:d.totalRemOfferingAndTithe, regionTotalOfferingAndTithe:d.regionTotalOfferingAndTithe}))
+          setRegionData(mappedResult);
           }catch(err){
             console.error(err);
           }
@@ -137,7 +139,7 @@ const  RegionMonthlyReport = () => {
                          <label className="form-label">Select Province</label>
 
                           <Field as="select" name="province" className="form-control form-control-lg">
-                              <option value="">Select all</option>
+                              {isAdmin() && <option value="">Select all</option>}
                               {isAdmin() && provinces.map((province) => {
                               return <option key={province.id} value={province.name}>{province.name}</option>;
                               })}
@@ -161,7 +163,7 @@ const  RegionMonthlyReport = () => {
                     </div>
                     </Form>
                   </R3Card>
-                    {regionData.length ? <div className="RegionMonthlyReport-table"><R3Card>  <Table  rowKey={record => record._id} title= {() => <h2>Country Performance Report</h2>} 
+                    {regionData.length ? <div className="RegionMonthlyReport-table"><R3Card>  <Table  rowKey={record => record.id} title= {() => <h2>Region Monthly Report</h2>} 
                     columns={columns} 
                     dataSource={regionData}
                     pagination = {false}
@@ -181,11 +183,14 @@ const  RegionMonthlyReport = () => {
                             totalRegionTotalOfferingAndTithe += regionTotalOfferingAndTithe;
                            
                       });
-  
+                      const reportData = pagedData.map(elt=> [elt.parishName, elt.countryName,`€${elt.tithe?.toFixed(2)}`,`€${elt.offering?.toFixed(2)}`, `€${elt.totalRemOfferingAndTithe?.toFixed(2)}`,`€${elt.regionTithe25?.toFixed(2)}`, `€${elt.regionOffering10?.toFixed(2)}`, `€${elt.regionTotalOfferingAndTithe?.toFixed(2)}`]);
+                      
+                      const footerData = ["","", totalTithe, totalOffering, grandTotalRemOfferingAndTithe,totalRegionTithe25, totalRegionOffering10,totalRegionTotalOfferingAndTithe ];
+                      
                       return (
                         <>
                           <Table.Summary.Row>
-                          <Table.Summary.Cell></Table.Summary.Cell>
+                          <Table.Summary.Cell><button className="btn btn-secondary" onClick={() => generatePDF(columns, reportData, "Region Monthly Report",footerData)}>Export to PDF</button></Table.Summary.Cell>
                           <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
                           <Table.Summary.Cell><b>€{totalTithe?.toFixed(2)}</b></Table.Summary.Cell>
                           <Table.Summary.Cell><b>€{totalOffering?.toFixed(2)}</b></Table.Summary.Cell>

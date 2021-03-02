@@ -10,6 +10,7 @@ import { dateFormatList } from '../../../../helpers/dateHelper';
 import Loading from '../../../../components/Loading';
 import './PastorDetailReport';
 import { DatePicker } from "formik-antd";
+import { generatePDF } from '../../../../util/reportGenerator';
 const {MonthPicker} = DatePicker;
 
 
@@ -44,6 +45,7 @@ const PastorDetailReport = () => {
         })
    
     }, []);
+    
 
     const columns =[
         {
@@ -102,7 +104,6 @@ const PastorDetailReport = () => {
 
     if(!parishes.length) return <Loading />
 
-    console.log(parishes);
 
     function formatDate(value){
       return value.split('T')[0].split('-').reverse()[1];
@@ -126,7 +127,7 @@ const PastorDetailReport = () => {
           
                 <>
                   <div className="ParishReport">
-                      <h1 className="ParishReport-heading">Pastor Detail Report</h1>
+                      <h1 className="ParishReport-heading">Pastor's Detail Report</h1>
                       <R3Card>
                         <Form>
                           <div className="form-row">
@@ -145,7 +146,23 @@ const PastorDetailReport = () => {
                         </Form>
                       </R3Card>
                   </div>
-                  {parishes && <Table rowKey ={record => record.id} columns={columns} dataSource={filteredParishes} />}
+                  {parishes && <Table 
+                  rowKey ={record => record.id} 
+                  columns={columns}
+                   dataSource={filteredParishes} 
+                   summary = {() => {
+
+                    const footerData = [];                                      
+                    const reportData = filteredParishes.map(elt=> [elt.parish, elt.pastorsName, elt.email, `${moment(elt.pastorDOB).format(dateFormatList[0])}`, elt.spouseName, `${moment(elt.spouseDOB).format(dateFormatList[0])}`, elt.memorableOccassion, `${moment(elt.dateOfMemorableOccassion).format(dateFormatList[0])}`]);
+                     return(
+                       <>
+                        <Table.Summary.Row>
+                          <Table.Summary.Cell><button className="btn btn-secondary" onClick={() => generatePDF(columns, reportData, "Pastor's Detail Record",footerData, true)}>EXPORT</button></Table.Summary.Cell>
+                        </Table.Summary.Row>
+                       </>
+                     )
+                   }}
+                   />}
 
                 </>
         )}

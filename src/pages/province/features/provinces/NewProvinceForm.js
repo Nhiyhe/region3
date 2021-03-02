@@ -32,7 +32,7 @@ const NewProvinceForm = ({province, mode}) => {
     const source = axios.CancelToken.source();
     const getPastors = async () => {
       try{
-        const { data } = await Axios.get("/pastors", {cancelToken:source.token});
+        const { data } = await Axios.get("/pastors/dropdownlists", {cancelToken:source.token});
         setPastors(data.body);
       }catch(err){
         console.error(err);
@@ -50,6 +50,7 @@ const NewProvinceForm = ({province, mode}) => {
 
   if(mode !== 'editing' && !pastors.length) return <Loading />
   
+  console.log(pastors);
   return (
      <div className="NewProvinceForm">
           <h2 className="ProvinceForm-heading">{province.name ? `Editing ${province.name}` : 'Create New Province'}</h2>
@@ -78,7 +79,7 @@ const NewProvinceForm = ({province, mode}) => {
                             <option value="">Select Province Pastor</option>
                             {pastors.filter(p => p.position.toLowerCase() === 'province pastor' && !p.isAdmin).map((pastor) => {
                               return (
-                                <option key={pastor.id} value={pastor.id}>
+                                <option key={pastor._id} value={pastor._id}>
                                   {pastor.firstName} {pastor.lastName}
                                 </option>
                               );

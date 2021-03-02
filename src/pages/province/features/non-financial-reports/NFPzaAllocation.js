@@ -10,6 +10,7 @@ import { dateFormatList } from '../../../../helpers/dateHelper';
 import { Table } from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
 import './NFPzaAllocation.css';
+import { generatePDF } from '../../../../util/reportGenerator';
 
 const  NFPzaAllocation = () => {
 
@@ -102,10 +103,10 @@ const  NFPzaAllocation = () => {
             const {data} = await requestAxios.get(`/provinces`,{cancelToken:source.token});
             setProvinces(data.body);
             }catch(err){
-              if(err.response && err.response.data){
-                alert.error(err.response.data.message);
+              if(axios.isCancel(err)){
+                return;
               }else{
-              alert.error("An unexpected error occured.");
+                console.error("There was a problem")
               }
             }
         }
@@ -125,7 +126,6 @@ const  NFPzaAllocation = () => {
        initialValues={{province:'', startDate: new Date().toISOString(),endDate: new Date().toISOString() }}
        onSubmit = { async (values) => {
         try{
-          // ?startDate=${values.startDate}&endDate=${values.endDate}&provinceName=${values.province}`);
           const {data} = await requestAxios.get(`/attendances/report/by/country?startDate=${values.startDate}&endDate=${values.endDate}&provinceName=${values.province}`);
           setAttendance(data.body);
           }catch(err){
@@ -143,7 +143,7 @@ const  NFPzaAllocation = () => {
                          <label className="form-label">Select Province</label>
 
                           <Field as="select" name="province" className="form-control form-control-lg">
-                              <option value="">Select all</option>
+                              {isAdmin() && <option value="">Select all</option>}
                               {isAdmin() && provinces.map((province) => {
                               return <option key={province.id} value={province.name}>{province.name}</option>;
                               })}
@@ -193,12 +193,15 @@ const  NFPzaAllocation = () => {
                             grandTotalDeath+=totalDeath;
                            
                       });
+
+                      const footerData = ["", "", "", grandTotalMen, grandTotalWomen, grandTotalChildren,grandTotalMarriage,grandTotalNewComer, grandTotalWorkers,grandTotalSoulsSaved,grandTotalSoulsBaptised, grandTotalDeath];                                      
+                      const reportData = pagedData.map(elt=> [elt.provinceName, elt.zoneName, elt.countryName, elt.totalMen, elt.totalWomen, elt.totalChildren, elt.totalMarriages, elt.totalNewComers, elt.totalNewWorkers, elt.totalSoulsSaved, elt.totalSoulsBaptised, elt.totalDeath]);
   
                       return (
                         <>
                           <Table.Summary.Row>
                           <Table.Summary.Cell></Table.Summary.Cell>
-                          <Table.Summary.Cell></Table.Summary.Cell>
+                          <Table.Summary.Cell><button className="btn btn-secondary" onClick={() => generatePDF(columns, reportData, "Data Records by Country",footerData, true)}>EXPORT</button></Table.Summary.Cell>
                           <Table.Summary.Cell><b>TOTAL</b></Table.Summary.Cell>
                           <Table.Summary.Cell><b>{grandTotalMen}</b></Table.Summary.Cell>
                           <Table.Summary.Cell><b>{grandTotalWomen}</b></Table.Summary.Cell>

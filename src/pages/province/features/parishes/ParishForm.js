@@ -78,7 +78,8 @@ const ParishForm = () => {
 
       const getPastors = async () => {
         try{
-          const { data } = await requestAxios.get("/pastors", {cancelToken:source.token});
+          const { data } = await requestAxios.get("/pastors/dropdownlists", {cancelToken:source.token});
+          console.log(data.body);
           setPastors(data.body);
         }catch(err){
           if(err.response && err.response.data){
@@ -144,7 +145,7 @@ const ParishForm = () => {
 
  if(!provinces.length) return <Loading />
 
-  return (
+ return (
     <Formik 
     initialValues={{email:"", password:"", name:"", parishEmailAddress:"", parishPastor:"", referenceNo:"",worshipCenterAddress:"",postalAddress:"",phoneNo:"", churchStartDate: new Date().toISOString(), city:""}}
     validationSchema={validationSchema}

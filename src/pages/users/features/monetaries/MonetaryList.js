@@ -40,7 +40,6 @@ const MonetaryList = () => {
     }, [userInfo.id])
 
     const handlePageChange = page => {
-      console.log(page);
       getParishMonetaryRecords(page);
     };
 

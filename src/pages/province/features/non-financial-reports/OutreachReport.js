@@ -8,12 +8,15 @@ import R3Card from '../../../../components/Card';
 import { useAlert } from 'react-alert';
 import moment from 'moment';
 import { dateFormatList } from '../../../../helpers/dateHelper';
+import { DatePicker } from "formik-antd";
 import Loading from '../../../../components/Loading';
 import {Link, useHistory} from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import './OutreachReport.css';
+import { generatePDF } from '../../../../util/reportGenerator';
 
 const OutreachReport = () => {
+    const defaultId = "5fc5d6236c07300004aea00c";
     const alert = useAlert();
     const history = useHistory();
     const {userInfo, isAdmin} = useContext(AuthContext);
@@ -23,21 +26,24 @@ const OutreachReport = () => {
     const [parishes, setParishes] = useState([]);
     const [outreaches, setOutreaches] = useState([]);
     const [parish, setParish] = useState([]);
-    const [provinceId, setProvinceId] = useState("5fc5d6236c07300004aea00c");
-    const [parishId, setParishId] = useState("5fc5d6236c07300004aea00c");
-    const [zoneId, setZoneId] = useState("5fc5d6236c07300004aea00c");
-    const [countryId, setCountryId] = useState("5fc5d6236c07300004aea00c");
+    const [provinceId, setProvinceId] = useState(defaultId);
+    const [parishId, setParishId] = useState(defaultId);
+    const [zoneId, setZoneId] = useState(defaultId);
+    const [countryId, setCountryId] = useState(defaultId);
     const [disableZoneDropdownList, setDisableZoneDropdownList] = useState(true);
     const [disableCountryDropdownList, setDisableCountryDropdownList] = useState(true);
     const [disableParishDropdownList, setDisableParishDropdownList] = useState(true);
-    const [getAllProvincesOutreaches, setGetAllProvincesOutreaches] = useState(false);
-    const [getAllZonesOutreaches, setGetAllZonesOutreaches] = useState(false);
-    const [getAllCountriesOutreaches, setGetAllCountriesOutreaches] = useState(false);
+    const [getAllOutreaches, setGetAllOutreaches] = useState(false);
     const [getAllParishOutreaches, setGetAllParishOutreaches] = useState(false);
     const [isLoading, setIsLoading] =useState(true);
-    const [pagination, setPagination] = useState({page:1, limit:10});
+    const [pagination, setPagination] = useState({page:1, pageSize:5});
+    const [startDate, setStartDate] = useState(new Date().toISOString());
+    const [endDate, setEndDate] = useState(new Date().toISOString());
+    const [dateChange, setDateChange] = useState(false);
+    const [total, setTotal] = useState(0);
     const { confirm } = Modal;
 
+    const requestToken = axios.CancelToken.source();
 
     useEffect(() => {
         const source = axios.CancelToken.source();
@@ -46,11 +52,11 @@ const OutreachReport = () => {
             const { data } = await requestAxios.get("/provinces",{cancelToken:source.token});
             setProvinces(data.body);
           }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
+           if(axios.isCancel(err)){
+             return;
+           }else{
+             console.error("There was a problem");
+           }
           }
         };
           getProvinces();
@@ -61,28 +67,29 @@ const OutreachReport = () => {
      
       }, []);
 
-      useEffect(() => {
-        const source = axios.CancelToken.source();
-        const getOutreaches = async () => {
-          try{
-            const { data } = await requestAxios.get("/outreaches",{cancelToken:source.token});
-            setOutreaches(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
+      const getOutreaches = async (page) => {
+        try{
+          const { data } = await requestAxios.get(`/outreaches?province=${provinceId}&zone=${zoneId}&country=${countryId}&parish=${parishId}&page=${page}&limit=${pagination.pageSize}&startDate=${startDate}&endDate=${endDate}`,{cancelToken:requestToken.token});
+          setOutreaches(data.body);
+          setTotal(data.total);
+          setIsLoading(false);
+        }catch(err){
+          if(axios.isCancel(err)){
+            return;
+          }else{
+            console.error("There was a problem");
           }
-        };
-          getOutreaches();
+        }
+      };
+
+      useEffect(() => {
+          getOutreaches(1);
   
           return (() => {
-            source.cancel();
+            requestToken.cancel();
           })
      
-      }, [getAllProvincesOutreaches]);
+      }, [getAllOutreaches]);
 
 
     useEffect(() => {
@@ -94,10 +101,10 @@ const OutreachReport = () => {
             setZones(data.body);
           }
           catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
+            if(axios.isCancel(err)){
+              return;
             }else{
-            alert.error("An unexpected error occured.");
+              console.error("There was a problem");
             }
         };
       }
@@ -109,10 +116,10 @@ const OutreachReport = () => {
             setOutreaches(data.body);
           }
           catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
+            if(axios.isCancel(err)){
+              return;
             }else{
-            alert.error("An unexpected error occured.");
+              console.error("There was a problem");
             }
         };
       }
@@ -125,62 +132,26 @@ const OutreachReport = () => {
         
       },[provinceId])
 
+    useEffect(() => {
+        getOutreaches(1)
+
+        return (() => {
+          requestToken.cancel();
+        })
+    }, [provinceId]);
+
       
     useEffect(() => {
 
-      const source = axios.CancelToken.source();
-     
-      const getOutreachesByProvinceId = async () => {
-        try{
-          const { data } = await requestAxios.get(`/provinces/${provinceId}/outreaches`, {cancelToken:source.token});
-          setOutreaches(data.body);
-          setIsLoading(false);
-        }
-        catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
-      };
-    }
+    getOutreaches(1);
 
-    getOutreachesByProvinceId();
-
-      return (() => {
-        source.cancel();
-      })
+    return (() => {
+      requestToken.cancel();
+    })
       
-    },[provinceId])
+    },[zoneId])
 
-    useEffect(() => {
-
-      const source = axios.CancelToken.source();
-     
-      const getOutreachesByProvinceId = async () => {
-        try{
-          const { data } = await requestAxios.get(`/provinces/${provinceId}/outreaches`, {cancelToken:source.token});
-          setOutreaches(data.body);
-          setIsLoading(false);
-        }
-        catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
-      };
-    }
-
-    getOutreachesByProvinceId();
-
-      return (() => {
-        source.cancel();
-      })
-      
-    },[getAllZonesOutreaches])
-
-  
+ 
       useEffect(() => {
         const source = axios.CancelToken.source();
   
@@ -189,10 +160,10 @@ const OutreachReport = () => {
             const {data} = await requestAxios.get(`zones/${zoneId}/countries`, {cancelToken:source.token});
             setCountries(data.body);
           }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
+            if(axios.isCancel(err)){
+              return;
             }else{
-            alert.error("An unexpected error occured.");
+              console.error("There was a problem");
             }
           }
         }
@@ -223,40 +194,15 @@ const OutreachReport = () => {
       useEffect(() => {
         const source = axios.CancelToken.source();
   
-        const getOutreachesByZoneId = async (zoneId) => {
-          try{
-            const {data} = await requestAxios.get(`zones/${zoneId}/outreaches`, {cancelToken:source.token});
-            setOutreaches(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-
-        getOutreachesByZoneId(zoneId);
-  
-        return (() => {
-          source.cancel();
-        })
-      },[getAllCountriesOutreaches])
-
-        
-      useEffect(() => {
-        const source = axios.CancelToken.source();
-  
         const getParishesByCountryId = async () => {
           try{
             const {data} = await requestAxios.get(`countries/${countryId}/parishes`, {cancelToken:source.token});
             setParishes(data.body);
           }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
+            if(axios.isCancel(err)){
+              return;
             }else{
-            alert.error("An unexpected error occured.");
+              console.error("There was a problem");
             }
           }
         }
@@ -267,51 +213,23 @@ const OutreachReport = () => {
         })
       },[countryId])
 
+    useEffect(() => {
+      getOutreaches(1);
 
+      return (() => {
+        requestToken.cancel();
+      })
+
+    },[dateChange])
 
       useEffect(() => {
-        const source = axios.CancelToken.source();  
-        const getOutreachesByCountryId = async () => {
-          try{
-            const {data} = await requestAxios.get(`countries/${countryId}/outreaches`, {cancelToken:source.token});
-            setOutreaches(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-        getOutreachesByCountryId();
+            
+        getOutreaches(1);
   
-        return (() => {
-          source.cancel();
+         return (() => {
+          requestToken.cancel();
         })
       },[countryId])
-
-      useEffect(() => {
-        const source = axios.CancelToken.source();  
-        const getOutreachesByCountryId = async () => {
-          try{
-            const {data} = await requestAxios.get(`countries/${countryId}/outreaches`, {cancelToken:source.token});
-            setOutreaches(data.body);
-            setIsLoading(false);
-          }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
-            }else{
-            alert.error("An unexpected error occured.");
-            }
-          }
-        }
-        getOutreachesByCountryId();
-  
-        return (() => {
-          source.cancel();
-        })
-      },[getAllCountriesOutreaches])
 
       useEffect(() => {
         const source = axios.CancelToken.source();
@@ -321,10 +239,10 @@ const OutreachReport = () => {
             const {data} = await requestAxios.get(`parishes/${parishId}`, {cancelToken:source.token});
             setParish(data.body);
           }catch(err){
-            if(err.response && err.response.data){
-              alert.error(err.response.data.message);
+            if(axios.isCancel(err)){
+              return;
             }else{
-            alert.error("An unexpected error occured.");
+              console.error("There was a problem");
             }
           }
         }
@@ -337,20 +255,11 @@ const OutreachReport = () => {
 
                
       useEffect(() => {
-        const source = axios.CancelToken.source();
-  
-        const getParishOutreaches = async () => {
-          try{
-            const {data} = await requestAxios.get(`/parishes/${parishId}/outreaches`);
-            setOutreaches(data.body);
-            setIsLoading(false);
-        }catch(err){
-        }
-        }
-        getParishOutreaches();
+    
+      getOutreaches(1);
   
         return (() => {
-          source.cancel();
+          requestToken.cancel();
         })
       },[parishId])
 
@@ -374,26 +283,26 @@ const OutreachReport = () => {
       }
 
       const columns = [
-        {
-          title:'Province',
-          dataIndex:'province',
-          key:'province'
-        },
-        {
-          title:'Zone',
-          dataIndex:'zone',
-          key:'zone'
-        },
-        {
-          title:'Country',
-          dataIndex:'country',
-          key:'country'
-        },
-        {
-          title:'Province',
-          dataIndex:'province',
-          key:'province'
-        },
+        // {
+        //   title:'Province',
+        //   dataIndex:'province',
+        //   key:'province'
+        // },
+        // {
+        //   title:'Zone',
+        //   dataIndex:'zone',
+        //   key:'zone'
+        // },
+        // {
+        //   title:'Country',
+        //   dataIndex:'country',
+        //   key:'country'
+        // },
+        // {
+        //   title:'Province',
+        //   dataIndex:'province',
+        //   key:'province'
+        // },
           {
               title:'Date',
               dataIndex:'createdAt',
@@ -442,19 +351,23 @@ const OutreachReport = () => {
           },
       ];
 
+      const handlePageChange = page => {
+        getOutreaches(page);
+      };
+
 
     if(!provinces.length) return <Loading />
 
     return(
            <Formik
               initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
-              onSubmit={ async (values) => {
-                try{
-                  const {data} = await requestAxios.get(`/parishes/${parishId}/outreaches`);
-                  setOutreaches(data.body);
-              }catch(err){
-              }
-              }}
+              // onSubmit={ async (values) => {
+              //   try{
+              //     const {data} = await requestAxios.get(`/parishes/${parishId}/outreaches`);
+              //     setOutreaches(data.body);
+              // }catch(err){
+              // }
+              // }}
               
               >
             {() => (
@@ -471,23 +384,33 @@ const OutreachReport = () => {
                              <Field as="select" name="province" className="form-control form-control-lg" id="province" onChange={(e) => {
                                const value = e.target.value;
                                if(value && value === 'all'){
-                                 setGetAllProvincesOutreaches(!getAllProvincesOutreaches);
+                                 setProvinceId(defaultId);
+                                 setZoneId(defaultId);
+                                 setCountryId(defaultId);
+                                 setParishId(defaultId);
+                                 setGetAllOutreaches(!getAllOutreaches);
                                  setDisableZoneDropdownList(true);
+                                 setDisableCountryDropdownList(true);
+                                 setDisableParishDropdownList(true);
                                  setIsLoading(true);
                                }else if (value){
-                                 setProvinceId(value);
-                                 // getProvincePastor(e.target.value);
+                                setZoneId(defaultId);
+                                setCountryId(defaultId);
+                                setParishId(defaultId);
+                                setProvinceId(value);
+                                 
                                  setZones([]);
                                  setDisableZoneDropdownList(false);
                                  setCountries([]);
                                  setDisableCountryDropdownList(true);
+                                 setDisableParishDropdownList(true);
                                  setIsLoading(true);
                                }else{
                                  return;
                                }
                              }}>
                                <option value="">Select Province</option>
-                               <option value="all">Show all Provinces</option>
+                               {isAdmin() && <option value="all">Show all Provinces</option>}
                                {isAdmin() && provinces.map((province) => {
                                return <option key={province.id} value={province.id}>{province.name}</option>;
                                })}
@@ -502,10 +425,15 @@ const OutreachReport = () => {
                            <Field as="select" name="zone" className="form-control form-control-lg" onChange={(e) => {
                              let value = e.target.value;
                              if (value && value ==='all'){
-                                setGetAllZonesOutreaches(!getAllZonesOutreaches);
+                                setZoneId(defaultId);
+                                setCountryId(defaultId);
+                                setParishId(defaultId);
+                                setGetAllOutreaches(!getAllOutreaches);
                                 setDisableCountryDropdownList(true);
                                 setIsLoading(true);
                              }else if(value){
+                               setCountryId(defaultId);
+                               setParishId(defaultId);
                                setZoneId(value);
                                setDisableCountryDropdownList(false);
                                setIsLoading(true);
@@ -526,11 +454,14 @@ const OutreachReport = () => {
                          <Field as="select" name="country" className="form-control form-control-lg" onChange={(e) => {
                            const value = e.target.value;
                              if(value && value === 'all'){
-                                setGetAllCountriesOutreaches(!getAllCountriesOutreaches);
+                               setCountryId(defaultId);
+                               setParishId(defaultId);
+                               setGetAllOutreaches(!getAllOutreaches);                                
                                 setDisableParishDropdownList(true);
                                 setIsLoading(true);
                              }else if (value){
-                              setCountryId(e.target.value);
+                               setParishId(defaultId);
+                              setCountryId(value);
                               setDisableParishDropdownList(false);
                               setIsLoading(true);
                              }else{
@@ -549,11 +480,12 @@ const OutreachReport = () => {
                          <label>Parish</label>
                          <Field as="select" name="parishes" className="form-control form-control-lg" onChange={(e) => {
                              const value = e.target.value;
-
                              if(value && value === 'all'){
-                                 setGetAllCountriesOutreaches(!getAllCountriesOutreaches);
+                              setIsLoading(true);
+                              setParishId(defaultId);
+                              setGetAllOutreaches(!getAllOutreaches);
                              }else if (value){
-                              setParishId(e.target.value);
+                              setParishId(value);
                               setIsLoading(true);
                              }else{
                                return;
@@ -566,6 +498,28 @@ const OutreachReport = () => {
                            })}
                          </Field>
                        </div>
+                       <div className="form-row">
+                          
+                          <div className="form-group col-6">
+                              <label className="form-label">Start Date</label>
+                              <DatePicker name="startDate" placeholder="Start Date" className="form-control form-control-lg" format={dateFormatList[0]} onChange={(date,dateString) => {
+                                const dateResult = dateString.split('/').reverse().join('-');
+                                setStartDate(new Date(dateResult).toISOString());
+                                setIsLoading(true);
+                                setDateChange(!dateChange);
+                              }} />
+                          </div>
+
+                          <div className="form-group col-6">
+                              <label className="form-label">End Date</label>
+                              <DatePicker name="endDate" placeholder="End Date" className="form-control form-control-lg" format={dateFormatList[0]} onChange={(date,dateString) => {
+                                const dateResult = dateString.split('/').reverse().join('-');
+                                setEndDate(new Date(dateResult).toISOString());
+                                setIsLoading(true);
+                                setDateChange(!dateChange);
+                              }} />
+                          </div>
+                      </div> 
                           {/* <input type="submit" value="Search" className="btn btn-primary btn-block btn-lg mt-5" /> */}
                      </div>
                    </div>
@@ -573,7 +527,41 @@ const OutreachReport = () => {
                  </R3Card>
                </div>
                 
-                {outreaches && <Table title={() => <h2>Outreaches</h2>} loading={isLoading} rowKey ={record => record.id} columns={columns} dataSource={outreaches.map(o => ({parish:o.parish?.name, province:o.province?.name, zone:o.zone?.name, country:o.country?.countryName, createdAt:o.createdAt, newNation:o.newNation, newParish:o.newParish, churchDedication: o.churchDedication, notes: o.notes, id: o.id || o._id}))} />}
+                {outreaches && <Table 
+                title={() => <h2>Outreaches</h2>} 
+                loading={isLoading} 
+                rowKey ={record => record.id} 
+                columns={columns} 
+                dataSource={outreaches.map(o => ({parish:o.parish?.name, province:o.province?.name, zone:o.zone?.name, country:o.country?.countryName, createdAt:o.createdAt, newNation:o.newNation, newParish:o.newParish, churchDedication: o.churchDedication, notes: o.notes, id: o.id || o._id}))}
+                pagination={{total, onChange:handlePageChange, ...pagination}}
+                summary = {pagedData => {
+                  let totalNewNation =0;
+                  let totalNewParish = 0;
+                  let totalChurchDedication = 0;
+
+                  pagedData.forEach(({newNation, newParish, churchDedication}) => {
+
+                    totalNewNation+=newNation;
+                    totalNewParish+=newParish;
+                    totalChurchDedication+=churchDedication;
+
+                  })
+
+                  const footerData = ["","", totalNewNation, totalNewParish, totalChurchDedication];                                      
+                  const reportData = pagedData.map(elt=> [`${moment(elt.createdAt).format(dateFormatList[0])}`, elt.parish, elt.newNation, elt.newParish, elt.churchDedication, elt.notes]);
+                   return(
+                     <>
+                      <Table.Summary.Row>
+                        <Table.Summary.Cell><button className="btn btn-secondary" onClick={() => generatePDF(columns, reportData, "Outreach Report by Parish",footerData, true)}>EXPORT</button></Table.Summary.Cell>
+                        <Table.Summary.Cell>TOTAL</Table.Summary.Cell>
+                        <Table.Summary.Cell>{totalNewNation}</Table.Summary.Cell>
+                        <Table.Summary.Cell>{totalNewParish}</Table.Summary.Cell>
+                        <Table.Summary.Cell>{totalChurchDedication}</Table.Summary.Cell>
+                      </Table.Summary.Row>
+                    </>
+                   )
+                 }}
+                />}
                 </div>
             )}
         </Formik>

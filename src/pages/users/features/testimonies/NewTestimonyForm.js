@@ -35,7 +35,7 @@ const NewTestimonyForm = () =>{
             source.cancel();
         }
     },[userInfo.id])
-
+    console.log(parish);
     return(
         <Formik
         initialValues={{title:"", testifier:"", body:""}}
@@ -43,10 +43,13 @@ const NewTestimonyForm = () =>{
         onSubmit={async(values, actions) =>{
             values.parish = userInfo.id;
             values.parishName = parish?.name;
-            values.province = parish?.country?.zone?.province?.name
-            values.zone = parish?.country?.zone?.name
-            values.country = parish?.country?.countryName
-            try{
+            values.provinceName = parish?.country?.zone?.province?.name;
+            values.zoneName = parish?.country?.zone?.name;
+            values.countryName = parish?.country?.countryName;
+            values.province =  parish?.country?.zone?.province?._id;
+            values.country = parish?.country?._id;
+            values.zone = parish?.country?.zone?._id;
+             try{
                 const {data} = await requestAxios.post(`/testimonies`, values);
                 alert.success(data.message);
                 actions.resetForm();

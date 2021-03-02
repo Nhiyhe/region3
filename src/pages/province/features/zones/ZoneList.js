@@ -184,7 +184,7 @@ const ZoneList  = () => {
             </R3Card>
             </div>
             <R3Card>
-                <Table title={() => <h1 className="ZoneList-heading">Zones</h1>} loading={isLoading} rowKey={data => data._id} columns={columns} dataSource={zones.map(z => ({id:z.id || z._id, province:z.province?.name, zone:z.name, locationAddress:z.locationAddress})) } pagination={false} />
+                <Table title={() => <h1 className="ZoneList-heading">Zones</h1>} loading={isLoading} rowKey={data => data.id} columns={columns} dataSource={zones.map(z => ({id:z.id || z._id, province:z.province?.name, zone:z.name, locationAddress:z.locationAddress})) } pagination={false} />
             </R3Card>
         </div>
     )
