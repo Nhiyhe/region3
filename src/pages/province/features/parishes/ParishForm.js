@@ -246,7 +246,7 @@ const ParishForm = () => {
                         <Field as="select" name="parishPastor" className="form-control form-control-lg">
                           <option value="">Select Pastor</option>
                           {pastors.filter(parishPastor => parishPastor.position.toLowerCase() === "parish pastor").map((pastor) => {
-                              return <option key={pastor.id} value={pastor.id}>{pastor.firstName} {pastor.lastName}</option>
+                              return <option key={pastor._id} value={pastor._id}>{pastor.firstName} {pastor.lastName}</option>
                           })}
                         </Field>
                         <ErrorMessage name="parishPastor">

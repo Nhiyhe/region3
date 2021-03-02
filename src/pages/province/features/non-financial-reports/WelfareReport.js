@@ -254,7 +254,7 @@ const WelfareReport = () => {
             key: 'action',
             render: (text, record) => (
               <Space size="middle">
-                <Link className="btn btn-info" to={`${record.id}/read`}>Read</Link>
+                <Link className="btn btn-info" to={`${record._id}/read`}>Read</Link>
                 <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
                 { !record.read && <Tag color="magenta">UNREAD MESSAGE</Tag>}
               </Space>

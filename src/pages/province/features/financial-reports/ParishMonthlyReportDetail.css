@@ -1,0 +1,21 @@
+.ParishMonthlyReportDetail{
+
+}
+
+.ParishMonthlyReportDetail h2{
+  font-weight: 300;
+  font-size: 3rem;
+}
+
+.ParishMonthlyReportDetail > h3{
+    font-weight: 300;
+    font-size: 2rem;
+}
+
+.ParishMonthlyReportDetail > h4{
+    font-weight: 400;
+    font-size: 2rem;
+}
+.ParishMonthlyReportDetail-download{
+    margin-top: 1rem;
+}

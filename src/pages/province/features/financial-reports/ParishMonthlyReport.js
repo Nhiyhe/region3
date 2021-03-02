@@ -1,6 +1,6 @@
 import { Formik, Field, Form } from 'formik';
 import React, { useContext, useState, useEffect } from 'react';
-import {Table} from 'antd';
+import {Table, Space} from 'antd';
 import {AuthContext} from '../../../../context/AuthContext';
 import axios from 'axios';
 import requestAxios from '../../../../util/requestAxios';
@@ -12,6 +12,7 @@ import { DatePicker } from "formik-antd";
 import Loading from '../../../../components/Loading';
 import './ParishMonthlyReport.css';
 import { generatePDF } from '../../../../util/reportGenerator';
+import { Link } from 'react-router-dom';
 
 const ParishMonthlyReport  = () => {
     const defaultId = '5fc5d6236c07300004aea00c';
@@ -95,8 +96,6 @@ const ParishMonthlyReport  = () => {
 
       const getAllMonetaries = async (page) => {
         try{
-        //  const { data } = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}&country=${countryId}&parish=${parishId}&startDate=${startDate}&endDate=${endDate}`, {cancelToken:source.token});
-
           const { data } = await requestAxios.get(`/monetaries?page=${page}&limit=${pagination.pageSize}&startDate=${startDate}&endDate=${endDate}`,{cancelToken:requestToken.token});
           setMonetaries(data.body);
           setTotal(data.total);
@@ -220,20 +219,6 @@ const ParishMonthlyReport  = () => {
       },[zoneId])
 
       useEffect(() => {
-  
-        // const getMonetariesByZoneId = async (zoneId) => {
-        //   try{
-        //    const { data } = await requestAxios.get(`/monetaries?province=${provinceId}&zone=${zoneId}&startDate=${startDate}&endDate=${endDate}`, {cancelToken:source.token});
-        //      setMonetaries(data.body);
-        //   }catch(err){
-        //     if(err.response && err.response.data){
-        //       alert.error(err.response.data.message);
-        //     }else{
-        //     alert.error("An unexpected error occured.");
-        //     }
-        //   }
-        // }
-        // getMonetariesByZoneId(zoneId);
 
         getAllMonetariesBySearch(1);
   
@@ -451,42 +436,23 @@ const ParishMonthlyReport  = () => {
         <>€{ closeBal ? closeBal?.toFixed(2) : closeBal.toFixed(2)}</>
       )
     },
+    {
+      title: 'Actions',
+      key: 'action',
+      render: (text, record) => (
+        <Space size="middle">
+          <Link className="btn btn-info" to={`${record._id}/monthly-report/details`}>Detail</Link>
+        </Space>
+      ),
+    },
   ]
   
-  // function convertArrayOfObjectsToCSV(array) {
-  //   let result;
-  
-  //   const columnDelimiter = ',';
-  //   const lineDelimiter = '\n';
-  //   const keys = Object.keys(monetaries[0]);
-  
-  //   result = '';
-  //   result += keys.join(columnDelimiter);
-  //   result += lineDelimiter;
-  
-  //   array.forEach(item => {
-  //     let ctr = 0;
-  //     keys.forEach(key => {
-  //       if (ctr > 0) result += columnDelimiter;
-  
-  //       result += item[key];
-        
-  //       ctr++;
-  //     });
-  //     result += lineDelimiter;
-  //   });
-  
-  //   return result;
-  // }
-  
+ 
   
   const handlePageChange = page => {
     getAllMonetariesBySearch(page);
   };
 
-  // const Export = ({ onExport }) => (
-  //   <input type="button" value="Export" className="btn btn-info btn-lg mb-4" onClick={e => onExport(e.target.value)}  />
-  // );
 
   if(!provinces.length) return <Loading />
     return (
