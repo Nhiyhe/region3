@@ -385,7 +385,7 @@ const ParishMonthlyReport  = () => {
       fixed: true,
       width: 140,
       render: p => (
-      <>{p.name}</>
+      <>{p ? p?.name : ''}</>
         )
     },
     {
