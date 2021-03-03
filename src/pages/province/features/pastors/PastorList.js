@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import requestAxios from '../../../../util/requestAxios';
 import axios from 'axios';
-import { AuthContext } from '../../../../context/AuthContext';
-import { useAlert } from 'react-alert';
 import Loading from '../../../../components/Loading';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Table, Modal, Space, Tag } from 'antd';
@@ -11,9 +9,6 @@ import './PastorList.css';
 
 const PastorList = () => { 
     const { confirm } = Modal;
-
-    const alert = useAlert();
-    const {userInfo} = useContext(AuthContext);
     const [pastors, setPastors] = useState([]);
     const [pagination, setPagination] = useState({page:1, pageSize:10});
     const [total, setTotal] = useState(0);
@@ -80,7 +75,7 @@ const PastorList = () => {
             key: 'action',
             render: (text, record) => (
               <Space size="middle">
-                <Link className="btn btn-info" to={`${record.id}/edit`}>Edit</Link>
+                <Link className="btn btn-info" to={`${record._id}/edit`}>Edit</Link>
                 <button className="btn btn-danger" onClick={() => showDeleteConfirm(record)}>Delete</button>
               </Space>
             ),
@@ -97,16 +92,17 @@ const PastorList = () => {
           okType: 'danger',
           cancelText: 'No',
           async onOk() {
-            await requestAxios.delete(`/pastor/${pastor.id}`);
-            window.location ='/pastor/lists';            
+            await requestAxios.delete(`/pastors/${pastor._id}`);
+            window.location ='/pastors/lists';    
           },
           onCancel() {
           },
         });
       }
 
-
     if(!pastors.length) return <Loading />
+
+    
     return(
         <div className="PastorList">
             <h1 className="PastorList-heading">Pastors</h1>

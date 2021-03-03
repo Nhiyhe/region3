@@ -61,10 +61,10 @@ const PastorForm = () => {
                 </Field>
             </div>
 
-                <div className="form-group col-4">
+                {/* <div className="form-group col-4">
                     <label>URN</label>
                     <Field name="urn" placeholder="URN" className="form-control form-control-lg" />
-                </div>
+                </div> */}
           </div>
 
           <div className="form-row">                

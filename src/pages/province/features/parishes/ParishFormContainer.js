@@ -11,7 +11,6 @@ const validationSchema = yup.object().shape({
   email:yup.string().required().email(),
   password:yup.string().required(),
   name:yup.string().required().required(),
-  parishEmailAddress:yup.string().required(),
   parishPastor:yup.string().required()
 });
 
@@ -22,7 +21,6 @@ const ParishFormContainer = () => {
   const [province, setProvince] = useState({});
 
       const getProvincePastor = async (id) => {
-        console.log('method called', id)
         try{
           const {data} = await requestAxios.get(`/provinces/${id}`);
           setProvince(data.body);
@@ -37,12 +35,14 @@ const ParishFormContainer = () => {
 
     return (
         <Formik 
-        initialValues={{email:"", password:"", name:"", parishEmailAddress:"", parishPastor:"", referenceNo:"",
-        worshipCenterAddress:"",postalAddress:"",phoneNo:"", churchStartDate:new Date().toISOString(), city:""}}
+        initialValues={{email:"", password:"", name:"", parishPastor:"",worshipCenterAddress:"",postalAddress:"",phoneNo:"", churchStartDate:new Date().toISOString(), city:""}}
         component={ ParishForm }
         validationSchema={validationSchema}
         onSubmit={async (values, actions) => {
         //  values.provincePastor = province.pastor.id;
+
+        console.log(values);
+        return;
           try{
             const {data} = await requestAxios.post( "/parishes/signup", values);
             actions.setSubmitting(false);

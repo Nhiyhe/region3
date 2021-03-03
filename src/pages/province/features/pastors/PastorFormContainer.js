@@ -26,7 +26,7 @@ const PastorFormContainer = () => {
         email: "",
         password:"",
         phone: "",
-        urn: "",
+        // urn: "",
         position: "Parish Pastor",
         spouseFirstName: "",
         spouseMiddleName: "",

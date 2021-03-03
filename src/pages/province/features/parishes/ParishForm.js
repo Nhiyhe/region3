@@ -18,7 +18,7 @@ const validationSchema = yup.object().shape({
   email:yup.string().required().email().label("Email"),
   password:yup.string().required().label("Password"),
   name:yup.string().required().required().label("Parish Name"),
-  parishEmailAddress:yup.string().required().label("Parish Email Address"),
+  // parishEmailAddress:yup.string().required().label("Parish Email Address"),
   parishPastor:yup.string().required().label("Parish Pastor")
 });
 
@@ -58,11 +58,11 @@ const ParishForm = () => {
           const { data } = await requestAxios.get("/provinces",{cancelToken:source.token});
           setProvinces(data.body);
         }catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
+            if(axios.isCancel(err)){
+              return;
+            }else{
+              console.error("There was a problem");
+            }
         }
       };
         getProvinces();
@@ -82,11 +82,11 @@ const ParishForm = () => {
           console.log(data.body);
           setPastors(data.body);
         }catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
+            if(axios.isCancel(err)){
+              return;
+            }else{
+              console.error("There was a problem");
+            }
         }
       };
       getPastors();
@@ -106,11 +106,11 @@ const ParishForm = () => {
           setZones(data.body);
         }
         catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
+            if(axios.isCancel(err)){
+              return;
+            }else{
+              console.error("There was a problem");
+            }
       };
     }
       getZonesByProvinceId();
@@ -129,11 +129,11 @@ const ParishForm = () => {
           const {data} = await requestAxios.get(`zones/${zoneId}/countries`, {cancelToken:source.token});
           setCountries(data.body);
         }catch(err){
-          if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-          alert.error("An unexpected error occured.");
-          }
+            if(axios.isCancel(err)){
+              return;
+            }else{
+              console.error("There was a problem");
+            }
         }
       }
       getCountriesByZoneId(zoneId);
@@ -147,7 +147,7 @@ const ParishForm = () => {
 
  return (
     <Formik 
-    initialValues={{email:"", password:"", name:"", parishEmailAddress:"", parishPastor:"", referenceNo:"",worshipCenterAddress:"",postalAddress:"",phoneNo:"", churchStartDate: new Date().toISOString(), city:""}}
+    initialValues={{email:"", password:"", name:"", parishPastor:"",worshipCenterAddress:"",postalAddress:"",phoneNo:"", churchStartDate: new Date().toISOString(), city:""}}
     validationSchema={validationSchema}
     onSubmit={async (values, actions) => {
       values.provincePastor = province.pastor.id;
@@ -160,11 +160,7 @@ const ParishForm = () => {
         alert.success(data.message);
         window.location = '/parishes/lists';
       }catch(err){
-        if(err.response && err.response.data){
-            alert.error(err.response.data.message);
-          }else{
-            alert.error("An unexpected error occured.");
-          }
+         console.error("There was a problem");
       }
     }}
     >
@@ -231,13 +227,13 @@ const ParishForm = () => {
                             {(msg) => <div className="text-danger">{msg}</div>}
                           </ErrorMessage>
                       </div>
-                      <div className="form-group col">
+                      {/* <div className="form-group col">
                           <label>Parish Email</label>
                           <Field name="parishEmailAddress" placeholder="Email" className="form-control form-control-lg" />
                           <ErrorMessage name="parishEmailAddress">
                             {(msg) => <div className="text-danger">{msg}</div>}
                           </ErrorMessage>
-                      </div>
+                      </div> */}
                   </div>
     
                   <div className="form-row">
@@ -254,10 +250,10 @@ const ParishForm = () => {
                           </ErrorMessage>
                       </div>
     
-                      <div className="form-group mb-5 col-5">
+                      {/* <div className="form-group mb-5 col-5">
                           <label>Reference Number</label>
                           <Field name="referenceNo" placeholder="Reference Number" className="form-control form-control-lg" />
-                      </div>
+                      </div> */}
                   </div>
                   <div className="form-row">
                       <div className="form-group col-4">

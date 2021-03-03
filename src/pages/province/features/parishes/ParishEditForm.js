@@ -88,10 +88,10 @@ const ParishEditForm = () => {
                                 <Field name="name" className="form-control form-control-lg" id="parishName" />
                             </div>
 
-                            <div className="form-group">
+                            {/* <div className="form-group">
                                 <label className="form-label" htmlFor="parishEmail">Email</label>
                                 <Field name="parishEmailAddress" className="form-control form-control-lg" id="parishEmail" />
-                            </div>
+                            </div> */}
 
                             <div className="form-group">
                                 <label className="form-label" htmlFor="parishEmail">Parish Pastor</label>
