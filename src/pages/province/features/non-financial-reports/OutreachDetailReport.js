@@ -38,6 +38,8 @@ const OutrechDetailReport = () => {
             source.cancel();
         })
     },[]);
+
+    console.log(outreach);
     return(
         <div>
             <div className="col-8 offset-2">
@@ -66,8 +68,15 @@ const OutrechDetailReport = () => {
                         <label className="form-label">Notes</label>
                         <p>{outreach.notes}</p>
                     </div>
-                    
-                    <button className="btn btn-info" onClick={() => history.goBack()}>Go Back</button>
+                    {outreach.images ? <><div>
+                        {outreach?.images.map(img => {
+                            return <img key={img._id} src={`${img.url}`} alt="Oureach Image" className="OutrechDetailReport-img" />
+                        })}
+                    </div> </> : <p>No Images Provided</p>}
+
+                    <div className="form-group mt-5">
+                        <button className="btn btn-info btn-lg" onClick={() => history.goBack()}>Go Back</button>
+                    </div>
                 </R3Card>
             </div>
         </div>

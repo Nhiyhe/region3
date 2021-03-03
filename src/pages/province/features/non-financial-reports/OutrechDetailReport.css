@@ -1,3 +1,9 @@
 .OutrechDetailReport{
     
 }
+
+.OutrechDetailReport-img{
+    width: 300px;
+    object-fit: cover;
+    padding: 1rem;
+}

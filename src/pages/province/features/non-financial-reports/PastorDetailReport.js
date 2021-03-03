@@ -18,23 +18,23 @@ const PastorDetailReport = () => {
 
     const alert = useAlert();
     const [parishes, setParishes] = useState([]);
-    const [pagination, setPagination] = useState({page:1, limit:10});
     const { confirm } = Modal;
     const [filteredParishes, setFilteredParishes] = useState(parishes);
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
 
 
     useEffect(() => {
       const source = axios.CancelToken.source();
       const getParishes = async () => {
         try{
-          const { data } = await requestAxios.get("/parishes",{cancelToken:source.token});
-          setParishes(data.body.map(p => ({id: p._id, parish:p.name, pastorsName: `${p.parishPastor?.firstName} ${p.parishPastor?.middleName ? p.parishPastor?.middleName : ''} ${p.parishPastor?.lastName}`, email:p.parishPastor?.email, pastorDOB:p.parishPastor?.dateOfBirth, spouseName:`${p.parishPastor?.spouseFirstName} ${p.parishPastor?.spouseLastName}`, spouseDOB:p.parishPastor?.spouseDateOfBirth, memorableOccassion:p.parishPastor.memorableOccassion, dateOfMemorableOccassion:p.parishPastor?.dateOfMemorableOccassion})));
-          setFilteredParishes(data.body.map(p => ({id: p._id, parish:p.name, pastorsName: `${p.parishPastor?.firstName} ${p.parishPastor?.middleName ? p.parishPastor?.middleName : ''} ${p.parishPastor?.lastName}`, email:p.parishPastor?.email, pastorDOB:p.parishPastor?.dateOfBirth, spouseName:`${p.parishPastor?.spouseFirstName} ${p.parishPastor?.spouseLastName}`, spouseDOB:p.parishPastor?.spouseDateOfBirth, memorableOccassion:p.parishPastor.memorableOccassion, dateOfMemorableOccassion:p.parishPastor?.dateOfMemorableOccassion})));
+          const { data } = await requestAxios.get(`/parishes?page=${pagination.page}&limit=${pagination.pageSize}`,{cancelToken:source.token});
+          setParishes(data.body.map(p => ({id: p._id, parish:p.name, pastorsName: `${p.parishPastor?.firstName} ${p.parishPastor?.middleName ? p.parishPastor?.middleName : ''} ${p.parishPastor?.lastName}`, email:p.parishPastor?.email, pastorDOB:p.parishPastor?.dateOfBirth, spouseName:`${p.parishPastor?.spouseFirstName} ${p.parishPastor?.spouseLastName}`, spouseDOB:p.parishPastor?.spouseDateOfBirth, memorableOccassion:p?.parishPastor?.memorableOccassion, dateOfMemorableOccassion:p.parishPastor?.dateOfMemorableOccassion})));
+          setFilteredParishes(data.body.map(p => ({id: p._id, parish:p.name, pastorsName: `${p.parishPastor?.firstName} ${p.parishPastor?.middleName ? p.parishPastor?.middleName : ''} ${p.parishPastor?.lastName}`, email:p.parishPastor?.email, pastorDOB:p.parishPastor?.dateOfBirth, spouseName:`${p.parishPastor?.spouseFirstName} ${p.parishPastor?.spouseLastName}`, spouseDOB:p.parishPastor?.spouseDateOfBirth, memorableOccassion:p.parishPastor.memorableOccassion, dateOfMemorableOccassion:p?.parishPastor?.dateOfMemorableOccassion})));
         }catch(err){
           if(err.response && err.response.data){
             alert.error(err.response.data.message);
           }else{
-          alert.error("An unexpected error occured.");
+          console.error(err);
           }
         }
       };
@@ -103,7 +103,6 @@ const PastorDetailReport = () => {
     ];
 
     if(!parishes.length) return <Loading />
-
 
     function formatDate(value){
       return value.split('T')[0].split('-').reverse()[1];
