@@ -21,9 +21,11 @@ const WelfareList  = () => {
     const [pagination, setPagination] = useState({page:1, pageSize:10});
     const [total, setTotal] = useState(0);
 
+    const requestToken = axios.CancelToken.source();
+
     const getWelfares = async (page) => {
       try{
-          const {data} = await requestAxios.get(`/parishes/${userInfo.id}/welfares?page=${page}&limit=${pagination.pageSize}`);
+          const {data} = await requestAxios.get(`/parishes/${userInfo.id}/welfares?page=${page}&limit=${pagination.pageSize}`,{cancelToken:requestToken.token});
           setWelfares(data.body);
           setTotal(data.total);
 
@@ -31,16 +33,19 @@ const WelfareList  = () => {
           if(err.response && err.response.data){
               alert.error(err.response.data.message);
             }else{
-            alert.error("An unexpected error occured.");
+              if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
             }
       }
   }
 
     useEffect(() => {
-        const source = axios.CancelToken.source();
         getWelfares(1);
         return (() =>{
-            source.cancel();
+            requestToken.cancel();
         })
     }, []);
 
@@ -53,7 +58,7 @@ const WelfareList  = () => {
           okType: 'danger',
           cancelText: 'No',
           async onOk() {
-            await requestAxios.delete(`/welfares/${welfare.id}`);
+            await requestAxios.delete(`/welfares/${welfare._id}`);
             history.push(`/parish/welfares/list`); 
           },
           onCancel() {

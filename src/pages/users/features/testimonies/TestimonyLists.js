@@ -56,11 +56,11 @@ const TestimonyLists = () => {
           okType: 'danger',
           cancelText: 'No',
           async onOk() {
-            await requestAxios.delete(`/testimonies/${testimony.id}`);
-            history.goBack();        
+            await requestAxios.delete(`/testimonies/${testimony._id}`);
+            // history.push(`/parish/testimonies/lists`);
+            window.location = `/parish/testimonies/lists`
           },
           onCancel() {
-            console.log('Cancel');
           },
         });
       }

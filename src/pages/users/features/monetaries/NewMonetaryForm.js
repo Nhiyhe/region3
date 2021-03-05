@@ -50,7 +50,7 @@ const NewMonetaryForm = (props) => {
                         </ErrorMessage>
                     </div>
 
-                    {props.allPaymentMade && <input type="submit" value="Submit" className="btn btn-primary btn-lg" />}
+                    {props.allPaymentMade && <input type="submit" value={props.isSubmitting ? "Please wait..." : "Submit"} disabled={props.isSubmitting} className="btn btn-primary btn-lg" />}
                     {!props.allPaymentMade && <Tag color="error"> <h5>Sorry, you have a pending transaction. You cannot create another record,
                         Make a payment first.</h5></Tag>}
                 </Form>

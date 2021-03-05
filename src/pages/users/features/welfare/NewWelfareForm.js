@@ -7,6 +7,7 @@ import { AuthContext } from '../../../../context/AuthContext';
 import requestAxios from '../../../../util/requestAxios';
 import * as yup from 'yup';
 import axios from 'axios';
+import { OmitProps } from 'antd/lib/transfer/ListBody';
 
 const validationSchema = yup.object().shape({
     subject:yup.string().required("Subject is Required"),
@@ -68,7 +69,7 @@ const NewWelfareForm = () =>{
             }
         }}
         >
-        {() => (
+        {({isSubmitting}) => (
               <div className="row">
               <div className="col-md-8 offset-2"> 
               <R3Card>
@@ -103,7 +104,7 @@ const NewWelfareForm = () =>{
                             </ErrorMessage>
                       </div>                         
                     
-                      <input type="submit" value="Send Message" className="btn btn-primary btn-lg" />
+                      <input type="submit" value={isSubmitting ? "Please wait..." : "Send Message"} className="btn btn-primary btn-lg" disabled={isSubmitting} />
                   </Form>
               </R3Card>
           </div>

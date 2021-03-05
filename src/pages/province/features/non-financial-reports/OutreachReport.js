@@ -36,7 +36,7 @@ const OutreachReport = () => {
     const [getAllOutreaches, setGetAllOutreaches] = useState(false);
     const [getAllParishOutreaches, setGetAllParishOutreaches] = useState(false);
     const [isLoading, setIsLoading] =useState(true);
-    const [pagination, setPagination] = useState({page:1, pageSize:5});
+    const [pagination, setPagination] = useState({page:1, pageSize:10});
     const [startDate, setStartDate] = useState(new Date().toISOString());
     const [endDate, setEndDate] = useState(new Date().toISOString());
     const [dateChange, setDateChange] = useState(false);
@@ -361,14 +361,7 @@ const OutreachReport = () => {
     return(
            <Formik
               initialValues={{startDate: new Date().toISOString(),endDate: new Date().toISOString()}}
-              // onSubmit={ async (values) => {
-              //   try{
-              //     const {data} = await requestAxios.get(`/parishes/${parishId}/outreaches`);
-              //     setOutreaches(data.body);
-              // }catch(err){
-              // }
-              // }}
-              
+            
               >
             {() => (
                 <div className="OutreachReport">

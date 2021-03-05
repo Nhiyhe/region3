@@ -29,19 +29,27 @@ const NewMonetaryFormContainer = () => {
        
         const getCurrentParishAct = async() => {
             try{
-                const {data} = await requestAxios.get(`/remittances/parish/${userInfo.id}`, {cancelToken:source.cancel()});
+                const {data} = await requestAxios.get(`/remittances/parish/${userInfo.id}`, {cancelToken:source.token});
                 setCurrentBal(data.body);
             }catch(err){               
-                return;
+                if(axios.isCancel(err)){
+                    return;
+                  }else{
+                    console.error("There was a problem");
+                }
             }
         }
 
         const getParishDetail = async() => {
             try{
-                const {data} = await requestAxios.get(`/parishes/${userInfo.id}`, {cancelToken:source.cancel()});
+                const {data} = await requestAxios.get(`/parishes/${userInfo.id}`, {cancelToken:source.token});
                 setParish(data.body);
-            }catch(err){               
-                return;
+            }catch(err){     
+                if(axios.isCancel(err)){
+                    return;
+                  }else{
+                    console.error("There was a problem");
+                }
             }
         }
 
@@ -60,7 +68,12 @@ const NewMonetaryFormContainer = () => {
               try{
                   const {data} = await requestAxios.get(`/parishes/${userInfo.id}/monetaryrecords`,{cancelToken:source.token});
                   setParishMonetaryRecords(data.body);
-              }catch(err){
+              }catch(err){  
+                if(axios.isCancel(err)){
+                    return;
+                  }else{
+                    console.error("There was a problem");
+                  }
               }
           }
   
@@ -97,7 +110,7 @@ const NewMonetaryFormContainer = () => {
                 if(err.response && err.response.data){
                     alert.error(err.response.data.message);
                   }else{
-                  alert.error("An unexpected error occured.");
+                     console.error("There was a problem.");
                   }
             }
         }}

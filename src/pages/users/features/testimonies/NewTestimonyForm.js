@@ -60,12 +60,12 @@ const NewTestimonyForm = () =>{
                 if(err.response && err.response.data){
                     alert.error(err.response.data.message);
                   }else{
-                  alert.error("An unexpected error occured.");
+                  console.error("There was a problem");
                   }
             }
         }}
         >
-        {() => (
+        {({isSubmitting}) => (
               <div className="row">
               <div className="col-md-8 offset-2"> 
               <R3Card>
@@ -95,7 +95,7 @@ const NewTestimonyForm = () =>{
                             </ErrorMessage>
                       </div>                         
                     
-                      <input type="submit" value="Submit" className="btn btn-primary btn-lg" />
+                      <input type="submit" value={isSubmitting ? "Please wait..." : "Submit"} className="btn btn-primary btn-lg" disabled={isSubmitting} />
                   </Form>
               </R3Card>
           </div>

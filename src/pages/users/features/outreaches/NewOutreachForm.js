@@ -103,7 +103,7 @@ const NewOutreachForm = () => {
                             </ErrorMessage>
                         </div>                            
                     
-                      <input type="submit" value="Submit" className="btn btn-primary btn-lg" />
+                      <input type="submit" value={props.isSubmitting ? "Please wait..." :"Submit"} disabled={props.isSubmitting} className="btn btn-primary btn-lg" />
                       <button type="button" className="btn btn-default btn-lg" onClick={() => history.goBack()}>Go Back</button>
                   </Form>
               </R3Card>

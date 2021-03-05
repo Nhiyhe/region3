@@ -12,7 +12,7 @@ import './PayMent.css';
 const validationSchema = yup.object()
 .shape({amountRemitted:yup.number().required().positive("Please provide a positive number"),proof:yup.mixed().required('Please provide evidence of payment')});
 
-const PayMent = () => {
+const PayMent = (props) => {
     const {id} = useParams();
     const [remmittance, setRemmittance] = useState({});
     const [currentBal, setCurrentBal] = useState({});
@@ -142,7 +142,7 @@ const PayMent = () => {
                         </div>
     
                         <div className="mt-5">
-                            <input type="submit" value="Make Payment" className="btn btn-primary btn-lg" />
+                            <input type="submit" disabled={props.isSubmitting} value={props.isSubmitting ? "Please wait..." : "Make a Payment"} disabled={props.isSubmitting} className="btn btn-primary btn-lg" />
                             <button type="button" className="btn btn-default btn-lg" onClick={() => history.goBack()}>Go Back</button>
                         </div>
                     </Form>

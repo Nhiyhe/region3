@@ -6,7 +6,7 @@ import {ErrorMessage} from 'formik';
 import { useHistory } from 'react-router-dom';
 
 
-const NewAttendanceForm = ({editing}) => {
+const NewAttendanceForm = ({editing, isSubmitting}) => {
     const history = useHistory();
     return (
         <div className="NewAttendanceForm">
@@ -85,7 +85,7 @@ const NewAttendanceForm = ({editing}) => {
                                 {(msg) => <div className="text-danger">{msg}</div>}
                     </ErrorMessage>
                 </div>
-                <input type="submit" value={editing ? 'Update' : 'Submit'} className="btn btn-primary btn-lg mr-2" />
+                <input type="submit" value={editing ? 'Update' : 'Submit'} className="btn btn-primary btn-lg mr-2" disabled={isSubmitting}/>
                 {editing && <button type="button" className="btn btn-info btn-lg" onClick={ () => history.goBack()}>Go Back</button>}
                 </Form>
                 

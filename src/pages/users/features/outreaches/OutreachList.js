@@ -20,11 +20,12 @@ const OutreachList = () => {
     const alert = useAlert();
     const { confirm } = Modal;
 
+   const requestToken = axios.CancelToken.source();
 
     const getOutreaches = async page => {
       
       try{
-        const {data} = await requestAxios.get(`/parishes/${userInfo.id}/outreaches?page=${page}&limit=${pagination.pageSize}`);
+        const {data} = await requestAxios.get(`/parishes/${userInfo.id}/outreaches?page=${page}&limit=${pagination.pageSize}`,{cancelToken:requestToken.token});
           setOutreaches(data.body);
           setTotal(data.total);
 
@@ -32,7 +33,11 @@ const OutreachList = () => {
           if(err.response && err.response.data){
               alert.error(err.response.data.message);
             }else{
-            alert.error("An unexpected error occured.");
+              if(axios.isCancel(err)){
+                return;
+              }else{
+                console.error("There was a problem");
+              }
             }
       }
   }
@@ -40,6 +45,10 @@ const OutreachList = () => {
 
     useEffect(() => {
         getOutreaches(1);
+
+        return (() => {
+          requestToken.cancel();
+        })
     }, []);
 
     function showDeleteConfirm(outreach) {
